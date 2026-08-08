@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{ZM} Чёрный Рассвет · Hardcore Zombie · CS 1.6</title>
+<meta name="description" content="Хардкорный зомби-сервер Counter-Strike 1.6. IP 195.60.166.224:27374 — правила, топ игроков, кланы, донат. RU / EN.">
+<meta name="theme-color" content="#E01B1B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070505'/%3E%3Cg fill='%23E01B1B'%3E%3Ccircle cx='16' cy='10.5' r='5.4'/%3E%3Ccircle cx='10.2' cy='21' r='5.4'/%3E%3Ccircle cx='21.8' cy='21' r='5.4'/%3E%3Ccircle cx='16' cy='17.4' r='4.8' fill='%23070505'/%3E%3Ccircle cx='16' cy='17.4' r='2.3'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{ZM} Чёрный Рассвет · Hardcore Zombie">
+<meta property="og:description" content="Counter-Strike 1.6 · IP 195.60.166.224:27374 · правила, топ игроков, кланы, донат">
+<meta property="og:image" content="art/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#070505; --coal:#0D0909; --steel:#151010; --line:#281B1B; --line2:#3E2727;
+  --blood:#E01B1B; --dark:#7E0D0D; --rust:#B33A16;
+  --toxin:#8FE01B; --warn:#FFB300;
+  --bone:#F2EAE4; --ash:#A5928C; --mute:#6A5551;
+  --display:'Oswald',sans-serif; --mono:'JetBrains Mono',monospace; --body:'Manrope',sans-serif;
+  --hazard:repeating-linear-gradient(135deg,var(--blood) 0 10px,#0B0606 10px 20px);
+  --r:0px;
+  --inf:0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);color:var(--bone);font-family:var(--body);font-size:16px;line-height:1.6;
+  overflow-x:hidden;
+}
+/* помехи и развёртка */
+#grain{position:fixed;inset:-120px;z-index:96;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+  animation:grain 700ms steps(4) infinite;mix-blend-mode:overlay}
+@keyframes grain{0%{translate:0 0}25%{translate:-24px 12px}50%{translate:16px -18px}75%{translate:-12px -8px}100%{translate:0 0}}
+#scan{position:fixed;inset:0;z-index:97;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.34) 0 1px,transparent 1px 3px);opacity:.55}
+#sweep{position:fixed;left:0;right:0;height:180px;z-index:97;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(224,27,27,.07),transparent);animation:sweep 7s linear infinite}
+@keyframes sweep{0%{top:-200px}100%{top:100%}}
+#vig{position:fixed;inset:0;z-index:95;pointer-events:none;
+  box-shadow:inset 0 0 200px rgba(0,0,0,.9), inset 0 0 calc(60px + var(--inf)*180px) rgba(224,27,27,calc(.05 + var(--inf)*.35))}
+#glow{position:fixed;width:520px;height:520px;z-index:94;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(circle,rgba(224,27,27,.13),transparent 62%);translate:-50% -50%}
+@media(pointer:fine){#glow{opacity:1}}
+
+::selection{background:var(--blood);color:#fff}
+:focus-visible{outline:2px solid var(--blood);outline-offset:3px}
+.wrap{width:min(1240px,92vw);margin-inline:auto}
+
+/* ================= ШАПКА ================= */
+header{position:sticky;top:0;z-index:60;background:rgba(7,5,5,.97);border-bottom:2px solid var(--blood)}
+.bar{display:flex;align-items:center;gap:16px;height:60px}
+.mark{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.12em;white-space:nowrap;
+  display:flex;align-items:center;gap:9px}
+.mark i{width:11px;height:11px;background:var(--blood);display:block;
+  clip-path:polygon(50% 0,100% 100%,0 100%);animation:beat 1.6s infinite}
+@keyframes beat{0%,100%{opacity:1}50%{opacity:.25}}
+.mark s{text-decoration:none;color:var(--blood)}
+.meter{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);white-space:nowrap}
+.meter b{color:var(--blood);font-weight:700}
+.meter #liveTag{color:var(--toxin)}
+.meter #liveTag.off{color:var(--blood)}
+.lang{display:flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11px}
+.lang button{background:none;border:0;color:var(--ash);padding:6px 11px;cursor:pointer;letter-spacing:.1em;
+  transition:.15s;font-family:inherit;font-size:inherit}
+.lang button:hover{color:var(--blood)}
+.lang button[aria-pressed="true"]{background:var(--blood);color:#fff;font-weight:700}
+
+/* тикер тревоги */
+.ticker{background:var(--blood);border-block:2px solid #000;overflow:hidden}
+.ticker-in{display:flex;white-space:nowrap;animation:slide 26s linear infinite;width:max-content}
+.ticker-in span{font-family:var(--mono);font-weight:700;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:#12FFFF;color:#0A0505;padding:8px 26px;position:relative}
+.ticker-in span::after{content:'';position:absolute;right:0;top:50%;translate:0 -50%;width:5px;height:5px;background:#0A0505;
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* вкладки */
+.tabs{border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;background:var(--coal)}
+.tabs::-webkit-scrollbar{display:none}
+.tabrow{display:flex;min-width:max-content}
+.tab{position:relative;background:none;border:0;cursor:pointer;white-space:nowrap;padding:13px 26px 12px;
+  display:flex;flex-direction:column;gap:2px;align-items:flex-start;transition:.15s;
+  clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+.tab i{font-style:normal;font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;color:var(--mute);transition:.15s}
+.tab b{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--ash);transition:.15s}
+.tab:hover{background:rgba(224,27,27,.12)}
+.tab:hover b,.tab:hover i{color:var(--bone)}
+.tab[aria-selected="true"]{background:var(--blood)}
+.tab[aria-selected="true"] b{color:#fff}
+.tab[aria-selected="true"] i{color:rgba(255,255,255,.72)}
+.infect{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--toxin),var(--blood));
+  box-shadow:0 0 14px rgba(224,27,27,.9)}
+
+.page{display:none}
+.page.on{display:block}
+
+/* ================= ГЕРОЙ ================= */
+.hero{position:relative;padding:56px 0 0;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0;background:url('art/hero.jpg') center 18%/cover no-repeat;
+  filter:grayscale(.2) contrast(1.12) brightness(.55);opacity:.7}
+.hero::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at 22% 45%,transparent,rgba(7,5,5,.78) 66%),
+             linear-gradient(180deg,rgba(7,5,5,.9),transparent 30%,rgba(7,5,5,.96))}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.35fr .65fr;gap:40px;align-items:center;
+  padding-bottom:56px}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;padding:6px 12px;
+  border:1px solid var(--line2);color:var(--ash);clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%)}
+.chip.hot{background:var(--blood);border-color:var(--blood);color:#fff;font-weight:700}
+
+h1{font-family:var(--display);font-weight:700;line-height:.82;text-transform:uppercase;letter-spacing:-.015em;
+  font-size:clamp(56px,12vw,168px);position:relative}
+h1 .l1{display:block;color:transparent;-webkit-text-stroke:2px var(--bone)}
+h1 .l2{display:block;color:var(--blood);text-shadow:0 0 60px rgba(224,27,27,.55)}
+.glitch{position:relative}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none;
+  -webkit-text-stroke:inherit;color:inherit}
+.glitch::before{color:#00E5FF;-webkit-text-stroke-color:#00E5FF;animation:g1 5s infinite steps(1);mix-blend-mode:screen}
+.glitch::after{color:var(--toxin);-webkit-text-stroke-color:var(--toxin);animation:g2 5s infinite steps(1);mix-blend-mode:screen}
+@keyframes g1{0%,88%,100%{clip-path:inset(100% 0 0 0);translate:0}89%{clip-path:inset(8% 0 66% 0);translate:-7px 0}92%{clip-path:inset(54% 0 26% 0);translate:5px 0}95%{clip-path:inset(28% 0 52% 0);translate:-4px 0}}
+@keyframes g2{0%,88%,100%{clip-path:inset(100% 0 0 0);translate:0}90%{clip-path:inset(40% 0 38% 0);translate:6px 0}93%{clip-path:inset(4% 0 78% 0);translate:-6px 0}97%{clip-path:inset(66% 0 14% 0);translate:4px 0}}
+
+.slash{position:relative;margin:26px 0 0;padding-left:20px}
+.slash::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:4px;background:var(--blood)}
+.lede{color:var(--ash);font-size:17px;max-width:46ch}
+.serverline{margin-top:22px;display:inline-block;border:1px solid var(--line2);background:rgba(13,9,9,.86);padding:11px 16px;
+  clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.serverline b{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);font-weight:400;margin-bottom:5px}
+.serverline code{font-family:var(--mono);font-size:13.5px;color:var(--blood);word-break:break-word}
+
+.console{margin-top:22px;border:1px solid var(--line2);background:rgba(10,7,7,.9);font-family:var(--mono);font-size:13px;
+  position:relative;box-shadow:0 0 0 1px rgba(224,27,27,.1),0 30px 70px -40px #000}
+.console-head{display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid var(--line);
+  color:var(--mute);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.dot{width:7px;height:7px;background:var(--blood);box-shadow:0 0 10px var(--blood);animation:beat 1.2s infinite}
+.console-body{padding:15px 14px;min-height:168px}
+.console-body p{margin-bottom:3px;white-space:pre-wrap;word-break:break-word}
+.c-dim{color:var(--mute)} .c-out{color:var(--rust)} .c-ok{color:var(--toxin)}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--blood);vertical-align:-2px;animation:blink .9s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{position:relative;overflow:hidden;font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.12em;
+  text-transform:uppercase;padding:14px 26px;border:0;background:var(--blood);color:#fff;cursor:pointer;
+  text-decoration:none;display:inline-block;transition:.15s;
+  clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+.btn::before{content:'';position:absolute;inset:0;background:#fff;translate:-101% 0;transition:translate .25s;z-index:-1}
+.btn:hover{background:#fff;color:var(--blood)}
+.btn.ghost{background:transparent;color:var(--bone);box-shadow:inset 0 0 0 1px var(--line2)}
+.btn.ghost:hover{background:var(--bone);color:var(--void);box-shadow:none}
+
+.heroart{position:relative}
+.heroart .frame{position:relative;aspect-ratio:4/5;overflow:hidden;
+  background:url('art/hero.jpg') center/cover;
+  clip-path:polygon(0 0,100% 0,100% 88%,88% 100%,0 100%)}
+.heroart .frame::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 45%,rgba(7,5,5,.75)),
+             repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px)}
+.stamp{position:absolute;left:-16px;bottom:24px;z-index:3;rotate:-8deg;border:3px solid var(--blood);color:var(--blood);
+  font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.2em;text-transform:uppercase;
+  padding:8px 14px;background:rgba(7,5,5,.6)}
+.claw{position:absolute;right:-10px;top:6%;width:120px;height:70%;z-index:4;pointer-events:none;opacity:.75}
+
+/* рваная граница секций */
+.tear{height:26px;background:var(--blood);
+  clip-path:polygon(0 0,3% 62%,7% 12%,11% 74%,16% 22%,21% 80%,26% 16%,31% 70%,36% 24%,42% 82%,47% 14%,52% 68%,57% 20%,63% 78%,68% 12%,73% 72%,78% 26%,84% 80%,89% 16%,94% 66%,100% 20%,100% 0)}
+.tear.up{rotate:180deg}
+
+/* ================= СТАТУС ================= */
+.status{background:var(--coal);border-bottom:1px solid var(--line)}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.cell{padding:24px;border-left:1px solid var(--line);transition:.2s;position:relative;overflow:hidden}
+.cell:first-child{border-left:0}
+.cell::before{content:'';position:absolute;left:0;top:0;width:100%;height:2px;background:var(--blood);translate:-100% 0;transition:translate .3s}
+.cell:hover::before{translate:0 0}
+.cell:hover{background:var(--steel)}
+.cell-k{font-family:var(--mono);font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--mute)}
+.cell-v{font-family:var(--display);font-weight:600;font-size:26px;letter-spacing:.03em;margin-top:6px;text-transform:uppercase}
+.live{color:var(--toxin);display:inline-flex;align-items:center;gap:9px}
+.live::before{content:'';width:9px;height:9px;background:var(--toxin);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+  animation:beat 1.4s infinite}
+.gt{padding:18px 0 22px;text-align:center}
+.gt img{max-width:100%;border:1px solid var(--line2)}
+
+/* ================= ЗАГОЛОВКИ ================= */
+section{padding:72px 0;position:relative}
+.dh{margin-bottom:34px;position:relative}
+.dh-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.dh-code{font-family:var(--mono);font-weight:700;font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:#fff;
+  background:var(--blood);padding:6px 12px;white-space:nowrap;
+  clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%)}
+.dh-line{flex:1;height:8px;background:var(--hazard);opacity:.5;min-width:20px}
+.dh-meta{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+.dh h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,72px);text-transform:uppercase;
+  letter-spacing:-.01em;line-height:.92}
+.dh h2 em{font-style:normal;color:var(--blood)}
+.dh-sub{font-family:var(--mono);font-size:11.5px;color:var(--mute);letter-spacing:.06em;margin-top:12px;line-height:1.85;max-width:74ch}
+
+.reveal{opacity:0;clip-path:inset(0 100% 0 0);transition:opacity .5s ease,clip-path .65s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;clip-path:inset(0 0 0 0)}
+
+/* ================= ЛЕСТНИЦА НАКАЗАНИЙ ================= */
+.ladder{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:48px}
+.ladder li{padding:24px 22px 26px;background:var(--coal);border-left:4px solid var(--warn);position:relative;overflow:hidden}
+.ladder li:nth-child(2){border-left-color:var(--rust)}
+.ladder li:nth-child(3){border-left-color:var(--blood)}
+.ladder li::after{content:'';position:absolute;right:-30px;top:-30px;width:90px;height:90px;background:var(--hazard);opacity:.12;rotate:20deg}
+.ladder .st{font-family:var(--mono);font-size:9px;letter-spacing:.26em;color:var(--mute);text-transform:uppercase}
+.ladder b{display:block;font-family:var(--display);font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:.03em;margin:9px 0 9px}
+.ladder li:nth-child(1) b{color:var(--warn)}
+.ladder li:nth-child(2) b{color:var(--rust)}
+.ladder li:nth-child(3) b{color:var(--blood)}
+.ladder small{color:var(--ash);font-size:13.5px;line-height:1.6;display:block}
+.ladder.mini{grid-template-columns:repeat(3,1fr);margin:0 0 24px;gap:10px}
+.ladder.mini li{padding:16px}
+.ladder.mini b{font-size:17px;margin:6px 0 5px}
+.ladder.mini small{font-size:12.5px}
+
+/* ================= ПРАВИЛА ================= */
+.rgroup{margin-bottom:52px}
+.rgroup-h{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.rgroup-h .num{font-family:var(--display);font-weight:700;font-size:30px;color:var(--blood);line-height:1}
+.rgroup-h h3{font-family:var(--display);font-weight:600;font-size:26px;text-transform:uppercase;letter-spacing:.04em}
+.rgroup-h::after{content:'';flex:1;height:8px;background:var(--hazard);opacity:.35}
+.rgroup.vip .rgroup-h .num{color:var(--toxin)}
+.rgroup.vip .rgroup-h h3{color:var(--toxin)}
+.rgroup.staff .rgroup-h .num,.rgroup.staff .rgroup-h h3{color:var(--warn)}
+.rgroup-note{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin-bottom:20px;line-height:1.9}
+.rule{display:grid;grid-template-columns:60px 1fr auto;gap:20px;align-items:center;padding:17px 14px 17px 16px;
+  border-bottom:1px solid var(--line);position:relative;transition:.18s;background:linear-gradient(90deg,transparent,transparent)}
+.rule::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line2);transition:.18s}
+.rule.sev::before{background:var(--blood)}
+.rule:hover{background:linear-gradient(90deg,rgba(224,27,27,.09),transparent 55%);translate:5px 0}
+.rule:hover::before{background:var(--blood);box-shadow:0 0 14px var(--blood)}
+.rule-n{font-family:var(--display);font-weight:700;font-size:17px;color:var(--blood)}
+.vip .rule-n{color:var(--toxin)} .staff .rule-n{color:var(--warn)}
+.rule-t{font-size:15.5px;font-weight:600}
+.rule-t small{display:block;color:var(--ash);font-size:13.5px;margin-top:4px;line-height:1.55;font-weight:400}
+.tag{font-family:var(--mono);font-weight:700;font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:7px 11px;
+  border:1px solid var(--line2);color:var(--ash);white-space:nowrap;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.tag.sev{background:var(--blood);border-color:var(--blood);color:#fff}
+.vip .tag.sev{background:var(--toxin);border-color:var(--toxin);color:#0B1200}
+.staff .tag.sev{background:var(--warn);border-color:var(--warn);color:#1A1200}
+
+/* ================= ТАБЛИЦЫ ================= */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);
+  text-align:left;padding:0 16px 14px 0;font-weight:400}
+.tbl td{padding:15px 16px 15px 0;border-top:1px solid var(--line);font-size:15px;vertical-align:middle}
+.tbl tbody tr{transition:.16s;position:relative}
+.tbl tbody tr:hover{background:rgba(224,27,27,.07)}
+.tbl tbody tr.empty td{opacity:.35}
+.tbl tbody tr.empty:hover td{opacity:.7}
+.nick{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+.tbl a{color:var(--blood);text-decoration:none;font-family:var(--mono);font-size:13px}
+.tbl a:hover{text-decoration:underline}
+.num-c{font-family:var(--mono);font-size:14px;color:var(--ash)}
+.rank{font-family:var(--display);font-weight:700;font-size:26px;width:64px;color:var(--mute)}
+tr.r1 .rank{color:var(--blood);text-shadow:0 0 18px rgba(224,27,27,.7)}
+tr.r2 .rank{color:var(--rust)}
+tr.r3 .rank{color:var(--warn)}
+tr.r1 td{background:linear-gradient(90deg,rgba(224,27,27,.12),transparent 55%)}
+.clan-tag{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--blood);letter-spacing:.12em;white-space:nowrap}
+
+/* ================= КАРТОЧКИ ================= */
+.samples{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sample{position:relative;aspect-ratio:1;overflow:hidden;margin:0;background-image:var(--img);
+  background-size:cover;background-position:center top;filter:grayscale(.55) contrast(1.1) brightness(.8);transition:.28s;
+  clip-path:polygon(0 0,100% 0,100% 90%,90% 100%,0 100%)}
+.sample::before{content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,transparent 40%,rgba(7,5,5,.95)),linear-gradient(0deg,rgba(224,27,27,.2),transparent 55%)}
+.sample:hover{filter:none;translate:0 -5px}
+.sample figcaption{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:14px 15px}
+.sample figcaption b{display:block;font-family:var(--display);font-weight:700;font-size:24px;color:var(--blood);line-height:1}
+.sample figcaption span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone);margin-top:5px}
+
+.banner{position:relative;height:250px;overflow:hidden;margin-bottom:36px;background-image:var(--img);
+  background-size:cover;background-position:center 22%;filter:contrast(1.08) saturate(.85);
+  clip-path:polygon(0 0,100% 0,100% 86%,94% 100%,0 100%)}
+.banner::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(7,5,5,.95) 6%,rgba(7,5,5,.42) 58%,rgba(7,5,5,.18)),
+             linear-gradient(0deg,rgba(224,27,27,.22),transparent 55%)}
+.banner-txt{position:absolute;left:0;bottom:0;z-index:2;padding:24px 26px;max-width:64%}
+.banner-txt span{display:block;font-family:var(--mono);font-weight:700;font-size:9.5px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--blood);margin-bottom:7px}
+.banner-txt b{display:block;font-family:var(--display);font-weight:700;font-size:clamp(22px,3.4vw,34px);
+  text-transform:uppercase;letter-spacing:.02em;line-height:1}
+
+/* карты */
+.maps{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.map{position:relative;aspect-ratio:16/10;overflow:hidden;background-image:var(--img);background-size:cover;
+  background-position:center;background-color:var(--steel);display:flex;align-items:flex-end;transition:.2s;
+  filter:grayscale(.4);clip-path:polygon(0 0,100% 0,100% 87%,92% 100%,0 100%)}
+.map:hover{filter:none;translate:0 -4px}
+.map::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(7,5,5,.95))}
+.map::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(224,27,27,.06) 0 6px,transparent 6px 12px)}
+.map figcaption{position:relative;z-index:2;padding:16px;width:100%}
+.map b{display:block;font-family:var(--mono);font-weight:700;font-size:13px;color:var(--bone);letter-spacing:.04em;word-break:break-all}
+.map span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);margin-top:5px}
+.map.now{outline:2px solid var(--blood);outline-offset:-2px}
+.map.now span{color:var(--blood);font-weight:700}
+
+/* ================= ДОНАТ ================= */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tier{position:relative;background:var(--coal);padding:32px 26px;display:flex;flex-direction:column;transition:.22s;
+  border-top:4px solid var(--line2);overflow:hidden}
+.tier::after{content:'';position:absolute;right:-40px;bottom:-40px;width:120px;height:120px;background:var(--hazard);opacity:.07;rotate:20deg}
+.tier:hover{border-top-color:var(--blood);translate:0 -6px;background:var(--steel)}
+.tier.top{border-top-color:var(--blood)}
+.tier.top::before{content:attr(data-flag);position:absolute;top:0;right:0;background:var(--blood);color:#fff;
+  font-family:var(--mono);font-weight:700;font-size:9px;letter-spacing:.16em;padding:6px 12px;text-transform:uppercase}
+.tier h3{font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.tier.top h3{color:var(--blood)}
+.price{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--warn);margin:10px 0 22px}
+.tier ul{list-style:none;display:grid;gap:10px;margin-bottom:26px}
+.tier li{font-size:14.5px;padding-left:20px;position:relative;color:var(--ash)}
+.tier li::before{content:'';position:absolute;left:0;top:8px;width:8px;height:8px;background:var(--blood);
+  clip-path:polygon(50% 0,100% 100%,0 100%)}
+.tier .btn{margin-top:auto;text-align:center}
+.note{font-family:var(--mono);font-size:11.5px;color:var(--mute);border-left:3px solid var(--blood);padding:12px 0 12px 16px;
+  margin-top:26px;line-height:1.9}
+.buybox{background:var(--coal);border-top:4px solid var(--blood);padding:30px;margin-top:28px}
+.buybox h4{font-family:var(--display);font-weight:700;font-size:26px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:20px}
+.pays{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.pays span{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash);
+  border:1px solid var(--line2);padding:7px 12px}
+
+/* ================= ШАГИ И ВОПРОСЫ ================= */
+.steps{display:grid;gap:2px}
+.step{display:grid;grid-template-columns:80px 1fr;gap:22px;padding:28px 26px;background:var(--coal);transition:.2s;position:relative}
+.step:hover{background:var(--steel)}
+.step::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blood);scale:1 0;
+  transform-origin:top;transition:scale .25s}
+.step:hover::before{scale:1 1}
+.step-n{font-family:var(--display);font-weight:700;font-size:52px;line-height:.8;color:transparent;-webkit-text-stroke:2px var(--blood)}
+.step h4{font-family:var(--display);font-weight:600;font-size:23px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.step p{color:var(--ash);font-size:15px}
+.step code,.cmd{display:inline-block;font-family:var(--mono);font-size:13.5px;color:var(--blood);background:var(--void);
+  border:1px solid var(--line2);padding:9px 13px;margin-top:12px;word-break:break-all}
+.step .key{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--bone);border:1px solid var(--line2);
+  padding:3px 9px;margin:8px 3px 0 0}
+.faq{margin-top:24px}
+.faq details{background:var(--coal);margin-bottom:2px;transition:.16s}
+.faq details[open]{background:var(--steel)}
+.faq summary{cursor:pointer;padding:17px 22px;font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--bone);list-style:none;transition:.16s}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:'▸';color:var(--blood);margin-right:14px;display:inline-block;transition:rotate .2s}
+.faq details[open] summary::before{rotate:90deg}
+.faq summary:hover{color:var(--blood)}
+.faq p{padding:0 22px 20px 52px;color:var(--ash);font-size:14.5px}
+
+/* ================= ФОРМЫ ================= */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field.full{grid-column:1/-1}
+label{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+input,textarea,select{background:var(--void);border:1px solid var(--line2);color:var(--bone);padding:14px;
+  font-family:var(--body);font-size:15px;transition:.16s}
+input:focus,textarea:focus,select:focus{border-color:var(--blood);outline:none;box-shadow:0 0 0 1px var(--blood)}
+textarea{resize:vertical;min-height:120px}
+.out{margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--toxin);min-height:22px}
+
+footer{border-top:2px solid var(--blood);padding:44px 0;background:var(--coal)}
+.foot{display:flex;gap:26px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.foot-links{display:flex;gap:24px;flex-wrap:wrap}
+.foot a{font-family:var(--mono);font-size:12px;color:var(--bone);text-decoration:none;letter-spacing:.1em;cursor:pointer;transition:.15s}
+.foot a:hover{color:var(--blood)}
+.foot small{font-family:var(--mono);font-size:10.5px;color:var(--mute);letter-spacing:.08em}
+
+@media(max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:32px}
+  .heroart{max-width:420px}
+  .status-grid{grid-template-columns:1fr 1fr}
+  .cell:nth-child(3){border-left:0}
+  .cell:nth-child(n+3){border-top:1px solid var(--line)}
+  .tiers,.ladder,.ladder.mini{grid-template-columns:1fr}
+  .samples{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .rule{grid-template-columns:48px 1fr;gap:14px}
+  .rule .tag{grid-column:2}
+  .step{grid-template-columns:1fr;gap:10px;padding:22px}
+  .step-n{font-size:38px}
+  .banner{height:180px}
+  .banner-txt{max-width:90%;padding:18px}
+  .meter{font-size:9px}
+  .claw{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;clip-path:none}
+  #grain,#sweep,#glow{display:none}
+}
+</style>
+</head>
+<body>
+<div id="grain"></div><div id="scan"></div><div id="sweep"></div><div id="vig"></div><div id="glow"></div>
+
+<header>
+  <div class="wrap bar">
+    <div class="mark"><i></i>ЧЁРНЫЙ<s>·</s>РАССВЕТ</div>
+    <div class="meter"><span id="liveTag">—</span> · <span data-ru="ЗАРАЖЕНИЕ" data-en="INFECTION">…</span> <b id="pct">00</b>%</div>
+    <div class="lang">
+      <button id="ru" aria-pressed="true">RU</button>
+      <button id="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-in" id="ticker"></div>
+  </div>
+  <div class="wrap tabs">
+    <div class="tabrow" role="tablist">
+      <button class="tab" role="tab" data-page="home"   aria-selected="true"><i>01</i><b data-ru="Главная" data-en="Home">…</b></button>
+      <button class="tab" role="tab" data-page="play"   aria-selected="false"><i>02</i><b data-ru="Как играть" data-en="How to play">…</b></button>
+      <button class="tab" role="tab" data-page="rules"  aria-selected="false"><i>03</i><b data-ru="Правила" data-en="Rules">…</b></button>
+      <button class="tab" role="tab" data-page="top"    aria-selected="false"><i>04</i><b data-ru="Топ игроков" data-en="Top players">…</b></button>
+      <button class="tab" role="tab" data-page="clans"  aria-selected="false"><i>05</i><b data-ru="Кланы" data-en="Clans">…</b></button>
+      <button class="tab" role="tab" data-page="maps"   aria-selected="false"><i>06</i><b data-ru="Карты" data-en="Maps">…</b></button>
+      <button class="tab" role="tab" data-page="donate" aria-selected="false"><i>07</i><b data-ru="Донат" data-en="Donate">…</b></button>
+    </div>
+  </div>
+  <div class="infect" id="infect"></div>
+</header>
+
+<!-- ================= ГЛАВНАЯ ================= -->
+<main class="page on" id="p-home">
+  <div class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <div class="tagrow">
+          <span class="chip hot" data-ru="Заражение активно" data-en="Outbreak active">…</span>
+          <span class="chip">Counter-Strike 1.6</span>
+          <span class="chip">Hardcore Zombie</span>
+          <span class="chip">RU / EN</span>
+        </div>
+        <h1>
+          <span class="l1 glitch" id="t1" data-t="Чёрный" data-ru="Чёрный" data-en="Black">Чёрный</span>
+          <span class="l2 glitch" id="t2" data-t="Рассвет" data-ru="Рассвет" data-en="Dawn">Рассвет</span>
+        </h1>
+        <div class="slash">
+          <p class="lede" data-ru="Заражение началось на закате. К утру выживших почти не осталось. Сервер работает 24/7 — заходи, пока есть патроны."
+             data-en="The outbreak started at dusk. By morning almost no one was left. The server runs 24/7 — get in while there's ammo.">…</p>
+        </div>
+        <div class="serverline">
+          <b data-ru="Ищи в списке серверов" data-en="Find it in the server list">…</b>
+          <code id="rawName"></code>
+        </div>
+
+        <div class="console">
+          <div class="console-head"><span class="dot"></span><span data-ru="Консоль · ~" data-en="Console · ~">…</span></div>
+          <div class="console-body" id="term"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="copyIp" data-ru="Скопировать IP" data-en="Copy IP">…</button>
+          <button class="btn ghost" data-goto="play" data-ru="Как начать" data-en="How to start">…</button>
+          <a class="btn ghost" id="tgGroup" href="#" target="_blank" rel="noopener" data-ru="Telegram" data-en="Telegram">…</a>
+        </div>
+      </div>
+
+      <div class="heroart">
+        <div class="frame" role="img" aria-label="Двое выживших с оружием на фоне горящего города"></div>
+        <svg class="claw" viewBox="0 0 120 300" fill="none" aria-hidden="true">
+          <path d="M10 10 C40 90 55 190 40 290" stroke="#E01B1B" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+          <path d="M50 0 C80 85 92 185 78 285" stroke="#E01B1B" stroke-width="9" stroke-linecap="round" opacity=".65"/>
+          <path d="M92 18 C115 95 118 190 108 275" stroke="#E01B1B" stroke-width="5" stroke-linecap="round" opacity=".5"/>
+        </svg>
+        <div class="stamp" data-ru="Карантин" data-en="Quarantine">…</div>
+      </div>
+    </div>
+    <div class="tear"></div>
+  </div>
+
+  <div class="status">
+    <div class="wrap status-grid">
+      <div class="cell">
+        <div class="cell-k" data-ru="Статус" data-en="Status">…</div>
+        <div class="cell-v"><span class="live" id="stStatus">ONLINE</span></div>
+      </div>
+      <div class="cell">
+        <div class="cell-k" data-ru="Адрес" data-en="Address">…</div>
+        <div class="cell-v" id="stIp" style="font-family:var(--mono);font-size:15px">—</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k" data-ru="Слоты" data-en="Slots">…</div>
+        <div class="cell-v" id="stPlayers">—/32</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k" data-ru="Режим" data-en="Mode">…</div>
+        <div class="cell-v" id="stMap" style="font-size:19px">Zombie Plague</div>
+      </div>
+    </div>
+    <div class="wrap gt"><img id="gtBanner" alt="" hidden></div>
+  </div>
+
+  <section>
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Картотека" data-en="Case files">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" data-ru="Образцы · 06" data-en="Samples · 06">…</span>
+        </div>
+        <h2 data-ru="Материалы с объекта" data-en="Field material">…</h2>
+        <p class="dh-sub" data-ru="Зафиксировано на территории зоны. Хантеры и мясники — основные классы заражённых на сервере." data-en="Recorded inside the zone. Hunters and butchers are the primary infected classes on the server.">…</p>
+      </div>
+      <div class="samples">
+        <figure class="sample" style="--img:url('art/s1.jpg')"><figcaption><b>01</b><span data-ru="Контакт" data-en="Contact">…</span></figcaption></figure>
+        <figure class="sample" style="--img:url('art/s2.jpg')"><figcaption><b>02</b><span data-ru="Патруль" data-en="Patrol">…</span></figcaption></figure>
+        <figure class="sample" style="--img:url('art/s3.jpg')"><figcaption><b>03</b><span data-ru="Ночной выход" data-en="Night sweep">…</span></figcaption></figure>
+        <figure class="sample" style="--img:url('art/s4.jpg')"><figcaption><b>04</b><span data-ru="Ближний бой" data-en="Close quarters">…</span></figcaption></figure>
+        <figure class="sample" style="--img:url('art/n2.jpg')"><figcaption><b>05</b><span data-ru="Обращённая" data-en="Turned">…</span></figcaption></figure>
+        <figure class="sample" style="--img:url('art/n1.jpg')"><figcaption><b>06</b><span data-ru="Прорыв" data-en="Breakout">…</span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="tear up"></div>
+  <section style="background:var(--coal)">
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Сектор 01" data-en="Sector 01">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" data-ru="Допуск · полный" data-en="Clearance · full">…</span>
+        </div>
+        <h2 data-ru="Состав команды" data-en="Staff">…</h2>
+        <p class="dh-sub" data-ru="По вопросам бана пишите только этим людям. Любой другой «админ» — не админ." data-en="For ban questions contact only these people. Anyone else claiming to be staff is not.">…</p>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th data-ru="Ник" data-en="Nickname">…</th>
+          <th data-ru="Должность" data-en="Role">…</th>
+          <th data-ru="Связь" data-en="Contact">…</th>
+        </tr></thead>
+        <tbody id="adminList"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap reveal" style="max-width:860px">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Сектор 02" data-en="Sector 02">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" data-ru="Ответ · до 24 часов" data-en="Reply · within 24h">…</span>
+        </div>
+        <h2 data-ru="Жалоба и <em>разбан</em>" data-en="Complaint &amp; <em>unban</em>">…</h2>
+        <p class="dh-sub" data-ru="Заполни поля — сайт соберёт заявку, скопирует её и откроет Telegram. Останется вставить и отправить." data-en="Fill in the fields — the site builds the ticket, copies it and opens Telegram. Just paste and send.">…</p>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="f-nick" data-ru="Твой ник в игре" data-en="Your in-game nickname">…</label>
+          <input id="f-nick" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="f-type" data-ru="Тип обращения" data-en="Ticket type">…</label>
+          <select id="f-type">
+            <option value="unban" data-ru="Разбан" data-en="Unban request">Разбан</option>
+            <option value="report" data-ru="Жалоба на игрока" data-en="Report a player">Жалоба на игрока</option>
+            <option value="admin" data-ru="Жалоба на админа" data-en="Report an admin">Жалоба на админа</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-when" data-ru="Дата и время" data-en="Date and time">…</label>
+          <input id="f-when" type="text" placeholder="04.08.2026, 21:30" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="f-who" data-ru="Ник админа / нарушителя" data-en="Admin / offender nickname">…</label>
+          <input id="f-who" type="text" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label for="f-text" data-ru="Что произошло" data-en="What happened">…</label>
+          <textarea id="f-text"></textarea>
+        </div>
+        <div class="field full">
+          <button class="btn" id="send" data-ru="Собрать заявку и открыть Telegram" data-en="Build ticket and open Telegram">…</button>
+          <div class="out" id="formOut" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= КАК ИГРАТЬ ================= -->
+<main class="page" id="p-play">
+  <section>
+    <div class="wrap reveal" style="max-width:950px">
+      <div class="banner" style="--img:url('art/n4.jpg')" role="img" aria-label="Выжившая с автоматом на фоне заражённого города">
+        <div class="banner-txt">
+          <span data-ru="Вход свободный" data-en="Free entry">…</span>
+          <b data-ru="Пять минут до первого раунда" data-en="Five minutes to your first round">…</b>
+        </div>
+      </div>
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Допуск в зону" data-en="Zone entry">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" data-ru="5 минут" data-en="5 minutes">…</span>
+        </div>
+        <h2 data-ru="Как начать <em>играть</em>" data-en="How to <em>start</em>">…</h2>
+        <p class="dh-sub" data-ru="Пять шагов от нуля до первого раунда. Ничего платить не нужно." data-en="Five steps from zero to your first round. Nothing to pay.">…</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">01</div>
+          <div>
+            <h4 data-ru="Установи Counter-Strike 1.6" data-en="Install Counter-Strike 1.6">…</h4>
+            <p data-ru="Подойдёт версия из Steam или любая сборка с чистыми файлами. Сборки со встроенными читами сервер не пропустит — за них выдаётся бан." data-en="The Steam version or any build with clean files will do. Builds with built-in cheats are rejected and get you banned.">…</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">02</div>
+          <div>
+            <h4 data-ru="Включи консоль" data-en="Enable the console">…</h4>
+            <p data-ru="Настройки → Дополнительно → поставь галочку «Включить консоль разработчика». Открывается клавишей тильда." data-en="Options → Advanced → tick «Enable developer console». Open it with the tilde key.">…</p>
+            <span class="key">~</span><span class="key">Ё</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">03</div>
+          <div>
+            <h4 data-ru="Впиши команду подключения" data-en="Type the connect command">…</h4>
+            <p data-ru="Открой консоль, вставь строку целиком и нажми Enter." data-en="Open the console, paste the whole line and press Enter.">…</p>
+            <code id="connectCmd">connect 195.60.166.224:27374</code>
+            <div style="margin-top:14px"><button class="btn" id="copyCmd" data-ru="Скопировать команду" data-en="Copy the command">…</button></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">04</div>
+          <div>
+            <h4 data-ru="Или найди в списке серверов" data-en="Or find it in the server list">…</h4>
+            <p data-ru="Играть → Интернет → в поиске введи часть названия. Строка сервера выглядит так:" data-en="Play → Internet → search for part of the name. The server line looks like this:">…</p>
+            <code id="findName"></code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">05</div>
+          <div>
+            <h4 data-ru="Первый заход" data-en="First join">…</h4>
+            <p data-ru="Карты, модели зомби и звуки скачаются автоматически — одна-две минуты. Дальше загрузки идут мгновенно. Раунд начинается за людей, через двадцать секунд игра выбирает первых заражённых." data-en="Maps, zombie models and sounds download automatically — one or two minutes. After that loading is instant. The round starts with humans, and twenty seconds in the game picks the first infected.">…</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dh" style="margin-top:56px">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Неполадки" data-en="Troubleshooting">…</span>
+          <span class="dh-line"></span>
+        </div>
+        <h2 style="font-size:clamp(26px,4vw,44px)" data-ru="Если не заходит" data-en="If it won't connect">…</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary data-ru="Консоль не открывается" data-en="The console won't open">…</summary>
+          <p data-ru="Галочка «Включить консоль разработчика» снята в настройках, либо раскладка стоит на русском — переключись на английскую и жми тильду." data-en="The «Enable developer console» option is off, or your keyboard layout is not English — switch it and press tilde.">…</p>
+        </details>
+        <details>
+          <summary data-ru="Сервер не отвечает" data-en="Server is not responding">…</summary>
+          <p data-ru="Проверь статус на главной странице сайта. Если там ONLINE, а игра не пускает — впиши в консоль retry и подожди. Не помогло — перезапусти игру." data-en="Check the status on the home page. If it says ONLINE but the game won't let you in, type retry in the console and wait. If that fails, restart the game.">…</p>
+        </details>
+        <details>
+          <summary data-ru="Загрузка файлов обрывается" data-en="File download keeps breaking">…</summary>
+          <p data-ru="Впиши в консоль cl_allowdownload 1 и cl_downloadfilter all, затем подключись заново." data-en="Type cl_allowdownload 1 and cl_downloadfilter all in the console, then reconnect.">…</p>
+        </details>
+        <details>
+          <summary data-ru="Выкидывает с сообщением о бане" data-en="Kicked with a ban message">…</summary>
+          <p data-ru="Заполни форму на главной странице — заявка уйдёт владельцу в Telegram. Обход бана только увеличит срок." data-en="Fill in the form on the home page — the ticket goes to the owner on Telegram. Evading a ban only extends it.">…</p>
+        </details>
+        <details>
+          <summary data-ru="Низкий FPS или лаги" data-en="Low FPS or lag">…</summary>
+          <p data-ru="В консоли: fps_max 100 и rate 25000. Если пинг выше 150 — проблема в канале, попробуй проводное подключение." data-en="In the console: fps_max 100 and rate 25000. If your ping is above 150 the issue is your connection — try a wired one.">…</p>
+        </details>
+      </div>
+
+      <div class="actions" style="margin-top:32px">
+        <button class="btn" id="copyIp2" data-ru="Скопировать IP" data-en="Copy IP">…</button>
+        <button class="btn ghost" data-goto="rules" data-ru="Читать правила" data-en="Read the rules">…</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= ПРАВИЛА ================= -->
+<main class="page" id="p-rules">
+  <section>
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Регламент" data-en="Regulations">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" data-ru="Действует с 04.08.2026" data-en="In force since 04.08.2026">…</span>
+        </div>
+        <h2 data-ru="Правила <em>сервера</em>" data-en="Server <em>rules</em>">…</h2>
+        <p class="dh-sub" data-ru="Админ называет номер пункта при выдаче наказания. Заходя на сервер, ты соглашаешься с правилами. Одно предупреждение на всё время — второго не будет." data-en="Admins state the rule number when punishing. By joining you accept these rules. One warning for your whole time here — there is no second one.">…</p>
+      </div>
+      <ol class="ladder" id="ladderMain"></ol>
+      <div id="ruleGroups"></div>
+    </div>
+  </section>
+
+  <div class="tear up"></div>
+  <section style="background:var(--coal)">
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Журнал" data-en="Log">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" id="banUpd">…</span>
+        </div>
+        <h2 data-ru="История <em>наказаний</em>" data-en="Punishment <em>log</em>">…</h2>
+        <p class="dh-sub" data-ru="Публичный журнал. Не согласен с записью — форма обжалования на главной странице." data-en="A public log. Disagree with an entry — the appeal form is on the home page.">…</p>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th data-ru="Дата" data-en="Date">…</th>
+          <th data-ru="Ник" data-en="Nickname">…</th>
+          <th data-ru="Пункт" data-en="Rule">…</th>
+          <th data-ru="Причина" data-en="Reason">…</th>
+          <th data-ru="Срок" data-en="Term">…</th>
+          <th data-ru="Админ" data-en="Admin">…</th>
+        </tr></thead>
+        <tbody id="banList"></tbody>
+      </table>
+      <div class="note" data-ru="Записи правятся в блоке CONFIG.bans. Если положить рядом со скриптом файл api/data/bans.json, журнал будет браться из него."
+           data-en="Entries are edited in CONFIG.bans. If you place api/data/bans.json next to the script, the log is read from there.">…</div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= ТОП ИГРОКОВ ================= -->
+<main class="page" id="p-top">
+  <section>
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Реестр" data-en="Registry">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" id="topUpd">…</span>
+        </div>
+        <h2 data-ru="Топ <em>игроков</em>" data-en="Top <em>players</em>">…</h2>
+        <p class="dh-sub" data-ru="Пятнадцать выживших с наибольшим числом подтверждённых устранений." data-en="Fifteen survivors with the highest number of confirmed eliminations.">…</p>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th data-ru="Место" data-en="Rank">…</th>
+          <th data-ru="Ник" data-en="Nickname">…</th>
+          <th data-ru="Убийств" data-en="Kills">…</th>
+          <th data-ru="Часов" data-en="Hours">…</th>
+          <th data-ru="Сейчас" data-en="Now">…</th>
+        </tr></thead>
+        <tbody id="topList"></tbody>
+      </table>
+      <div class="note" data-ru="Таблица заполняется вручную в блоке CONFIG. Чтобы статистика обновлялась сама, на сервер ставится плагин статистики (PsychoStats или HLstatsX)."
+           data-en="The table is filled in manually inside CONFIG. For automatic updates install a stats plugin on the server (PsychoStats or HLstatsX).">…</div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= КЛАНЫ ================= -->
+<main class="page" id="p-clans">
+  <section>
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Группы" data-en="Groups">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" id="clanUpd">…</span>
+        </div>
+        <h2 data-ru="Топ <em>кланов</em>" data-en="Top <em>clans</em>">…</h2>
+        <p class="dh-sub" data-ru="Официально зарегистрированные на сервере. Тег закрепляется за кланом навсегда." data-en="Officially registered on the server. A tag is reserved for the clan permanently.">…</p>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th data-ru="Место" data-en="Rank">…</th>
+          <th data-ru="Тег" data-en="Tag">…</th>
+          <th data-ru="Клан" data-en="Clan">…</th>
+          <th data-ru="Лидер" data-en="Leader">…</th>
+          <th data-ru="Состав" data-en="Members">…</th>
+          <th data-ru="Убийств" data-en="Kills">…</th>
+        </tr></thead>
+        <tbody id="clanList"></tbody>
+      </table>
+      <div class="note" data-ru="Как зарегистрировать клан: собери минимум 4 человека, придумай тег в квадратных скобках и напиши владельцу в Telegram. Носить чужой тег запрещено — пункт 4.3."
+           data-en="How to register a clan: gather at least 4 people, pick a tag in square brackets and message the owner on Telegram. Wearing someone else's tag is forbidden — rule 4.3.">…</div>
+      <div class="actions" style="margin-top:28px">
+        <a class="btn" id="clanBtn" href="#" target="_blank" rel="noopener" data-ru="Подать заявку на клан" data-en="Apply to register a clan">…</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= КАРТЫ ================= -->
+<main class="page" id="p-maps">
+  <section>
+    <div class="wrap reveal">
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Территория" data-en="Territory">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" id="mapNow">…</span>
+        </div>
+        <h2 data-ru="Карты <em>сервера</em>" data-en="Server <em>maps</em>">…</h2>
+        <p class="dh-sub" data-ru="Ротация меняется голосованием в конце раунда. Текущая карта подсвечена." data-en="The rotation is decided by a vote at the end of the round. The current map is highlighted.">…</p>
+      </div>
+      <div class="maps" id="mapList"></div>
+      <div class="note" data-ru="Список правится в блоке CONFIG.maps. Превью карты: положи скриншот в art/maps/ с именем карты — например art/maps/zm_dust2.jpg."
+           data-en="The list is edited in CONFIG.maps. Map preview: put a screenshot in art/maps/ named after the map — for example art/maps/zm_dust2.jpg.">…</div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= ДОНАТ ================= -->
+<main class="page" id="p-donate">
+  <section>
+    <div class="wrap reveal">
+      <div class="banner" style="--img:url('art/n3.jpg')" role="img" aria-label="Выжившая с оружием на фоне зомби">
+        <div class="banner-txt">
+          <span data-ru="Снабжение зоны" data-en="Zone supply">…</span>
+          <b data-ru="Сервер живёт на ваши взносы" data-en="The server runs on your support">…</b>
+        </div>
+      </div>
+      <div class="dh">
+        <div class="dh-top">
+          <span class="dh-code" data-ru="Снабжение" data-en="Supply">…</span>
+          <span class="dh-line"></span>
+          <span class="dh-meta" data-ru="Срок · 30 дней" data-en="Term · 30 days">…</span>
+        </div>
+        <h2 data-ru="Донат" data-en="Donate">…</h2>
+        <p class="dh-sub" data-ru="Все средства идут на оплату хостинга. Привилегия не даёт права нарушать правила — раздел 5." data-en="All funds go to server hosting. A perk does not allow breaking the rules — section 5.">…</p>
+      </div>
+      <div class="tiers" id="tierList"></div>
+
+      <div class="buybox">
+        <h4 data-ru="Как оформить" data-en="How to buy">…</h4>
+        <div class="form-grid">
+          <div class="field">
+            <label for="b-nick" data-ru="Ник в игре — точно как на сервере" data-en="In-game nickname — exactly as on the server">…</label>
+            <input id="b-nick" type="text" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="b-tier" data-ru="Что берём" data-en="What you're buying">…</label>
+            <select id="b-tier"></select>
+          </div>
+          <div class="field full">
+            <button class="btn" id="buy" data-ru="Оплатить картой или СБП" data-en="Pay by card or SBP">…</button>
+            <button class="btn ghost" id="buyCrypto" data-ru="Оплатить криптовалютой" data-en="Pay with crypto">…</button>
+            <button class="btn ghost" id="vipCheck" data-ru="Проверить мою привилегию" data-en="Check my perk">…</button>
+            <div class="out" id="buyOut" role="status"></div>
+          </div>
+        </div>
+        <p style="color:var(--ash);font-size:14.5px;margin-top:6px" data-ru="Ник копируется в комментарий к платежу — по нему привилегия и выдаётся. Ошибся в нике — напиши владельцу, вручную поправим."
+           data-en="Your nickname is copied into the payment comment — that's what the perk is issued by. Made a typo — message the owner and we'll fix it.">…</p>
+        <div class="pays" id="payList"></div>
+      </div>
+
+      <div class="note" data-ru="Черновик: названия, цены и привилегии заменим, когда определишься."
+           data-en="Draft: names, prices and perks will be replaced later.">…</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-links">
+      <a id="fTg" href="#" target="_blank" rel="noopener">@vatakat161</a>
+      <a id="fGroup" href="#" target="_blank" rel="noopener">t.me/cherniirassvet</a>
+      <a data-goto="rules" data-ru="Правила" data-en="Rules">…</a>
+      <a data-goto="play" data-ru="Как играть" data-en="How to play">…</a>
+    </div>
+    <small>{ZM} ЧЁРНЫЙ РАССВЕТ · CS 1.6 · 2026</small>
+  </div>
+</footer>
+
+<script>
+
+/* ============================================================
+   НАСТРОЙКИ — правь только этот блок
+   sev:true — серьёзное нарушение (бан сразу, без предупреждения)
+   ============================================================ */
+const CONFIG = {
+  name: "{ZM}║  Чёрный Рассвет║  Hardcore ZOMBIE{ru/en}",
+  ip: "195.60.166.224:27374",
+  tgAdmin: "vatakat161",
+  tgGroup: "cherniirassvet",
+  /* Пусто ("") — сайт работает без PHP: живые данные отключаются,
+     показываются значения из блока status ниже. Для бесплатного
+     статического хостинга оставь пустым и включи gametracker.       */
+  api: "",
+  pollMs: 30000,          // как часто сайт спрашивает данные (мс)
+  gametracker: false,     // true — после регистрации сервера на gametracker.com
+  status: { online:true, players:"32", mode:"Zombie Plague" },
+  topUpdated: { ru:"Обновлено вручную · 04.08.2026", en:"Updated manually · 04.08.2026" },
+
+  /* ---------- ОПЛАТА ----------
+     link: ссылка на твою страницу приёма платежей.
+     Подойдёт ЮMoney, DonationAlerts, Boosty, CryptoCloud — что угодно,
+     где можно оставить комментарий к переводу.
+     Пусто — кнопка ведёт в личку Telegram.                                */
+  pay: {
+    link:       "",                  // российский агрегатор: карта, СБП
+    linkCrypto: "",                  // Cryptomus: оплата криптовалютой
+    check:      "",                  // проверка привилегии — нужен PHP
+    methods: ["Карта", "СБП", "Криптовалюта"]
+  },
+
+  /* ---------- КАРТЫ ---------- */
+  maps: [
+    "zm_dust2_2013", "zm_lila_panic", "zm_toxic_house", "zm_ice_attack",
+    "zm_foda_hospital", "zm_survivor_city", "zm_dust_world", "zm_atix_helicopter",
+    "zm_bunker", "zm_crazy_office", "zm_lego_panic", "zm_pool_day"
+  ],
+
+  /* ---------- ЖУРНАЛ НАКАЗАНИЙ ---------- */
+  bans: [
+    { date:"—", nick:"—", rule:"—", reason:{ru:"Записей пока нет",en:"No entries yet"}, term:"—", admin:"—" }
+  ],
+
+  ladder: [
+    { st:{ru:"Шаг 01",en:"Step 01"}, t:{ru:"Предупреждение",en:"Warning"},
+      d:{ru:"Одно на всё время игры и на все правила сразу. Второго предупреждения не будет — ни за то же нарушение, ни за другое.",
+         en:"One for your entire time on the server, covering all rules at once. There is no second warning — not for the same rule, not for another."} },
+    { st:{ru:"Шаг 02",en:"Step 02"}, t:{ru:"Бан на 1 день",en:"1-day ban"},
+      d:{ru:"Любое нарушение после предупреждения. За серьёзное нарушение — сразу, предупреждение при этом не тратится.",
+         en:"Any violation after the warning. For a severe violation — immediately, and the warning is not spent."} },
+    { st:{ru:"Шаг 03",en:"Step 03"}, t:{ru:"Бан навсегда",en:"Permanent ban"},
+      d:{ru:"Повторное серьёзное нарушение или третий случай подряд. Снимается только через заявку на разбан.",
+         en:"A repeated severe violation or a third case in a row. Lifted only through an unban request."} }
+  ],
+  ladderVip: [
+    { st:{ru:"Шаг 01",en:"Step 01"}, t:{ru:"Предупреждение",en:"Warning"}, d:{ru:"Одно на всё время.",en:"One in total."} },
+    { st:{ru:"Шаг 02",en:"Step 02"}, t:{ru:"Снятие привилегий на 1 день",en:"Perks removed for 1 day"}, d:{ru:"Оплаченный срок при этом не продлевается.",en:"The paid term is not extended."} },
+    { st:{ru:"Шаг 03",en:"Step 03"}, t:{ru:"Полное снятие привилегий",en:"Full removal of perks"}, d:{ru:"При повторном нарушении, без возврата средств.",en:"On a repeat violation, with no refund."} }
+  ],
+  ladderStaff: [
+    { st:{ru:"Шаг 01",en:"Step 01"}, t:{ru:"Предупреждение",en:"Warning"}, d:{ru:"Одно на всё время работы админом.",en:"One for your whole time as an admin."} },
+    { st:{ru:"Шаг 02",en:"Step 02"}, t:{ru:"Снятие прав на 1 день",en:"Rights removed for 1 day"}, d:{ru:"Доступ отключается, разбор фиксируется владельцем.",en:"Access is disabled and the case is logged by the owner."} },
+    { st:{ru:"Шаг 03",en:"Step 03"}, t:{ru:"Полное снятие прав",en:"Full removal of rights"}, d:{ru:"При повторном нарушении — окончательно, без восстановления.",en:"On a repeat violation — final, with no reinstatement."} }
+  ],
+
+  ruleGroups: [
+    {
+      cls:"", title:{ru:"Общие положения",en:"General"},
+      note:{ru:"Нарушения этого раздела ломают сервер целиком, а не отдельный раунд.",en:"Violations here break the whole server, not a single round."},
+      items:[
+        { ru:"Читы, скрипты, сторонние программы", en:"Cheats, scripts, third-party software",
+          d:{ru:"Aim, wallhack, speedhack, скрипты на bhop и отдачу, сборки с изменёнными файлами. Проверка по демо и скриншотам.",en:"Aim, wallhack, speedhack, bhop and recoil scripts, builds with modified files. Verified via demos and screenshots."}, sev:true },
+        { ru:"Обход бана", en:"Ban evasion",
+          d:{ru:"Смена ника или IP, вход с другого аккаунта, прокси и VPN для захода с активным баном.",en:"Changing nick or IP, joining from another account, proxies or VPN to bypass an active ban."}, sev:true },
+        { ru:"Слив личных данных игроков", en:"Leaking players' personal data",
+          d:{ru:"Публикация имени, адреса, телефона, соцсетей и фотографий без согласия человека.",en:"Posting a name, address, phone, social media or photos without consent."}, sev:true },
+        { ru:"Мошенничество с привилегиями", en:"Scamming with perks",
+          d:{ru:"Продажа чужих привилегий, обещание VIP от лица администрации, сбор донатов на посторонние кошельки.",en:"Selling someone else's perks, promising VIP on behalf of the staff, collecting donations to outside wallets."}, sev:true },
+        { ru:"Использование уязвимостей сервера", en:"Exploiting server vulnerabilities",
+          d:{ru:"Флуд командами, краш сервера, эксплойты плагинов. Нашёл дыру — сообщи владельцу, за это дают награду.",en:"Command flooding, crashing the server, plugin exploits. Found a hole — report it to the owner, there's a reward."}, sev:true },
+        { ru:"Выдача себя за администрацию", en:"Impersonating the staff",
+          d:{ru:"Ник, префикс или сообщения, из которых игрок делает вывод, что перед ним админ. Настоящий список — на главной.",en:"A nickname, prefix or messages implying you are an admin. The real list is on the home page."} },
+        { ru:"Реклама сторонних серверов и проектов", en:"Advertising other servers or projects",
+          d:{ru:"Чужие IP, ссылки на другие сообщества, приглашения в сторонние чаты — в чате, нике и спрее.",en:"Other servers' IPs, links to other communities, invites to outside chats — in chat, nickname or spray."} }
+      ]
+    },
+    {
+      cls:"", title:{ru:"Чат и микрофон",en:"Chat and voice"},
+      note:{ru:"Спор с админом выносится в личные сообщения Telegram, а не в общий чат.",en:"Arguments with admins go to Telegram DMs, not the public chat."},
+      items:[
+        { ru:"Оскорбления по национальности, религии, семье", en:"Slurs about nationality, religion or family",
+          d:{ru:"Сюда же — угрозы расправы в реальной жизни и пожелания смерти.",en:"This also covers real-life threats and death wishes."}, sev:true },
+        { ru:"Оскорбления игроков и администрации", en:"Insulting players and staff",
+          d:{ru:"Систематическая травля одного игрока считается серьёзным нарушением.",en:"Systematic harassment of one player counts as a severe violation."} },
+        { ru:"Музыка, крик и посторонние звуки в микрофон", en:"Music, screaming and background noise on the mic",
+          d:{ru:"Микрофон — для общения по игре. Зажатая кнопка и фоновый шум тоже нарушение.",en:"The mic is for in-game communication. A stuck push-to-talk key and background noise count too."} },
+        { ru:"Спам, флуд и капс в чате", en:"Spam, flooding and caps in chat",
+          d:{ru:"Повтор одного сообщения, длинные строки символов, реклама своих услуг.",en:"Repeating the same message, long symbol strings, advertising your own services."} },
+        { ru:"Провокации на политические и религиозные темы", en:"Political and religious provocations",
+          d:{ru:"Сервер международный: играют и русскоязычные, и англоязычные. Эти темы в чате запрещены полностью.",en:"The server is international: both Russian and English speakers play here. These topics are fully banned in chat."} },
+        { ru:"Попрошайничество привилегий и прав", en:"Begging for perks or rights",
+          d:{ru:"Все условия описаны во вкладке «Донат». В чате это не обсуждается.",en:"All terms are in the Donate tab. It is not discussed in chat."} }
+      ]
+    },
+    {
+      cls:"", title:{ru:"Игровой процесс",en:"Gameplay"},
+      note:{ru:"Умышленный слом раунда приравнивается к серьёзному нарушению.",en:"Deliberately breaking a round counts as a severe violation."},
+      items:[
+        { ru:"Багоюз и выход за пределы карты", en:"Bug abuse and going out of bounds",
+          d:{ru:"Застревание в текстурах, места, недоступные для зомби, проход сквозь стены.",en:"Getting stuck in textures, spots zombies cannot reach, walking through walls."} },
+        { ru:"Помощь зомби, умышленное заражение", en:"Helping zombies, deliberate infection",
+          d:{ru:"Подставляться под заражение, открывать двери зомби, сливать позиции выживших.",en:"Getting infected on purpose, opening doors for zombies, leaking survivors' positions."} },
+        { ru:"Блокировка своей команды", en:"Blocking your own team",
+          d:{ru:"Перекрывать проходы, мешать занять позицию, толкать под зомби.",en:"Blocking passages, preventing teammates from taking position, pushing them into zombies."} },
+        { ru:"Тимкилл и урон по своим", en:"Team killing and friendly fire",
+          d:{ru:"Умышленный урон по выжившим, подрыв гранатой в укрытии.",en:"Deliberate damage to survivors, grenading your own team in cover."} },
+        { ru:"AFK на протяжении раунда", en:"Going AFK for a whole round",
+          d:{ru:"Занимаешь слот и не играешь. Отошёл надолго — выйди с сервера.",en:"You take a slot and don't play. Away for a while — disconnect."} },
+        { ru:"Умышленный слив раунда и саботаж", en:"Throwing the round and sabotage",
+          d:{ru:"Договорной слив, помощь чужому клану, порча игры из мести.",en:"Rigged losses, helping a rival clan, ruining the game out of spite."}, sev:true }
+      ]
+    },
+    {
+      cls:"", title:{ru:"Ники, спреи и оформление",en:"Nicknames, sprays and cosmetics"},
+      note:{ru:"Админ вправе кикнуть до смены ника — это не считается наказанием и не тратит предупреждение.",en:"An admin may kick until the nickname is changed — that is not a punishment and does not spend your warning."},
+      items:[
+        { ru:"Нецензурный или оскорбительный ник", en:"Obscene or offensive nickname",
+          d:{ru:"Мат, оскорбления, разжигание вражды в нике.",en:"Profanity, insults or hate speech in a nickname."} },
+        { ru:"Пустой, невидимый или копирующий ник", en:"Empty, invisible or copycat nickname",
+          d:{ru:"Ник из пробелов и невидимых символов, копия ника другого игрока или админа.",en:"A nickname of spaces or invisible characters, a copy of another player's or admin's nick."} },
+        { ru:"Чужой клановый тег", en:"Wearing another clan's tag",
+          d:{ru:"Теги закреплены за кланами во вкладке «Кланы». Носить чужой без разрешения лидера запрещено.",en:"Tags are reserved for clans in the Clans tab. Wearing one without the leader's permission is forbidden."} },
+        { ru:"Спреи 18+, шок-контент, символика ненависти", en:"18+ sprays, shock content, hate symbols",
+          d:{ru:"Сюда же — реклама сторонних проектов на спрее.",en:"This also covers advertising other projects on a spray."}, sev:true }
+      ]
+    },
+    {
+      cls:"vip", title:{ru:"Правила для VIP и обладателей привилегий",en:"Rules for VIP and perk holders"},
+      note:{ru:"Привилегия — доступ к возможностям, а не индульгенция. Схема наказаний для VIP своя:",en:"A perk gives access to features, not immunity. VIP punishments follow their own ladder:"},
+      ladder:"ladderVip", ladderCls:"vipm",
+      items:[
+        { ru:"VIP не даёт права нарушать правила", en:"VIP does not allow breaking the rules",
+          d:{ru:"Наказание такое же, как для обычного игрока, плюс снятие привилегии по схеме выше.",en:"The punishment is the same as for any player, plus perk removal per the ladder above."} },
+        { ru:"Привилегия не передаётся и не перепродаётся", en:"Perks are not transferable or resellable",
+          d:{ru:"Привязана к нику и паролю. Дал доступ другому — теряешь сам.",en:"Tied to your nickname and password. Share access and you lose it yourself."}, sev:true },
+        { ru:"Требовать особого отношения от админов запрещено", en:"Do not demand special treatment",
+          d:{ru:"«Я задонатил» не является аргументом при разборе нарушения.",en:"«I paid» is not an argument when a violation is reviewed."} },
+        { ru:"Не злоупотребляй способностями против своей команды", en:"Do not abuse abilities against your own team",
+          d:{ru:"Блок своих через VIP-меню, спам способностями, намеренный слом баланса раунда.",en:"Blocking teammates via the VIP menu, spamming abilities, deliberately breaking round balance."} },
+        { ru:"Возврат средств не производится", en:"No refunds",
+          d:{ru:"Исключение — техническая ошибка сервера: привилегия не выдана или выдана не та. Пиши владельцу в течение 48 часов.",en:"Exception — a server-side technical error: the perk was not granted or the wrong one was. Message the owner within 48 hours."} },
+        { ru:"При бане за читы привилегия сгорает", en:"A cheating ban burns the perk",
+          d:{ru:"Компенсация не выплачивается, оплаченный срок не восстанавливается.",en:"No compensation, and the remaining paid time is not restored."}, sev:true },
+        { ru:"Смена ника — только через администрацию", en:"Change your nickname only through the staff",
+          d:{ru:"Сменил сам — привилегия может не примениться. Предупреди владельца заранее.",en:"Change it yourself and the perk may stop applying. Warn the owner in advance."} }
+      ]
+    },
+    {
+      cls:"staff", title:{ru:"Правила для администрации",en:"Rules for staff"},
+      note:{ru:"Права администратора — это работа, а не привилегия. Действия проверяются владельцем, игроки жалуются через форму на главной. Схема наказаний:",en:"Admin rights are a job, not a privilege. Actions are reviewed by the owner and players report through the form on the home page. The ladder:"},
+      ladder:"ladderStaff", ladderCls:"",
+      items:[
+        { ru:"Наказание выдаётся только по правилам", en:"Punish strictly by the rules",
+          d:{ru:"В причине указывается номер пункта и срок. Бан «за не понравился» снимается автоматически.",en:"The reason must state the rule number and the term. A ban «just because» is lifted automatically."} },
+        { ru:"Каждое наказание фиксируется", en:"Record every punishment",
+          d:{ru:"Скриншот или демо хранятся до конца срока. Нет доказательств — игрок разбанивается по первому требованию.",en:"A screenshot or demo is kept until the term ends. No evidence — the player is unbanned on first request."} },
+        { ru:"Права не используются в личных целях", en:"No use of rights for personal gain",
+          d:{ru:"Бан участника конфликта, мут оппонента в споре, наказание за жалобу на себя.",en:"Banning someone you're in conflict with, muting an opponent, punishing a player for reporting you."}, sev:true },
+        { ru:"Команды не используются для игрового преимущества", en:"No commands for in-game advantage",
+          d:{ru:"Выдача себе оружия, здоровья, невидимости, смена своей команды, заморозка противников.",en:"Giving yourself weapons, health or invisibility, switching your own team, freezing opponents."}, sev:true },
+        { ru:"Пароль администратора не передаётся никому", en:"Never share your admin password",
+          d:{ru:"За всё, что сделано с твоего доступа, отвечаешь ты.",en:"You answer for everything done through your access."}, sev:true },
+        { ru:"Смена карты и настроек — по голосованию", en:"Change maps and settings by vote",
+          d:{ru:"Исключение — карта сломана, идёт багоюз или онлайн меньше четырёх человек.",en:"Exception — the map is broken, being exploited, or fewer than four players are online."} },
+        { ru:"Спор с игроком выносится в личные сообщения", en:"Take arguments to DMs",
+          d:{ru:"Публичные разборки запрещены обеим сторонам. Ответ на обращение — в течение 24 часов.",en:"Public arguments are banned for both sides. Answer a ticket within 24 hours."} },
+        { ru:"Неактивность более 14 дней", en:"Inactivity over 14 days",
+          d:{ru:"Уходишь надолго — предупреди владельца, права сохранятся.",en:"Going away for a while — warn the owner and your rights are kept."} }
+      ]
+    }
+  ],
+
+  top: [
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" },
+    { nick:"—", kills:"—", inf:"—", hours:"—" }
+  ],
+
+  clans: [
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" },
+    { tag:"[—]", name:{ru:"Свободно",en:"Vacant"}, leader:"", members:"—", points:"—" }
+  ],
+
+  tiers: [
+    { name:"VIP", price:{ru:"— ₽ / 30 дней",en:"— / 30 days"},
+      perks:[ {ru:"Префикс [VIP] в чате",en:"[VIP] chat prefix"},{ru:"+50 HP при заражении",en:"+50 HP when infected"},
+              {ru:"Доступ к VIP-меню",en:"Access to the VIP menu"},{ru:"Резерв слота на сервере",en:"Reserved slot"} ] },
+    { name:"PREMIUM", top:true, flag:{ru:"Выбор игроков",en:"Most picked"}, price:{ru:"— ₽ / 30 дней",en:"— / 30 days"},
+      perks:[ {ru:"Всё из VIP",en:"Everything in VIP"},{ru:"Двойной прыжок",en:"Double jump"},
+              {ru:"Выбор класса зомби",en:"Zombie class selection"},{ru:"Стартовый набор оружия",en:"Starting weapon pack"} ] },
+    { name:"ADMIN", price:{ru:"— ₽ / 30 дней",en:"— / 30 days"},
+      perks:[ {ru:"Всё из PREMIUM",en:"Everything in PREMIUM"},{ru:"Права: kick, ban, mute",en:"Rights: kick, ban, mute"},
+              {ru:"Смена карты голосованием",en:"Map change by vote"},{ru:"Отдельный чат админов",en:"Private staff chat"} ] }
+  ],
+
+  admins: [
+    { nick:"vatakat161", role:{ru:"Владелец сервера",en:"Server owner"}, tg:"vatakat161" },
+    { nick:"—", role:{ru:"Главный админ",en:"Head admin"}, tg:"" },
+    { nick:"—", role:{ru:"Админ",en:"Admin"}, tg:"" },
+    { nick:"—", role:{ru:"Модератор",en:"Moderator"}, tg:"" }
+  ]
+};
+
+const T = {
+  copy:{ru:"Скопировать IP",en:"Copy IP"},
+  copied:{ru:"IP скопирован",en:"IP copied"},
+  buy:{ru:"Купить",en:"Buy"},
+  none:{ru:"нет",en:"none"},
+  leader:{ru:"Лидер",en:"Leader"},
+  inGame:{ru:"в игре",en:"in game"},
+  updated:{ru:"Обновляется с сервера",en:"Live from the server"},
+  manual:{ru:"Данные из файла настроек",en:"Data from the config file"},
+  liveOn:{ru:"СВЯЗЬ ЕСТЬ",en:"LINK UP"},
+  liveOff:{ru:"НЕТ СВЯЗИ",en:"NO LINK"},
+  staticMode:{ru:"ЧЁРНЫЙ РАССВЕТ",en:"BLACK DAWN"},
+  cmdCopied:{ru:"Команда скопирована",en:"Command copied"},
+  copyCmd:{ru:"Скопировать команду",en:"Copy the command"},
+  nowPlaying:{ru:"Сейчас идёт",en:"Playing now"},
+  mapsCount:{ru:"Карт в ротации",en:"Maps in rotation"},
+  inRotation:{ru:"В ротации",en:"In rotation"},
+  current:{ru:"Идёт сейчас",en:"Playing now"},
+  buyNeedNick:{ru:"Укажи ник в игре.",en:"Enter your in-game nickname."},
+  buyReady:{ru:"Комментарий к платежу скопирован — вставь его при оплате.",en:"The payment comment is copied — paste it at checkout."},
+  buyTg:{ru:"Заявка скопирована. Вставь её в чат Telegram.",en:"The order is copied. Paste it into the Telegram chat."},
+  vipYes:{ru:"Привилегия активна",en:"Perk is active"},
+  vipNo:{ru:"Привилегия на этот ник не найдена.",en:"No perk found for this nickname."},
+  vipDays:{ru:"дн. осталось, до",en:"days left, until"},
+  vipErr:{ru:"Проверка недоступна — напиши владельцу.",en:"Check unavailable — message the owner."},
+  banLog:{ru:"Журнал ведётся вручную",en:"Log maintained manually"},
+  banLive:{ru:"Журнал с сервера",en:"Log from the server"},
+  members:{ru:"Состав",en:"Members"},
+  warn:{ru:"Предупреждение",en:"Warning"},
+  banDay:{ru:"Бан на 1 день",en:"1-day ban"},
+  privDay:{ru:"Привилегии · 1 день",en:"Perks · 1 day"},
+  rightsDay:{ru:"Права · 1 день",en:"Rights · 1 day"},
+  fillNick:{ru:"Укажи ник в игре.",en:"Enter your in-game nickname."},
+  fillText:{ru:"Опиши, что произошло.",en:"Describe what happened."},
+  ready:{ru:"Заявка скопирована. Вставь её в чат Telegram.",en:"Ticket copied. Paste it into the Telegram chat."},
+  types:{ unban:{ru:"ЗАЯВКА НА РАЗБАН",en:"UNBAN REQUEST"},
+          report:{ru:"ЖАЛОБА НА ИГРОКА",en:"PLAYER REPORT"},
+          admin:{ru:"ЖАЛОБА НА АДМИНА",en:"ADMIN REPORT"} },
+  lNick:{ru:"Ник",en:"Nick"}, lWhen:{ru:"Когда",en:"When"},
+  lWho:{ru:"Кого касается",en:"Subject"}, lWhat:{ru:"Суть",en:"Details"},
+  lServer:{ru:"Сервер",en:"Server"}
+};
+
+let LIVE = null;
+let lang = (navigator.language || "ru").toLowerCase().startsWith("ru") ? "ru" : "en";
+let page = "home";
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const esc = s => String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+
+function sevLabel(g, r){
+  if(!r.sev) return T.warn[lang];
+  if(g.cls === "staff") return T.rightsDay[lang];
+  if(g.cls === "vip")   return T.privDay[lang];
+  return T.banDay[lang];
+}
+function ladderHTML(arr, cls){
+  return `<ol class="ladder mini ${cls||""}">` + arr.map(s=>`
+    <li><span class="st">${esc(s.st[lang])}</span><b>${esc(s.t[lang])}</b><small>${esc(s.d[lang])}</small></li>`).join("") + `</ol>`;
+}
+
+function renderRules(){
+  $("#ladderMain").innerHTML = CONFIG.ladder.map(s=>`
+    <li><span class="st">${esc(s.st[lang])}</span><b>${esc(s.t[lang])}</b><small>${esc(s.d[lang])}</small></li>`).join("");
+
+  $("#ruleGroups").innerHTML = CONFIG.ruleGroups.map((g,gi)=>`
+    <div class="rgroup ${g.cls}">
+      <div class="rgroup-h"><span class="num">${gi+1}</span><h3>${esc(g.title[lang])}</h3></div>
+      <div class="rgroup-note">${esc(g.note[lang])}</div>
+      ${g.ladder ? ladderHTML(CONFIG[g.ladder], g.ladderCls) : ""}
+      ${g.items.map((r,i)=>`
+        <div class="rule ${r.sev?"sev":""}">
+          <div class="rule-n">${gi+1}.${i+1}</div>
+          <div class="rule-t">${esc(r[lang])}<small>${esc(r.d[lang])}</small></div>
+          <div class="tag ${r.sev?"sev":""}">${esc(sevLabel(g,r))}</div>
+        </div>`).join("")}
+    </div>`).join("");
+}
+
+function renderTop(){
+  const src = (LIVE && LIVE.top && LIVE.top.length)
+    ? LIVE.top
+    : CONFIG.top.map(p=>({nick:p.nick, kills:p.kills, hours:p.hours, online:false}));
+  const rows = src.slice(0, 15);
+  while(rows.length < 15) rows.push({nick:"—", kills:"—", hours:"—", online:false});
+
+  $("#topList").innerHTML = rows.map((p,i)=>`
+    <tr class="r${i+1} ${p.nick==="—"?"empty":""}">
+      <td class="rank">${String(i+1).padStart(2,"0")}</td>
+      <td class="nick">${esc(p.nick)}</td>
+      <td class="num-c">${esc(p.kills)}</td>
+      <td class="num-c">${esc(p.hours)}</td>
+      <td class="num-c">${p.online?`<span class="live" style="font-size:11px">${T.inGame[lang]}</span>`:"—"}</td>
+    </tr>`).join("");
+  $("#topUpd").textContent = LIVE ? T.updated[lang] : CONFIG.topUpdated[lang];
+}
+
+function renderClans(){
+  const live = (LIVE && LIVE.clans) ? LIVE.clans : null;
+  let rows = CONFIG.clans.map(c=>{
+    const m = live ? live.find(x=>x.tag.toLowerCase() === c.tag.toLowerCase()) : null;
+    return { tag:c.tag, name:c.name[lang], leader:c.leader,
+             members: m ? m.members : c.members, kills: m ? m.kills : c.points };
+  });
+  if(live) rows.sort((a,b)=>(parseInt(b.kills)||0)-(parseInt(a.kills)||0));
+  rows = rows.slice(0,15);
+  while(rows.length < 15) rows.push({tag:"[—]", name:"—", leader:"", members:"—", kills:"—"});
+
+  $("#clanList").innerHTML = rows.map((c,i)=>`
+    <tr class="r${i+1} ${c.tag==="[—]"?"empty":""}">
+      <td class="rank">${String(i+1).padStart(2,"0")}</td>
+      <td class="clan-tag">${esc(c.tag)}</td>
+      <td class="nick">${esc(c.name)}</td>
+      <td>${c.leader?`<a href="https://t.me/${esc(c.leader)}" target="_blank" rel="noopener">@${esc(c.leader)}</a>`:`<span class="num-c">—</span>`}</td>
+      <td class="num-c">${esc(c.members)}</td>
+      <td class="num-c">${esc(c.kills)}</td>
+    </tr>`).join("");
+  $("#clanUpd").textContent = LIVE ? T.updated[lang] : T.manual[lang];
+}
+
+function renderMaps(){
+  const cur = (LIVE && LIVE.map && LIVE.map !== "—") ? LIVE.map.toLowerCase() : null;
+  $("#mapList").innerHTML = CONFIG.maps.map(m=>{
+    const now = cur && m.toLowerCase() === cur;
+    return `<figure class="map ${now?"now":""}" style="--img:url('art/maps/${esc(m)}.jpg')">
+      <figcaption>
+        <b>${esc(m)}</b>
+        <span>${now ? T.current[lang] : T.inRotation[lang]}</span>
+      </figcaption>
+    </figure>`;
+  }).join("");
+  $("#mapNow").textContent = cur
+    ? T.nowPlaying[lang] + " · " + LIVE.map
+    : T.mapsCount[lang] + " · " + CONFIG.maps.length;
+}
+
+function renderBans(){
+  const src = (LIVE && LIVE.bans && LIVE.bans.length) ? LIVE.bans : CONFIG.bans;
+  $("#banList").innerHTML = src.map(b=>{
+    const reason = (b.reason && typeof b.reason === "object") ? b.reason[lang] : (b.reason || "—");
+    return `<tr class="${b.nick==="—"?"empty":""}">
+      <td class="num-c">${esc(b.date)}</td>
+      <td class="nick">${esc(b.nick)}</td>
+      <td class="num-c" style="color:var(--toxin)">${esc(b.rule)}</td>
+      <td>${esc(reason)}</td>
+      <td><span class="tag ${b.term && String(b.term).length>0 && b.term!=="—" ? "sev":""}">${esc(b.term)}</span></td>
+      <td class="num-c">${esc(b.admin)}</td>
+    </tr>`;
+  }).join("");
+  $("#banUpd").textContent = (LIVE && LIVE.bans && LIVE.bans.length) ? T.banLive[lang] : T.banLog[lang];
+}
+
+function renderBuy(){
+  const vc = document.getElementById("vipCheck");
+  if(vc) vc.style.display = CONFIG.pay.check ? "" : "none";
+  $("#b-tier").innerHTML = CONFIG.tiers.map(t=>
+    `<option value="${esc(t.name)}">${esc(t.name)} — ${esc(t.price[lang])}</option>`).join("");
+  $("#payList").innerHTML = (CONFIG.pay.methods||[]).map(m=>`<span>${esc(m)}</span>`).join("");
+}
+
+function renderRest(){
+  $("#tierList").innerHTML = CONFIG.tiers.map(t=>`
+    <div class="tier ${t.top?"top":""}" ${t.top?`data-flag="${esc(t.flag[lang])}"`:""}>
+      <h3>${esc(t.name)}</h3>
+      <div class="price">${esc(t.price[lang])}</div>
+      <ul>${t.perks.map(p=>`<li>${esc(p[lang])}</li>`).join("")}</ul>
+      <a class="btn" href="https://t.me/${CONFIG.tgAdmin}" target="_blank" rel="noopener">${T.buy[lang]}</a>
+    </div>`).join("");
+
+  $("#adminList").innerHTML = CONFIG.admins.map(a=>`
+    <tr>
+      <td class="nick">${esc(a.nick)}</td>
+      <td style="color:var(--dust)">${esc(a.role[lang])}</td>
+      <td>${a.tg?`<a href="https://t.me/${esc(a.tg)}" target="_blank" rel="noopener">@${esc(a.tg)}</a>`:`<span style="color:var(--mute);font-family:var(--mono);font-size:13px">${T.none[lang]}</span>`}</td>
+    </tr>`).join("");
+}
+
+function applyLang(){
+  document.documentElement.lang = lang;
+  $$("[data-ru][data-en]").forEach(el=>{
+    const v = el.dataset[lang];
+    if(v.indexOf("<em>") !== -1) el.innerHTML = v; else el.textContent = v;
+  });
+  $("#t1").dataset.t = $("#t1").textContent;
+  $("#t2").dataset.t = $("#t2").textContent;
+  $("#ru").setAttribute("aria-pressed", lang==="ru");
+  $("#en").setAttribute("aria-pressed", lang==="en");
+  renderRules(); renderTop(); renderClans(); renderMaps(); renderBans(); renderBuy(); renderRest(); renderTicker();
+  typeConsole();
+}
+
+function openPage(p, push=true){
+  if(!document.getElementById("p-"+p)) p = "home";
+  page = p;
+  $$(".page").forEach(el=>el.classList.toggle("on", el.id === "p-"+p));
+  $$(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.page===p));
+  $$("#p-"+p+" .reveal").forEach(el=>el.classList.add("in"));
+  if(push && location.hash !== "#"+p) history.replaceState(null,"","#"+p);
+  window.scrollTo(0,0);
+  meter();
+  if(p==="home") typeConsole();
+  if(typeof runScramble === "function") runScramble(p);
+}
+const TABS = [...$$(".tab")];
+TABS.forEach((b,i)=>{
+  b.onclick = ()=>openPage(b.dataset.page);
+  b.onkeydown = e=>{
+    if(e.key!=="ArrowRight" && e.key!=="ArrowLeft") return;
+    e.preventDefault();
+    const n = TABS[(i + (e.key==="ArrowRight"?1:TABS.length-1)) % TABS.length];
+    n.focus(); openPage(n.dataset.page);
+  };
+});
+$$("[data-goto]").forEach(b=>b.onclick = ()=>openPage(b.dataset.goto));
+window.addEventListener("hashchange", ()=>openPage(location.hash.slice(1)||"home", false));
+
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let typing;
+function typeConsole(){
+  const term = $("#term");
+  const lines = lang==="ru"
+    ? [["c-dim","] status"],["c-out","hostname: "+CONFIG.name],["c-dim","] connect "+CONFIG.ip],
+       ["c-out","Соединение с сервером..."],["c-ok","Добро пожаловать на ЧЁРНЫЙ РАССВЕТ"]]
+    : [["c-dim","] status"],["c-out","hostname: "+CONFIG.name],["c-dim","] connect "+CONFIG.ip],
+       ["c-out","Connecting to server..."],["c-ok","Welcome to BLACK DAWN"]];
+  clearInterval(typing);
+  term.innerHTML = "";
+  if(reduced){ term.innerHTML = lines.map(l=>`<p class="${l[0]}">${esc(l[1])}</p>`).join(""); return; }
+  let li=0, ci=0, p=null;
+  typing = setInterval(()=>{
+    if(li>=lines.length){ clearInterval(typing); term.insertAdjacentHTML("beforeend",'<span class="cursor"></span>'); return; }
+    if(ci===0){ p=document.createElement("p"); p.className=lines[li][0]; term.appendChild(p); }
+    p.textContent = lines[li][1].slice(0, ++ci);
+    if(ci>=lines[li][1].length){ li++; ci=0; }
+  }, 22);
+}
+
+function applyConfig(){
+  $("#rawName").textContent = CONFIG.name;
+  $("#connectCmd").textContent = "connect " + CONFIG.ip;
+  $("#findName").textContent = CONFIG.name;
+  $("#stIp").textContent = CONFIG.ip;
+  $("#stPlayers").textContent = CONFIG.status.players;
+  $("#stMap").textContent = CONFIG.status.mode;
+  const st = $("#stStatus");
+  st.textContent = CONFIG.status.online ? "ONLINE" : "OFFLINE";
+  if(!CONFIG.status.online){ st.classList.remove("live"); st.style.color = "var(--blood)"; }
+  const g = "https://t.me/"+CONFIG.tgGroup, a = "https://t.me/"+CONFIG.tgAdmin;
+  $("#tgGroup").href = g; $("#fGroup").href = g; $("#fGroup").textContent = "t.me/"+CONFIG.tgGroup;
+  $("#fTg").href = a; $("#fTg").textContent = "@"+CONFIG.tgAdmin;
+  $("#clanBtn").href = a;
+  if(CONFIG.gametracker){
+    const b = $("#gtBanner");
+    b.onload = ()=>{ b.hidden = false; };
+    b.onerror = ()=>{ b.remove(); };
+    b.src = "https://cache.gametracker.com/server_info/"+CONFIG.ip+"/b_560_95_1.png";
+  }
+}
+
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); return true; }
+  catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand("copy"); }catch(_){}
+    ta.remove(); return ok;
+  }
+}
+
+function meter(){
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const p = h>0 ? Math.min(100, Math.round(window.scrollY/h*100)) : 0;
+  $("#infect").style.width = p+"%";
+  $("#pct").textContent = String(p).padStart(2,"0");
+  document.body.style.setProperty("--inf", (p/100).toFixed(2));
+}
+window.addEventListener("scroll", meter, {passive:true});
+window.addEventListener("resize", meter);
+
+$("#ru").onclick = ()=>{ lang="ru"; applyLang(); };
+$("#en").onclick = ()=>{ lang="en"; applyLang(); };
+
+$("#copyIp").onclick = async e=>{
+  const btn = e.currentTarget;
+  const ok = await copyText(CONFIG.ip);
+  btn.textContent = ok ? T.copied[lang] : CONFIG.ip;
+  setTimeout(()=>{ btn.textContent = T.copy[lang]; }, 1800);
+};
+
+$("#send").onclick = async ()=>{
+  const out=$("#formOut");
+  const nick=$("#f-nick").value.trim(), text=$("#f-text").value.trim();
+  if(!nick){ out.style.color="var(--blood)"; out.textContent=T.fillNick[lang]; $("#f-nick").focus(); return; }
+  if(!text){ out.style.color="var(--blood)"; out.textContent=T.fillText[lang]; $("#f-text").focus(); return; }
+  const type=$("#f-type").value;
+  const msg = [
+    T.types[type][lang], T.lServer[lang]+": "+CONFIG.ip, T.lNick[lang]+": "+nick,
+    $("#f-when").value.trim() ? T.lWhen[lang]+": "+$("#f-when").value.trim() : "",
+    $("#f-who").value.trim() ? T.lWho[lang]+": "+$("#f-who").value.trim() : "",
+    T.lWhat[lang]+": "+text
+  ].filter(Boolean).join("\n");
+  await copyText(msg);
+  out.style.color="var(--toxin)"; out.textContent=T.ready[lang];
+  window.open("https://t.me/"+CONFIG.tgAdmin, "_blank", "noopener");
+};
+
+/* ---------- живые данные с сервера ---------- */
+function applyLive(){
+  const tag = $("#liveTag");
+  if(LIVE){
+    tag.textContent = LIVE.online ? T.liveOn[lang] : T.liveOff[lang];
+    tag.classList.toggle("off", !LIVE.online);
+    $("#stStatus").textContent = LIVE.online ? "ONLINE" : "OFFLINE";
+    $("#stStatus").classList.toggle("live", LIVE.online);
+    $("#stStatus").style.color = LIVE.online ? "" : "var(--blood)";
+    $("#stPlayers").textContent = LIVE.players + "/" + LIVE.max;
+    if(LIVE.map && LIVE.map !== "—") $("#stMap").textContent = LIVE.map;
+  }else if(!CONFIG.api){
+    tag.textContent = T.staticMode[lang];   // PHP не подключён — это не ошибка
+    tag.classList.remove("off");
+  }else{
+    tag.textContent = T.liveOff[lang];
+    tag.classList.add("off");
+  }
+  renderTop(); renderClans(); renderMaps(); renderBans();
+}
+
+let polling = false;
+async function poll(){
+  if(!CONFIG.api || polling || document.hidden) return;
+  polling = true;
+  try{
+    const r = await fetch(CONFIG.api + "?t=" + Date.now(), {cache:"no-store"});
+    if(!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    if(j && typeof j === "object"){ LIVE = j; applyLive(); }
+  }catch(e){
+    if(LIVE){ LIVE = null; applyLive(); }
+  }finally{ polling = false; }
+}
+
+/* копирование команды подключения */
+$("#copyCmd").onclick = async e=>{
+  const btn = e.currentTarget;
+  const ok = await copyText("connect " + CONFIG.ip);
+  btn.textContent = ok ? T.cmdCopied[lang] : "connect " + CONFIG.ip;
+  setTimeout(()=>{ btn.textContent = T.copyCmd[lang]; }, 1800);
+};
+$("#copyIp2").onclick = async e=>{
+  const btn = e.currentTarget;
+  const ok = await copyText(CONFIG.ip);
+  btn.textContent = ok ? T.copied[lang] : CONFIG.ip;
+  setTimeout(()=>{ btn.textContent = T.copy[lang]; }, 1800);
+};
+
+/* оформление покупки */
+$("#buy").onclick = async ()=>{
+  const out = $("#buyOut");
+  const nick = $("#b-nick").value.trim();
+  if(!nick){ out.style.color="var(--blood)"; out.textContent=T.buyNeedNick[lang]; $("#b-nick").focus(); return; }
+  const tier = $("#b-tier").value;
+  const comment = tier + " · " + nick + " · " + CONFIG.ip;
+  await copyText(comment);
+  out.style.color = "var(--toxin)";
+  if(CONFIG.pay.link){
+    out.textContent = T.buyReady[lang];
+    window.open(CONFIG.pay.link, "_blank", "noopener");
+  }else{
+    out.textContent = T.buyTg[lang];
+    window.open("https://t.me/" + CONFIG.tgAdmin, "_blank", "noopener");
+  }
+};
+
+$("#buyCrypto").onclick = async ()=>{
+  const out = $("#buyOut");
+  const nick = $("#b-nick").value.trim();
+  if(!nick){ out.style.color="var(--blood)"; out.textContent=T.buyNeedNick[lang]; $("#b-nick").focus(); return; }
+  const tier = $("#b-tier").value;
+  await copyText(tier + " · " + nick + " · " + CONFIG.ip);
+  out.style.color = "var(--toxin)";
+  if(CONFIG.pay.linkCrypto){
+    out.textContent = T.buyReady[lang];
+    window.open(CONFIG.pay.linkCrypto, "_blank", "noopener");
+  }else{
+    out.textContent = T.buyTg[lang];
+    window.open("https://t.me/" + CONFIG.tgAdmin, "_blank", "noopener");
+  }
+};
+
+$("#vipCheck").onclick = async ()=>{
+  const out = $("#buyOut");
+  const nick = $("#b-nick").value.trim();
+  if(!nick){ out.style.color="var(--blood)"; out.textContent=T.buyNeedNick[lang]; $("#b-nick").focus(); return; }
+  try{
+    const r = await fetch(CONFIG.pay.check + "?nick=" + encodeURIComponent(nick), {cache:"no-store"});
+    const j = await r.json();
+    if(j.found){
+      out.style.color = "var(--toxin)";
+      out.textContent = T.vipYes[lang] + ": " + j.tier + " · " + j.days + " " + T.vipDays[lang] + " " + j.until;
+    }else{
+      out.style.color = "var(--dust)";
+      out.textContent = T.vipNo[lang];
+    }
+  }catch(e){
+    out.style.color = "var(--blood)";
+    out.textContent = T.vipErr[lang];
+  }
+};
+
+
+
+/* ============================================================
+   ЭФФЕКТЫ
+   ============================================================ */
+const TICKER = {
+  ru: ["Внимание · зона заражения", "Соблюдай правила — предупреждение только одно",
+       "Читы = бан навсегда", "Сервер работает 24/7", "Заражённые классы: хантер · мясник",
+       "Спор с админом — только в Telegram"],
+  en: ["Warning · infection zone", "Follow the rules — there is only one warning",
+       "Cheats = permanent ban", "Server runs 24/7", "Infected classes: hunter · butcher",
+       "Disputes with admins — Telegram only"]
+};
+function renderTicker(){
+  const line = TICKER[lang].map(t=>`<span>${esc(t)}</span>`).join("");
+  $("#ticker").innerHTML = line + line;   // два прохода для бесшовной петли
+}
+
+/* подсветка под курсором */
+if(!reduced && window.matchMedia("(pointer:fine)").matches){
+  const g = $("#glow");
+  window.addEventListener("pointermove", e=>{
+    g.style.left = e.clientX + "px";
+    g.style.top  = e.clientY + "px";
+  }, {passive:true});
+}
+
+/* заголовки собираются из помех */
+const SCRAMBLE = "▓▒░#%&@$*+=<>/\\|01";
+function scramble(el){
+  if(reduced || el.dataset.done === "1") return;
+  const html = el.innerHTML;
+  const text = el.textContent;
+  el.dataset.done = "1";
+  let frame = 0;
+  const total = 14;
+  const timer = setInterval(()=>{
+    frame++;
+    if(frame >= total){ clearInterval(timer); el.innerHTML = html; return; }
+    const cut = Math.floor(text.length * frame / total);
+    let out = text.slice(0, cut);
+    for(let i = cut; i < text.length; i++){
+      out += text[i] === " " ? " " : SCRAMBLE[Math.floor(Math.random()*SCRAMBLE.length)];
+    }
+    el.textContent = out;
+  }, 34);
+}
+function runScramble(p){
+  $$("#p-" + p + " .dh h2").forEach((el,i)=> setTimeout(()=>scramble(el), i*90));
+}
+
+/* дрожь кнопки копирования IP */
+function jolt(el){
+  if(reduced) return;
+  el.animate(
+    [{translate:"0 0"},{translate:"-3px 0"},{translate:"3px 0"},{translate:"-2px 0"},{translate:"0 0"}],
+    {duration:180, easing:"steps(5)"}
+  );
+}
+["copyIp","copyIp2","copyCmd"].forEach(id=>{
+  const b = document.getElementById(id);
+  if(b) b.addEventListener("click", ()=>jolt(b));
+});
+
+applyConfig();
+applyLang();
+openPage(location.hash.slice(1) || "home", false);
+if(CONFIG.api){ poll(); setInterval(poll, CONFIG.pollMs); } else { applyLive(); }
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) poll(); });
+
+</script>
+</body>
+</html>
