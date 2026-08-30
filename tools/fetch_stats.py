@@ -16,6 +16,7 @@
 import json
 import os
 import re
+import shlex
 import socket
 import struct
 import sys
@@ -355,8 +356,9 @@ def parse_csstats(raw):
 def parse_clans(text, nick_by_steam=None):
     """Строка: название тег уровень опыт монеты банк слоты STEAM_лидера победы поражения ...
 
-    Название может содержать пробелы, поэтому опираемся на SteamID лидера:
-    от него отсчитываем пять чисел назад, перед ними стоит тег.
+    Значения бывают в кавычках, а название может содержать пробелы, поэтому
+    опираемся на SteamID лидера: от него отсчитываем пять чисел назад,
+    перед ними стоит тег.
     """
     nick_by_steam = nick_by_steam or {}
     out = []
@@ -364,8 +366,12 @@ def parse_clans(text, nick_by_steam=None):
         line = line.strip()
         if not line or line[0] in ';#[/':
             continue
-        tok = line.split()
-        k = next((j for j, t in enumerate(tok) if t.upper().startswith('STEAM_')), -1)
+        try:
+            tok = shlex.split(line)          # значения бывают в кавычках
+        except ValueError:
+            tok = line.split()
+        k = next((j for j, t in enumerate(tok)
+                  if t.strip('"').upper().startswith('STEAM_')), -1)
         if k < 6:
             continue
         try:
