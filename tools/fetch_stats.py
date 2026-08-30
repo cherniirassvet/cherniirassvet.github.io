@@ -15,6 +15,7 @@
 
 import json
 import os
+import re
 import socket
 import struct
 import sys
@@ -64,12 +65,22 @@ HDR_SPLIT  = b'\xFF\xFF\xFF\xFE'
 def txt(raw):
     """Ники приходят в CP1251. Если не разбирается — читаем как UTF-8."""
     raw = raw.split(b'\x00')[0]
-    for enc in ('cp1251', 'utf-8'):
+    for enc in ('utf-8', 'cp1251'):
         try:
             return raw.decode(enc).strip()
         except UnicodeDecodeError:
             continue
     return raw.decode('cp1251', 'replace').strip()
+
+
+def dec(raw):
+    """Целый файл: сначала UTF-8, если не разбирается — CP1251."""
+    for enc in ('utf-8', 'cp1251'):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode('cp1251', 'replace')
 
 
 class Reader(object):
@@ -381,6 +392,10 @@ def parse_clans(text, nick_by_steam=None):
             'leader': nick_by_steam.get(tok[k], ''),
         })
     log('  zm_clans.ini: кланов %d' % len(out))
+    if not out:
+        for line in [l.strip() for l in text.splitlines() if l.strip()][:4]:
+            safe = re.sub(r'STEAM_[0-9:]+', 'STEAM_x:y:z', line)
+            log('    не разобрана строка: ' + safe[:200])
     return out
 
 # ------------------------------------------------------------------ запись
@@ -435,7 +450,7 @@ def main():
     log('[3/3] Разбираю...')
     people = parse_csstats(stats_raw) if stats_raw else []
     nick_by_steam = {p['steam']: p['name'] for p in people if p.get('steam')}
-    clans = parse_clans(clans_raw.decode('cp1251', 'replace'), nick_by_steam) if clans_raw else []
+    clans = parse_clans(dec(clans_raw), nick_by_steam) if clans_raw else []
 
     if not people and not clans:
         log('  данных нет — старый data/top.json не трогаю')
