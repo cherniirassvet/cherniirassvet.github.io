@@ -1,0 +1,49 @@
+# Робот сайта «Чёрный Рассвет».
+# Раз в 15 минут спрашивает игровой сервер и панель, кладёт свежие
+# data/online.json и data/top.json обратно в репозиторий.
+# Ключ панели берётся из секрета PANEL_KEY, в коде его нет.
+
+name: Данные сервера
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'      # четыре запуска в час: Pages разрешает 10 сборок
+  workflow_dispatch:            # кнопка «Run workflow» для запуска вручную
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stats
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+
+    steps:
+      - name: Забрать репозиторий
+        uses: actions/checkout@v4
+
+      - name: Поставить Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Собрать данные
+        env:
+          PANEL_KEY: ${{ secrets.PANEL_KEY }}
+        run: python tools/fetch_stats.py
+
+      - name: Положить обратно в репозиторий
+        run: |
+          git config user.name  'stats-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A data
+          if git diff --cached --quiet; then
+            echo 'Данные не изменились — коммит не нужен.'
+          else
+            git commit -m "данные $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
