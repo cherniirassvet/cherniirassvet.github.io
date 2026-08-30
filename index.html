@@ -149,17 +149,21 @@ p{margin:0}
 /* ==========================================================
    ГЕРОЙ — темнота, из которой проступает свет
    ========================================================== */
-.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:56% 20%;
-  filter:grayscale(.14) contrast(1.04) brightness(.86) saturate(.94);
-  animation:drift 26s ease-in-out infinite alternate}
-@keyframes drift{from{transform:scale(1.03)}to{transform:scale(1.09)}}
-.hero-bg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,#000 1%,rgba(0,0,0,.82) 26%,rgba(0,0,0,.34) 52%,rgba(0,0,0,.06) 76%,transparent 100%),
-             linear-gradient(0deg,#000 3%,rgba(0,0,0,.5) 20%,transparent 52%),
-             radial-gradient(90% 60% at 50% 50%,transparent 42%,rgba(0,0,0,.5) 100%)}
-.hero-body{position:relative;z-index:2;padding:0 var(--pad) clamp(30px,4vw,54px);max-width:900px}
+.hero{position:relative;display:flex;flex-direction:column;overflow:hidden}
+
+/* Арт-заголовок: картинка видна целиком, поля по бокам закрыты её же размытой копией */
+.hero-art{position:relative;width:100%;aspect-ratio:896/1200;max-height:min(86svh,940px);
+  overflow:hidden;background:var(--void)}
+.hero-art .fill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:blur(44px) saturate(.5) brightness(.28);transform:scale(1.22);
+  animation:drift 30s ease-in-out infinite alternate}
+@keyframes drift{from{transform:scale(1.18)}to{transform:scale(1.3)}}
+.hero-art .full{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;
+  filter:saturate(.99) contrast(1.02)}
+.hero-art::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(125% 82% at 50% 46%,transparent 66%,rgba(0,0,0,.45) 100%),
+             linear-gradient(0deg,rgba(0,0,0,.62) 0%,transparent 20%)}
+.hero-body{position:relative;z-index:2;padding:clamp(30px,4.4vw,58px) var(--pad) clamp(30px,4vw,54px);max-width:900px}
 .hero .lbl{margin-bottom:20px;color:var(--dawn)}
 .hero h1{
   font-size:clamp(46px,8.6vw,104px);line-height:.9;margin-bottom:22px;
@@ -302,11 +306,24 @@ p{margin:0}
 .col h3{margin-bottom:6px}
 .col .lbl{margin-bottom:16px}
 .col ul{list-style:none;margin:0;padding:0}
-.col li{padding:9px 0;border-bottom:1px solid var(--edge);font-size:15px;color:#CFCECA;
-  display:grid;grid-template-columns:12px 1fr;gap:10px}
-.col li::before{content:"";width:4px;height:1px;background:var(--dawn);margin-top:12px}
+.col li{padding:10px 0 10px 22px;border-bottom:1px solid var(--edge);font-size:15px;color:#CFCECA;
+  position:relative;line-height:1.5}
+.col li::before{content:"";position:absolute;left:0;top:20px;width:9px;height:1px;background:var(--dawn)}
 .col li b{color:var(--bone);font-weight:600}
 
+.termpick{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.termpick .lbl{margin-right:4px;color:var(--dawn)}
+.term{background:transparent;border:1px solid var(--edge2);color:var(--ash);
+  font-family:var(--fm);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  padding:12px 20px;cursor:pointer;transition:color .16s,border-color .16s,background .16s}
+.term:hover{color:var(--bone);border-color:var(--dawn)}
+.term.on{background:var(--dawn);border-color:var(--dawn);color:#0A0A0D}
+.col-price{font-family:var(--fm);font-size:19px;color:var(--dawn);margin:-8px 0 18px}
+.ledger td.c-month,.ledger td.c-forever,.ledger th.c-month,.ledger th.c-forever{transition:color .18s,opacity .18s}
+.ledger.term-month th.c-forever,.ledger.term-month td.c-forever,
+.ledger.term-forever th.c-month,.ledger.term-forever td.c-month{color:var(--dim);opacity:.45}
+.ledger.term-month td.c-month,.ledger.term-forever td.c-forever{color:var(--dawn)}
+.ledger.term-month tr.once td.c-forever{color:var(--dawn);opacity:1}
 .ledger{width:100%;border-collapse:collapse;font-size:15px}
 .ledger th{font-family:var(--fm);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
   text-align:right;padding:0 0 12px;border-bottom:1px solid var(--edge2);font-weight:400}
@@ -362,11 +379,9 @@ p{margin:0}
   .topbar{display:flex}
   .shell{padding-left:0;padding-bottom:calc(62px + env(safe-area-inset-bottom))}
   .toast{bottom:calc(78px + env(safe-area-inset-bottom))}
-  .hero{min-height:88svh}
-  .hero-bg img{object-position:52% 15%}
-  .hero-bg::after{background:
-    linear-gradient(0deg,#000 7%,rgba(0,0,0,.88) 28%,rgba(0,0,0,.34) 56%,transparent 84%),
-    linear-gradient(90deg,rgba(0,0,0,.45),transparent 62%)}
+  .hero-art{max-height:min(92svh,760px)}
+  .termpick{gap:8px}
+  .term{padding:11px 15px;font-size:10.5px}
   .vig{box-shadow:inset 0 0 110px 18px rgba(0,0,0,.7)}
   .grain{opacity:.045}
   .tele div{flex:1 1 50%;border-bottom:1px solid var(--edge)}
@@ -435,7 +450,11 @@ p{margin:0}
 <section class="page on" id="p-home">
 
   <div class="hero">
-    <div class="hero-bg"><img id="heroImg" class="heroart" src="img/hero.jpg" alt="" width="896" height="1200" fetchpriority="high"></div>
+    <div class="hero-art">
+      <img class="heroart fill" src="img/hero.jpg" alt="" aria-hidden="true">
+      <img id="heroImg" class="heroart full" src="img/hero.jpg" width="896" height="1200" fetchpriority="high"
+           alt="Выжившие со спасёнными животными на фоне горящего города">
+    </div>
     <div class="hero-body">
       <div class="lbl">Zombie Plague · Counter-Strike 1.6 · RU / EN</div>
       <h1>Чёрный<span>Рассвет</span></h1>
@@ -492,8 +511,8 @@ p{margin:0}
       </div>
       <div class="row">
         <div class="lbl">Баланс</div>
-        <div><h3>Правится по жалобам</h3>
-          <p>Ствол, который ломает игру, режется. Что и почему изменили — разбираем в канале, а не молча.</p></div>
+        <div><h3>Правится голосованием</h3>
+          <p>Ствол, который ломает игру, выносится на голосование в канале. Что и почему изменили — объявляем там же, а не молча.</p></div>
       </div>
       <div class="row">
         <div class="lbl">Награды</div>
@@ -503,8 +522,39 @@ p{margin:0}
     </div>
   </section>
 
-  <!-- Сборка -->
+  <!-- Голосования -->
   <section class="band alt">
+    <div class="head">
+      <div class="lbl">Как принимаются решения</div>
+      <h2>Решают игроки,<br>а не администрация</h2>
+      <p class="sub">Ни одно нововведение и ни одно изменение не вводится по желанию администрации.
+        Всё выносится на голосование: администрация считает голоса и исполняет итог.</p>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div class="lbl">Что решаем</div>
+        <div><h3>Любое изменение на сервере</h3>
+          <p>Новая карта, новый ствол, правка баланса, новое правило, срок наказания — всё это
+            выносится на голосование, а не вводится молча.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Где голосуем</div>
+        <div><h3>Опросом в Telegram-канале</h3>
+          <p>Голос есть у каждого, кто играет. Один игрок — один голос; накрутка ботами
+            и вторыми аккаунтами не засчитывается.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Что потом</div>
+        <div><h3>Итог объявляется и исполняется</h3>
+          <p>Результат публикуется в канале вместе с числом голосов. Решение выполняется,
+            даже если администрации оно не нравится.</p></div>
+      </div>
+    </div>
+    <a class="btn tglink" href="#" target="_blank" rel="noopener" style="margin-top:30px">Идти голосовать</a>
+  </section>
+
+  <!-- Сборка -->
+  <section class="band">
     <div class="head">
       <div class="lbl">Сборка</div>
       <h2>Что стоит на сервере</h2>
@@ -522,7 +572,7 @@ p{margin:0}
   </section>
 
   <!-- Заход -->
-  <section class="band">
+  <section class="band alt">
     <div class="head">
       <div class="lbl">Первый заход</div>
       <h2>Минута до игры</h2>
@@ -536,7 +586,7 @@ p{margin:0}
   </section>
 
   <!-- Вопросы -->
-  <section class="band alt">
+  <section class="band">
     <div class="head">
       <div class="lbl">Вопросы</div>
       <h2>Коротко о главном</h2>
@@ -692,6 +742,7 @@ p{margin:0}
       <div class="col">
         <h3>VIP</h3>
         <div class="lbl">Базовый уровень</div>
+        <div class="col-price" data-name="VIP"></div>
         <ul>
           <li><b>VIP-нож</b> — своя модель</li>
           <li><b>VIP-магазин</b> — отдельный раздел</li>
@@ -705,6 +756,7 @@ p{margin:0}
       <div class="col">
         <h3>Admin + VIP</h3>
         <div class="lbl">Полный доступ</div>
+        <div class="col-price" data-name="Admin + VIP"></div>
         <ul>
           <li><b>Всё из VIP</b> включено</li>
           <li><b>Права администратора:</b> бан, кик, смена карты</li>
@@ -719,9 +771,14 @@ p{margin:0}
   </section>
 
   <section class="band alt tight">
-    <table class="ledger">
+    <div class="termpick" role="group" aria-label="Срок привилегии">
+      <span class="lbl">Беру</span>
+      <button type="button" class="term on" data-term="month">На месяц</button>
+      <button type="button" class="term" data-term="forever">Навсегда</button>
+    </div>
+    <table class="ledger term-month" id="ledger">
       <thead><tr>
-        <th>Позиция</th><th>Месяц</th><th>Навсегда</th><th class="hide"></th>
+        <th>Позиция</th><th class="c-month">Месяц</th><th class="c-forever">Навсегда</th><th class="hide"></th>
       </tr></thead>
       <tbody id="ledgerBody"></tbody>
     </table>
@@ -827,13 +884,31 @@ function initStatic(){
   ['teleSlots','barSlots','specSlots'].forEach(i=>$('#'+i).textContent=CONFIG.server.slots);
   $('#year').textContent=new Date().getFullYear();
 
+  // цена под названием в колонках VIP и Admin + VIP
+  $$('.col-price').forEach(el=>{
+    const it = CONFIG.ledger.find(r=>r.name===el.dataset.name);
+    if(!it) return;
+    el.dataset.month   = cash(it.month)+' в месяц';
+    el.dataset.forever = cash(it.forever)+' навсегда';
+    el.textContent     = el.dataset.month;
+  });
+
+  // выбор срока: месяц или навсегда
+  function setTerm(t){
+    $$('.term').forEach(b=>b.classList.toggle('on', b.dataset.term===t));
+    const tb=$('#ledger'); if(tb) tb.className='ledger term-'+t;
+    $$('.col-price').forEach(el=>{ if(el.dataset[t]) el.textContent=el.dataset[t]; });
+  }
+  $$('.term').forEach(b=>b.addEventListener('click',()=>setTerm(b.dataset.term)));
+
   $('#ledgerBody').innerHTML = CONFIG.ledger.map(r=>{
     if(r.grp) return `<tr class="grp"><td colspan="4"><span class="lbl">${esc(r.grp)}</span></td></tr>`;
-    const m = r.once!=null ? '<span style="color:var(--dim)">—</span>' : cash(r.month);
-    const f = r.once!=null ? cash(r.once) : cash(r.forever);
-    return `<tr>
+    const one = r.once!=null;
+    const m = one ? '<span style="color:var(--dim)">—</span>' : cash(r.month);
+    const f = one ? cash(r.once) : cash(r.forever);
+    return `<tr${one?' class="once"':''}>
       <td class="nm"><b>${esc(r.name)}</b><span>${esc(r.desc)}</span></td>
-      <td>${m}</td><td>${f}</td>
+      <td class="c-month">${m}</td><td class="c-forever">${f}</td>
       <td class="hide"><a class="take adminlink" href="${CONFIG.links.admin}" target="_blank" rel="noopener">Взять</a></td>
     </tr>`;
   }).join('');
