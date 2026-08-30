@@ -222,16 +222,6 @@ p{margin:0}
 
 /* заявление */
 .claim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,5vw,80px);align-items:center}
-/* полоса с животными в блоке приютов */
-.animals{position:relative;margin-top:clamp(26px,4vw,44px);height:clamp(190px,26vw,330px);
-  overflow:hidden;border-top:1px solid var(--edge)}
-.animals img{width:100%;height:100%;object-fit:cover;object-position:50% 76%;
-  filter:saturate(.92) contrast(1.03) brightness(.84)}
-.animals::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,#000 0%,transparent 24%,transparent 74%,#000 100%),
-             linear-gradient(0deg,rgba(0,0,0,.82) 0%,transparent 46%)}
-.animals figcaption{position:absolute;left:0;right:0;bottom:16px;z-index:2;text-align:center;
-  font-family:var(--fm);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dawn)}
 .claim-num{font-family:var(--fd);font-weight:800;font-size:clamp(80px,17vw,210px);line-height:.8;letter-spacing:-.05em;color:var(--dawn)}
 .claim-num small{display:block;font-family:var(--fm);font-size:11px;letter-spacing:.24em;color:var(--dim);
   text-transform:uppercase;margin-top:18px;font-weight:400}
@@ -485,10 +475,6 @@ p{margin:0}
         <a class="btn tglink" href="#" target="_blank" rel="noopener" style="margin-top:24px">Смотреть отчёты</a>
       </div>
     </div>
-    <figure class="animals" style="margin-bottom:0">
-      <img class="heroart" src="img/hero.jpg" alt="Выжившие со спасёнными животными" loading="lazy">
-      <figcaption>Ради них всё и затевалось</figcaption>
-    </figure>
   </section>
 
   <!-- Правило -->
@@ -1064,7 +1050,7 @@ function reveal(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{
     if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
   }),{rootMargin:'0px 0px -6% 0px',threshold:.04});
-  $$('.head,.claim>div,.claim-num,.animals,.qa,.board,.tocline,.cols,.ledger,.doc section').forEach(el=>{
+  $$('.head,.claim>div,.claim-num,.qa,.board,.tocline,.cols,.ledger,.doc section').forEach(el=>{
     el.classList.add('rv'); io.observe(el);
   });
   $$('.rows,.spec').forEach(box=>{
