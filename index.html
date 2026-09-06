@@ -368,6 +368,19 @@ p{margin:0}
   opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* на телефоне длинное значение в спецификации не влезало в строку
+   и обрезалось — переносим его под ключ, во всю ширину */
+@media (max-width:640px){
+  .spec div{flex-wrap:wrap;row-gap:2px}
+  .spec .k{flex:0 0 auto}
+  .spec .fill{display:none}
+  .spec .v{white-space:normal;flex:1 1 100%;text-align:right}
+}
+
+/* шесть вкладок вместо пяти: не даём подписям ломаться на узких экранах */
+.tabs a{white-space:nowrap}
+@media (max-width:430px){.tabs a{font-size:8px;letter-spacing:.03em}}
+
 /* ==========================================================
    ТЕЛЕФОН
    ========================================================== */
@@ -409,6 +422,7 @@ p{margin:0}
   </a>
   <nav id="railNav">
     <a href="#/" data-r="/">Главная</a>
+    <a href="#/game" data-r="/game">Игра</a>
     <a href="#/rules" data-r="/rules">Правила</a>
     <a href="#/players" data-r="/players">Игроки</a>
     <a href="#/clans" data-r="/clans">Кланы</a>
@@ -556,14 +570,17 @@ p{margin:0}
     </div>
     <div class="spec">
       <div><span class="k">Режим</span><span class="fill"></span><span class="v">Zombie Plague, своя редакция ядра</span></div>
-      <div><span class="k">Оружие</span><span class="fill"></span><span class="v">40+ паков и скинов, каждый с моделью и звуком</span></div>
-      <div><span class="k">Классы зомби</span><span class="fill"></span><span class="v">свой конфиг, 12 типов способностей</span></div>
+      <div><span class="k">Оружие</span><span class="fill"></span><span class="v">39 позиций в магазине плюс клановое</span></div>
+      <div><span class="k">Классы зомби</span><span class="fill"></span><span class="v">8 классов со своими HP и способностью</span></div>
+      <div><span class="k">Спецраунды</span><span class="fill"></span><span class="v">немезида, выживший, чума, орда</span></div>
       <div><span class="k">Кланы</span><span class="fill"></span><span class="v">банк, теги, уровни, клановый магазин</span></div>
       <div><span class="k">Карты</span><span class="fill"></span><span class="v">15 в ротации, голосование в конце раунда</span></div>
-      <div><span class="k">Босс</span><span class="fill"></span><span class="v">отдельная карта с сундуками и наградой</span></div>
+      <div><span class="k">Босс</span><span class="fill"></span><span class="v">отдельная карта, голосование 70%</span></div>
+      <div><span class="k">Экономика</span><span class="fill"></span><span class="v">1 аммопак за 1000 урона по зомби</span></div>
       <div><span class="k">Загрузка контента</span><span class="fill"></span><span class="v">FastDL, первый заход около минуты</span></div>
       <div><span class="k">Слотов</span><span class="fill"></span><span class="v" id="specSlots">32</span></div>
     </div>
+    <a class="btn" href="#/game" style="margin-top:30px">Подробно: цены, классы, команды</a>
   </section>
 
   <!-- Заход -->
@@ -603,6 +620,321 @@ p{margin:0}
         <p>Меню на клавише <code>M</code>, раздел кланов. Создание стоит аммопаки, уровень и слоты качаются игрой.</p></details>
       <details><summary>Как стать администратором</summary>
         <p>Оформить на странице поддержки или выиграть в конкурсе. Права выдаются по SteamID, ник значения не имеет.</p></details>
+      <details><summary>Как быстрее набрать аммопаки</summary>
+        <p>Один аммопак даётся за каждые 1000 урона по зомби, два — за заражение человека, сорок — за убийство немезиды или выжившего, и по пятьдесят всей команде за победу в таком раунде. Оружие по площади в толпе выгоднее одиночного.</p></details>
+      <details><summary>Почему оружие пропадает</summary>
+        <p>Купленное оружие остаётся при тебе, пока тебя не убили, не заразили или ты не стал первым зомби. После этого покупка сгорает — это правило, а не сбой.</p></details>
+      <details><summary>Немезида и выживший ничего не покупают</summary>
+        <p>Так и задумано. В спецраундах магазин и способности им закрыты, антидот не работает, возрождения нет.</p></details>
+      <details><summary>Какой класс зомби выбрать</summary>
+        <p>Танк «Наташка мясник» — 11 000 HP, медленная, бьёт вдвое сильнее. Бегун «Пьяная студентка» — 2 500 HP, самая быстрая и прыгучая. Остальные шесть между этими краями. Полная таблица — на странице «Игра».</p></details>
+      <details><summary>Как открыть голосование за босса</summary>
+        <p>Команда <code>/boss</code> в чате или пункт в меню на клавише <code>M</code>. Нужно 70% голосов от тех, кто на сервере.</p></details>
+      <details><summary>Что даёт клан</summary>
+        <p>Общий банк аммопаков, тег над ником, отдельный раздел магазина и совместные задания. Создание стоит 10 000 аммопаков, уровень качается игрой.</p></details>
+    </div>
+  </section>
+</section>
+
+<!-- =================================================================
+     ИГРА — экономика, магазин, классы, спецраунды, команды
+     ================================================================= -->
+<section class="page" id="p-game">
+  <section class="band" style="border-top:0">
+    <div class="head">
+      <div class="lbl">Устройство сервера · всё в одном месте</div>
+      <h2>Как здесь<br>всё работает</h2>
+      <p class="sub">Ниже — настоящие числа с сервера: сколько дают за урон, сколько стоит каждый ствол,
+        какие у зомби HP и скорость. Цены меняются только через голосование, и эта страница правится следом.</p>
+    </div>
+
+    <div class="tocline">
+      <a href="#g1">01 Аммопаки</a><a href="#g2">02 Магазин</a><a href="#g3">03 Снаряжение</a>
+      <a href="#g4">04 Зомби</a><a href="#g5">05 Спецраунды</a><a href="#g6">06 Кланы</a>
+      <a href="#g7">07 Команды</a><a href="#g8">08 Карты</a>
+    </div>
+  </section>
+
+  <!-- 01 Аммопаки -->
+  <section class="band alt" id="g1" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">01 · Экономика</div>
+      <h2>Аммопаки</h2>
+      <p class="sub">Единственная валюта сервера. Копятся на SteamID, сохраняются между картами и не сгорают.
+        Купить их за деньги нельзя — только заработать в бою.</p>
+    </div>
+    <div class="spec">
+      <div><span class="k">За урон по зомби</span><span class="fill"></span><span class="v">1 аммопак за каждые 1000 урона</span></div>
+      <div><span class="k">За заражение человека</span><span class="fill"></span><span class="v">2 аммопака зомби</span></div>
+      <div><span class="k">За убийство немезиды</span><span class="fill"></span><span class="v">40 аммопаков</span></div>
+      <div><span class="k">За убийство выжившего</span><span class="fill"></span><span class="v">40 аммопаков</span></div>
+      <div><span class="k">За победу в раунде немезиды или выжившего</span><span class="fill"></span><span class="v">50 аммопаков</span></div>
+      <div><span class="k">На старте новому игроку</span><span class="fill"></span><span class="v">100 аммопаков</span></div>
+      <div><span class="k">Хранение</span><span class="fill"></span><span class="v">по SteamID, между картами</span></div>
+      <div><span class="k">Продажа за деньги</span><span class="fill"></span><span class="v">нет</span></div>
+    </div>
+    <div class="rows" style="margin-top:34px">
+      <div class="row">
+        <div class="lbl">Считай сам</div>
+        <div><h3>Дорогой ствол окупается уроном</h3>
+          <p>Оружие за 1000 аммопаков — это миллион нанесённого урона. Оно и бьёт соответственно:
+            чем дороже позиция, тем выше её урон в секунду. Дешёвые стволы не бесполезны, но
+            зомби на поздних раундах ими не остановить.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Оружие по площади</div>
+        <div><h3>Считается тот же урон</h3>
+          <p>РПГ, Танатос-1 и четырёхстволка бьют по области. Аммопаки капают за суммарный урон,
+            поэтому в толпе они выгоднее — но и стоят дороже, и перезаряжаются дольше.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Что не приносит</div>
+        <div><h3>Урон по своим и по барьеру</h3>
+          <p>Урон по людям, по собственному барьеру и добивание уже мёртвого зомби не считаются.
+            Боты урон дают, но в рейтинг не идут.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Магазин -->
+  <section class="band" id="g2" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">02 · Магазин оружия</div>
+      <h2>Все стволы<br>и цены</h2>
+      <p class="sub">Магазин открывается на клавише <span class="mono dawnc">M</span>. Покупка живёт до конца жизни:
+        оружие остаётся при тебе, пока тебя не убили, не заразили или ты не стал первым зомби.
+        Цены — в аммопаках.</p>
+    </div>
+    <table class="ledger">
+      <thead><tr><th>Позиция</th><th>Аммопаки</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="2"><span class="lbl">Автоматы</span></td></tr>
+        <tr><td class="nm"><b>Кислотный Всплеск</b><span>Скин на P90, стартовый вариант</span></td><td>11</td></tr>
+        <tr><td class="nm"><b>M4A1 Modern</b><span>Ровный автомат без сюрпризов</span></td><td>13</td></tr>
+        <tr><td class="nm"><b>Шип Преисподней AK-47</b><span>Скин на AK-47</span></td><td>13</td></tr>
+        <tr><td class="nm"><b>Чёрный Коршун</b><span>Длинный AK, выше урон за выстрел</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>Janus-13</b><span>Два режима огня</span></td><td>61</td></tr>
+        <tr><td class="nm"><b>Золотой AK-47</b><span>Только для администраторов</span></td><td>61</td></tr>
+        <tr><td class="nm"><b>AK-47 Transformers</b><span>Тяжёлый автомат поздних раундов</span></td><td>66</td></tr>
+        <tr><td class="nm"><b>Улыбка Ведьмы</b><span>Верх ветки автоматов</span></td><td>121</td></tr>
+
+        <tr class="grp"><td colspan="2"><span class="lbl">Винтовки</span></td></tr>
+        <tr><td class="nm"><b>Кровавый Шёпот</b><span>Дешёвый вход в снайперки</span></td><td>11</td></tr>
+        <tr><td class="nm"><b>Арбалет Королевское жало</b><span>Скин на AUG</span></td><td>13</td></tr>
+        <tr><td class="nm"><b>SG552 Lycanthrope</b><span>Средний класс, стабильная кучность</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>AWP Дурман</b><span>Крупный урон одним выстрелом</span></td><td>187</td></tr>
+        <tr><td class="nm"><b>AWP Волчий Клык</b><span>Сильнейшая снайперка магазина</span></td><td>220</td></tr>
+
+        <tr class="grp"><td colspan="2"><span class="lbl">Дробовики</span></td></tr>
+        <tr><td class="nm"><b>Лего-дробовик</b><span>Ближний бой, дёшево</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>Винчестер M1887</b><span>Высокий урон в упор</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>M4 Skull</b><span>Гибрид, бьёт и вблизи, и на средней</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>Слеза Богини</b><span>Дробовик поздних раундов</span></td><td>154</td></tr>
+        <tr><td class="nm"><b>Четырёхстволка</b><span>Четыре ствола залпом, урон по области</span></td><td>200</td></tr>
+
+        <tr class="grp"><td colspan="2"><span class="lbl">Пистолеты</span></td></tr>
+        <tr><td class="nm"><b>Балрог-1</b><span>Запасной ствол на первый раунд</span></td><td>22</td></tr>
+        <tr><td class="nm"><b>Wild Wing</b><span>Скорострельный пистолет</span></td><td>39</td></tr>
+        <tr><td class="nm"><b>Янус-1</b><span>Два режима, урон выше обычного</span></td><td>100</td></tr>
+        <tr><td class="nm"><b>Танатос-1</b><span>Сильнейший пистолет, бьёт по области</span></td><td>253</td></tr>
+
+        <tr class="grp"><td colspan="2"><span class="lbl">Пулемёты</span></td></tr>
+        <tr><td class="nm"><b>PKM Thanatos-1</b><span>Первый пулемёт, запас 100 патронов</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>M134 Galaxy</b><span>Миниган, долгая раскрутка</span></td><td>61</td></tr>
+        <tr><td class="nm"><b>M134 Thanatos</b><span>Миниган, вариант с другим уроном</span></td><td>61</td></tr>
+        <tr><td class="nm"><b>JANUS-3</b><span>Пулемёт с заряженным режимом</span></td><td>94</td></tr>
+        <tr><td class="nm"><b>Balrog-7</b><span>Тяжёлый пулемёт</span></td><td>1000</td></tr>
+        <tr><td class="nm"><b>Феникс</b><span>Пулемёт верхнего уровня</span></td><td>1500</td></tr>
+        <tr><td class="nm"><b>HK121EX</b><span>Самая дорогая позиция магазина</span></td><td>2000</td></tr>
+
+        <tr class="grp"><td colspan="2"><span class="lbl">Двуручное и особое</span></td></tr>
+        <tr><td class="nm"><b>Dual Uzi</b><span>Два пистолета-пулемёта</span></td><td>13</td></tr>
+        <tr><td class="nm"><b>TMP Dragon</b><span>Тихий и скорострельный</span></td><td>13</td></tr>
+        <tr><td class="nm"><b>Water Gun</b><span>Отталкивает зомби струёй</span></td><td>13</td></tr>
+        <tr><td class="nm"><b>Cart Chao</b><span>Экзотика, нестандартная стрельба</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>Chao Gun</b><span>Два режима вида, залповый огонь</span></td><td>31</td></tr>
+        <tr><td class="nm"><b>Skull-3</b><span>Тяжёлое двуручное</span></td><td>44</td></tr>
+        <tr><td class="nm"><b>РПГ-7 Разлом</b><span>Ракета, большой урон по области</span></td><td>61</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top:24px">Все патроны у пулемётов ограничены запасом в 100 штук — бесконечной стрельбы нет.
+      Клановое оружие лежит в отдельном разделе и требует уровня клана.</p>
+  </section>
+
+  <!-- 03 Снаряжение -->
+  <section class="band alt" id="g3" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">03 · Снаряжение и способности</div>
+      <h2>Всё, кроме стволов</h2>
+      <p class="sub">Часть покупается в магазине сервера, часть — в меню способностей Zombie&nbsp;Plague.
+        Открывается там же, на клавише <span class="mono dawnc">M</span>.</p>
+    </div>
+    <table class="ledger">
+      <thead><tr><th>Позиция</th><th>Аммопаки</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="2"><span class="lbl">Человеку</span></td></tr>
+        <tr><td class="nm"><b>Броня +100</b><span>Добавляет сотню брони поверх текущей · 2 раза за раунд</span></td><td>20</td></tr>
+        <tr><td class="nm"><b>Аптечка +500 HP</b><span>Лечит на месте · потолок 1500 HP</span></td><td>15</td></tr>
+        <tr><td class="nm"><b>Барьер</b><span>Ставится под ноги, держит 1500 прочности · 1 штука</span></td><td>10</td></tr>
+        <tr><td class="nm"><b>Граната HE</b><span>Осколочная</span></td><td>10</td></tr>
+        <tr><td class="nm"><b>Ослепляющая</b><span>Флешка</span></td><td>6</td></tr>
+        <tr><td class="nm"><b>Дымовая</b><span>Дым</span></td><td>6</td></tr>
+        <tr><td class="nm"><b>Набор гранат</b><span>Все три сразу, дешевле чем по отдельности</span></td><td>15</td></tr>
+        <tr><td class="nm"><b>Камера</b><span>Обзор с точки, куда поставил</span></td><td>17</td></tr>
+        <tr><td class="nm"><b>Ночное зрение</b><span>Из меню способностей</span></td><td>15</td></tr>
+
+        <tr class="grp"><td colspan="2"><span class="lbl">Зомби</span></td></tr>
+        <tr><td class="nm"><b>Антидот</b><span>Возвращает в люди · не работает в спецраундах</span></td><td>45</td></tr>
+        <tr><td class="nm"><b>Ярость</b><span>5 секунд ускорения · перезарядка 20 секунд</span></td><td>5</td></tr>
+        <tr><td class="nm"><b>Зомби-бомба</b><span>Взрыв на месте гибели</span></td><td>2</td></tr>
+        <tr><td class="nm"><b>Безумие зомби</b><span>5 секунд неуязвимости к отбросу · перезарядка 15 секунд</span></td><td>17</td></tr>
+        <tr><td class="nm"><b>Инфекционная граната</b><span>Заражает попавших людей · 1 за раунд</span></td><td>20</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 04 Классы зомби -->
+  <section class="band" id="g4" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">04 · Классы зомби</div>
+      <h2>Восемь тел<br>на выбор</h2>
+      <p class="sub">Класс выбирается один раз и применяется со следующего заражения. Танки медленные и живучие,
+        бегуны хрупкие и прыгучие — одинаково сильных нет, есть удобные под ситуацию.
+        Скорость человека для сравнения — 240.</p>
+    </div>
+    <table class="ledger">
+      <thead><tr><th>Класс</th><th>HP</th></tr></thead>
+      <tbody>
+        <tr><td class="nm"><b>Наташка мясник</b><span>Танк. Скорость 200, прыжок обычный, урон когтями ×2.2 · способность: ставит ловушки</span></td><td>11 000</td></tr>
+        <tr><td class="nm"><b>Акаони</b><span>Скорость 300, высокий прыжок, урон ×1.6 — только администраторам · способность: землетрясение</span></td><td>8 000</td></tr>
+        <tr><td class="nm"><b>Деймос</b><span>Скорость 245, урон ×1.2 — только для VIP · способность: вампиризм</span></td><td>6 000</td></tr>
+        <tr><td class="nm"><b>Медсестра</b><span>Скорость 240, урон обычный. Крепкий середняк · способность: лечит себя</span></td><td>4 500</td></tr>
+        <tr><td class="nm"><b>Соблазнительная</b><span>Скорость 250, урон обычный · способность: ослепляет стрелявшего</span></td><td>4 000</td></tr>
+        <tr><td class="nm"><b>Мицелия</b><span>Скорость 235, урон ×0.8. Слабая в бою, сильная в команде · способность: лечит зомби рядом</span></td><td>3 200</td></tr>
+        <tr><td class="nm"><b>Метеора</b><span>Скорость 250, высокий прыжок, урон ×0.9 · способность: рывок на 5 секунд</span></td><td>3 000</td></tr>
+        <tr><td class="nm"><b>Пьяная студентка</b><span>Скорость 300, самый высокий прыжок, урон ×0.8 · способности нет</span></td><td>2 500</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top:22px">Чем легче класс, тем сильнее его отбрасывает пулями: у танка сопротивление отбросу 0.70,
+      у студентки 1.15. Высота прыжка у всех классов поднята на 10% против стандарта.</p>
+  </section>
+
+  <!-- 05 Спецраунды -->
+  <section class="band alt" id="g5" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">05 · Спецраунды</div>
+      <h2>Когда правила<br>меняются</h2>
+      <p class="sub">Раз в несколько раундов вместо обычного заражения запускается особый режим.
+        В спецраундах возрождения нет, антидот не работает, а немезида и выживший ничего не покупают.</p>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div class="lbl">Немезида</div>
+        <div><h3>Один зомби против всех</h3>
+          <p>Здоровье считается от числа живых: 20 000 плюс 1 000 за каждого живого игрока сверх первого.
+            Прыжок и скорость вдвое выше обычных, оружие и способности недоступны, ослеплять не умеет.
+            За убийство немезиды — 40 аммопаков, всей команде за победу в раунде — по 50.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Выживший</div>
+        <div><h3>Один человек против всех</h3>
+          <p>Получает пулемёт с ослабленным уроном и умеет прыгать в длину и высоту, как немезида.
+            Пока стреляет — движется вдвое медленнее. Магазин ему закрыт.
+            За убийство выжившего — 40 аммопаков, за победу — по 50.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Чума</div>
+        <div><h3>Немезида и выживший разом</h3>
+          <p>С обеих сторон выходят усиленные бойцы, остальные играют обычными классами.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Орда</div>
+        <div><h3>Зомби сразу много</h3>
+          <p>Заражение начинается не с одного носителя, а с половины сервера. Людям надо просто дожить.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Босс</div>
+        <div><h3>Отдельная карта с наградой</h3>
+          <p>Карта босса выносится на голосование: нужно 70% голосов. Открыть голосование —
+            команда <span class="mono dawnc">/boss</span> или пункт в меню.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Кланы -->
+  <section class="band" id="g6" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">06 · Кланы</div>
+      <h2>Играть вместе<br>выгоднее</h2>
+      <p class="sub">Клан — это общий банк аммопаков, тег над ником, свой раздел магазина
+        и совместные задания. Уровень качается игрой, а слоты и уровни можно докупить за аммопаки.</p>
+    </div>
+    <table class="ledger">
+      <thead><tr><th>Действие</th><th>Аммопаки</th></tr></thead>
+      <tbody>
+        <tr><td class="nm"><b>Создать клан</b><span>Название, тег и место лидера</span></td><td>10 000</td></tr>
+        <tr><td class="nm"><b>+1 уровень клану</b><span>Открывает клановое оружие и скидки</span></td><td>60</td></tr>
+        <tr><td class="nm"><b>+1 слот</b><span>Ещё одно место для участника</span></td><td>40</td></tr>
+      </tbody>
+    </table>
+    <div class="spec" style="margin-top:30px">
+      <div><span class="k">Открыть меню клана</span><span class="fill"></span><span class="v">/clan или /клан</span></div>
+      <div><span class="k">Список кланов</span><span class="fill"></span><span class="v">/clans или /кланы</span></div>
+      <div><span class="k">Задания клана</span><span class="fill"></span><span class="v">/tasks или /задания</span></div>
+      <div><span class="k">Колодец — общий банк</span><span class="fill"></span><span class="v">/well или /колодец</span></div>
+      <div><span class="k">Передать аммопаки игроку</span><span class="fill"></span><span class="v">/giveap ник количество</span></div>
+      <div><span class="k">Клановое оружие</span><span class="fill"></span><span class="v">отдельный раздел, нужен уровень</span></div>
+    </div>
+  </section>
+
+  <!-- 07 Команды -->
+  <section class="band alt" id="g7" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">07 · Команды</div>
+      <h2>Что писать в чат</h2>
+      <p class="sub">Команды набираются в игровом чате. Всё остальное — в меню на клавише
+        <span class="mono dawnc">M</span>.</p>
+    </div>
+    <div class="spec">
+      <div><span class="k">M</span><span class="fill"></span><span class="v">магазин, классы, кланы, привилегии</span></div>
+      <div><span class="k">/shop</span><span class="fill"></span><span class="v">магазин оружия напрямую</span></div>
+      <div><span class="k">/top, /топ</span><span class="fill"></span><span class="v">лучшие игроки</span></div>
+      <div><span class="k">/top15, /топ15</span><span class="fill"></span><span class="v">таблица пятнадцати первых</span></div>
+      <div><span class="k">/rank, /ранг</span><span class="fill"></span><span class="v">своё место, убийства и урон</span></div>
+      <div><span class="k">/clan, /клан</span><span class="fill"></span><span class="v">меню клана</span></div>
+      <div><span class="k">/clans, /кланы</span><span class="fill"></span><span class="v">рейтинг кланов</span></div>
+      <div><span class="k">/tasks, /задания</span><span class="fill"></span><span class="v">задания клана</span></div>
+      <div><span class="k">/well, /колодец</span><span class="fill"></span><span class="v">банк клана</span></div>
+      <div><span class="k">/giveap ник количество</span><span class="fill"></span><span class="v">передать аммопаки</span></div>
+      <div><span class="k">/nom</span><span class="fill"></span><span class="v">номинировать карту на голосование</span></div>
+      <div><span class="k">/boss</span><span class="fill"></span><span class="v">голосование за карту босса</span></div>
+    </div>
+  </section>
+
+  <!-- 08 Карты -->
+  <section class="band" id="g8" style="scroll-margin-top:70px">
+    <div class="head">
+      <div class="lbl">08 · Ротация</div>
+      <h2>Пятнадцать карт</h2>
+      <p class="sub">В конце раунда открывается голосование за следующую карту. Любую карту из ротации
+        можно номинировать заранее командой <span class="mono dawnc">/nom</span>.</p>
+    </div>
+    <div class="spec">
+      <div><span class="k">zm_3rooms</span><span class="fill"></span><span class="v">три комнаты, тесный бой</span></div>
+      <div><span class="k">zm_battleground_foda</span><span class="fill"></span><span class="v">открытое поле</span></div>
+      <div><span class="k">zm_bhzrd_base_rmk</span><span class="fill"></span><span class="v">база, много коридоров</span></div>
+      <div><span class="k">zm_deko2</span><span class="fill"></span><span class="v">классика ротации</span></div>
+      <div><span class="k">zm_deko2_zg_v2</span><span class="fill"></span><span class="v">переработанная версия</span></div>
+      <div><span class="k">zm_dust_world</span><span class="fill"></span><span class="v">пустынный городок</span></div>
+      <div><span class="k">zm_dust_world_zg</span><span class="fill"></span><span class="v">вариант с новыми точками</span></div>
+      <div><span class="k">zm_dust2_2x2_fixed</span><span class="fill"></span><span class="v">увеличенная de_dust2</span></div>
+      <div><span class="k">zm_fdust2x2</span><span class="fill"></span><span class="v">быстрая версия dust</span></div>
+      <div><span class="k">zm_fun_world_4_final</span><span class="fill"></span><span class="v">парк аттракционов</span></div>
+      <div><span class="k">zm_ice_attack</span><span class="fill"></span><span class="v">лёд, скользкие площадки</span></div>
+      <div><span class="k">zm_minecraft</span><span class="fill"></span><span class="v">кубический мир</span></div>
+      <div><span class="k">zm_snowbase</span><span class="fill"></span><span class="v">снежная база</span></div>
+      <div><span class="k">zm_texas_night</span><span class="fill"></span><span class="v">ночной городок</span></div>
+      <div><span class="k">zm_zombust</span><span class="fill"></span><span class="v">много этажей и лестниц</span></div>
     </div>
   </section>
 </section>
@@ -620,7 +952,9 @@ p{margin:0}
 
     <div class="tocline">
       <a href="#r1">01 Общие</a><a href="#r2">02 Игра</a><a href="#r3">03 Чат</a>
-      <a href="#r4">04 Ники</a><a href="#r5">05 Читы</a><a href="#r6">06 Наказания</a>
+      <a href="#r4">04 Ники</a><a href="#r5">05 Читы</a><a href="#r6">06 Кланы</a>
+      <a href="#r7">07 Спецраунды</a><a href="#r8">08 Аммопаки</a><a href="#r9">09 Администрация</a>
+      <a href="#r10">10 Наказания</a>
     </div>
 
     <div class="doc">
@@ -628,9 +962,13 @@ p{margin:0}
         <div class="doc-h"><span class="i">01</span><h3>Общие положения</h3></div>
         <div class="doc-i"><span class="c">1.1</span><p>Играем по правилам сервера. Отговорка «не читал» не работает.</p></div>
         <div class="doc-i"><span class="c">1.2</span><p>Уважаем игроков и администрацию. Оскорбления запрещены в любой форме.</p></div>
-        <div class="doc-i"><span class="c">1.3</span><p>Запрещена реклама других серверов, каналов и сторонних проектов.</p></div>
+        <div class="doc-i"><span class="c">1.3</span><p>Запрещена реклама других серверов, каналов и сторонних проектов — в чате, в нике, в клан-теге и в голосовом.</p></div>
         <div class="doc-i"><span class="c">1.4</span><p>Запрещено попрошайничество аммопаков, привилегий и админки.</p></div>
         <div class="doc-i"><span class="c">1.5</span><p>Обход блокировки — смена ника, аккаунта или IP ради возврата — карается повторным баном без разбора.</p></div>
+        <div class="doc-i"><span class="c">1.6</span><p><b>Второй аккаунт</b> ради обхода наказания, накрутки статистики или лишнего голоса запрещён. Играть с одного компьютера вдвоём можно, если это разные живые люди.</p></div>
+        <div class="doc-i"><span class="c">1.7</span><p>Запрещена продажа, обмен и передача аккаунта, привилегии, клана и аммопаков за реальные деньги мимо администрации.</p></div>
+        <div class="doc-i"><span class="c">1.8</span><p>Правила действуют и в игре, и в Telegram-канале проекта.</p></div>
+        <div class="doc-i"><span class="c">1.9</span><p>Администрация может изменить правила, но только через голосование в канале. Новая редакция объявляется там же и сразу появляется на этой странице.</p></div>
       </section>
 
       <section id="r2" style="scroll-margin-top:70px">
@@ -641,6 +979,11 @@ p{margin:0}
         <div class="doc-i"><span class="c">2.4</span><p><b>Позиции.</b> Занимать можно любые доступные точки. Запрещены баги геометрии — места, куда зомби физически не попадает.</p></div>
         <div class="doc-i"><span class="c">2.5</span><p><b>АФК.</b> Долгий простой — кик. Зомби обязан искать людей, а не отсиживаться.</p></div>
         <div class="doc-i"><span class="c">2.6</span><p>Запрещено использовать баги плагинов и карт ради аммопаков, оружия или бессмертия. О найденном баге сообщи администрации — за это благодарим, а не наказываем.</p></div>
+        <div class="doc-i"><span class="c">2.7</span><p><b>Барьеры</b> ставятся для защиты, а не для запирания своих. Барьер, перекрывающий союзникам единственный выход, снимается, а хозяин получает предупреждение.</p></div>
+        <div class="doc-i"><span class="c">2.8</span><p><b>Оружие по области</b> — РПГ, четырёхстволка, Танатос — не повод класть своих. Урон по союзникам выключен, но выталкивать людей взрывом к зомби запрещено.</p></div>
+        <div class="doc-i"><span class="c">2.9</span><p><b>Первый зомби</b> обязан играть за зомби. Самоубийство, выход и переподключение ради смены роли запрещены.</p></div>
+        <div class="doc-i"><span class="c">2.10</span><p>Запрещено сливать координаты людей зомби через голосовой чат, сторонние мессенджеры и стримы.</p></div>
+        <div class="doc-i"><span class="c">2.11</span><p>Микрофон в раунде — для игры. Крики в микрофон, чтобы заглушить своих, приравниваются к помехе команде.</p></div>
       </section>
 
       <section id="r3" style="scroll-margin-top:70px">
@@ -649,6 +992,10 @@ p{margin:0}
         <div class="doc-i"><span class="c">3.2</span><p>Запрещены флуд, спам, капс и злоупотребление микрофоном. Музыка в голосовой чат — кик.</p></div>
         <div class="doc-i"><span class="c">3.3</span><p>Действия администрации обсуждаются в Telegram, а не в общем чате.</p></div>
         <div class="doc-i"><span class="c">3.4</span><p>Запрещено выкладывать чужие личные данные.</p></div>
+        <div class="doc-i"><span class="c">3.5</span><p>Запрещены угрозы — реальные и игровые, включая обещания «зайти с читами» или «положить сервер».</p></div>
+        <div class="doc-i"><span class="c">3.6</span><p>Запрещены ссылки на скачивание софта, читов и сторонних сборок.</p></div>
+        <div class="doc-i"><span class="c">3.7</span><p>Спор с администратором в общем чате прекращается по первому требованию. Не согласен — пишешь в Telegram, там разберут по логам.</p></div>
+        <div class="doc-i"><span class="c">3.8</span><p>Язык общения любой. Но если тебя просят перейти на русский или английский, чтобы понимали остальные, — переходи.</p></div>
       </section>
 
       <section id="r4" style="scroll-margin-top:70px">
@@ -657,6 +1004,9 @@ p{margin:0}
         <div class="doc-i"><span class="c">4.2</span><p>Запрещено копировать ник другого игрока или администратора, ставить пустой и нечитаемый ник.</p></div>
         <div class="doc-i"><span class="c">4.3</span><p>Запрещено носить клан-тег, не состоя в клане.</p></div>
         <div class="doc-i"><span class="c">4.4</span><p>Слишком длинный ник обрезается сервером автоматически. Это не ошибка.</p></div>
+        <div class="doc-i"><span class="c">4.5</span><p>Запрещены ники и теги, изображающие администрацию: <span class="mono">ADMIN</span>, <span class="mono">VIP</span>, «модератор» и подобное.</p></div>
+        <div class="doc-i"><span class="c">4.6</span><p>Смена ника ради ухода от наказания считается обходом блокировки. Наказание привязано к SteamID, а не к нику.</p></div>
+        <div class="doc-i"><span class="c">4.7</span><p>Личная модель, купленная за аммопаки, не должна повторять модель зомби или сливаться с текстурами карты.</p></div>
       </section>
 
       <section id="r5" style="scroll-margin-top:70px">
@@ -665,18 +1015,82 @@ p{margin:0}
         <div class="doc-i"><span class="c">5.2</span><p>Запрещены bhop-скрипты и автобинды на прыжок. Прыгать руками можно.</p></div>
         <div class="doc-i"><span class="c">5.3</span><p>Запрещены прозрачные модели и правка игровых файлов ради видимости зомби.</p></div>
         <div class="doc-i"><span class="c">5.4</span><p>Прикрытие читера приравнивается к нарушению.</p></div>
+        <div class="doc-i"><span class="c">5.5</span><p>Запрещены сторонние сборки клиента, снимающие ограничения игры: увеличенная дальность прорисовки, отключение дыма и вспышек, изменённая гамма моделей.</p></div>
+        <div class="doc-i"><span class="c">5.6</span><p>Запрещены любые действия, роняющие сервер: флуд командами, эксплойты движка, попытки перегрузить канал.</p></div>
+        <div class="doc-i"><span class="c">5.7</span><p>Подозрение на чит проверяется по логам и записи. Отказ выйти на связь при разборе трактуется не в пользу игрока.</p></div>
+        <div class="doc-i"><span class="c">5.8</span><p>Нашёл дыру в защите — напиши администрации. Молча пользоваться ею — то же нарушение, что и чит.</p></div>
       </section>
 
-      <section id="r6" style="scroll-margin-top:70px;border-bottom:0">
-        <div class="doc-h"><span class="i">06</span><h3>Администрация и наказания</h3></div>
-        <div class="doc-i"><span class="c">6.1</span><p>Администратор соблюдает те же правила. Привилегия не даёт права нарушать.</p></div>
-        <div class="doc-i"><span class="c">6.2</span><p>Запрещено пользоваться админ-командами ради себя, друзей или клана.</p></div>
-        <div class="doc-i"><span class="c">6.3</span><p>Спорные решения разбираются в Telegram по логам.</p></div>
+      <section id="r6" style="scroll-margin-top:70px">
+        <div class="doc-h"><span class="i">06</span><h3>Кланы</h3></div>
+        <div class="doc-i"><span class="c">6.1</span><p>Клан отвечает за своих. За системный тиминг участников клан расформировывается целиком.</p></div>
+        <div class="doc-i"><span class="c">6.2</span><p>Запрещён тиминг между кланами — договорной слив раундов ради опыта и заданий.</p></div>
+        <div class="doc-i"><span class="c">6.3</span><p>Банк клана — общий. Лидер, выводящий аммопаки из колодца в свой карман против воли состава, снимается с должности.</p></div>
+        <div class="doc-i"><span class="c">6.4</span><p>Запрещены названия и теги с матом, рекламой и символикой, запрещённой правилом 4.1.</p></div>
+        <div class="doc-i"><span class="c">6.5</span><p>Клановое оружие требует уровня клана. Попытка обойти проверку уровня — нарушение правила 2.6.</p></div>
+        <div class="doc-i"><span class="c">6.6</span><p>Приём в клан и исключение — дело лидера. Администрация в состав не вмешивается, кроме случаев из 6.1 и 6.4.</p></div>
+      </section>
+
+      <section id="r7" style="scroll-margin-top:70px">
+        <div class="doc-h"><span class="i">07</span><h3>Спецраунды и босс</h3></div>
+        <div class="doc-i"><span class="c">7.1</span><p>Немезида и выживший ничего не покупают — это не баг, а правило режима. Попытка обойти запрет через баг — нарушение 2.6.</p></div>
+        <div class="doc-i"><span class="c">7.2</span><p>В спецраундах возрождения нет. Самоубийство ради быстрого рестарта запрещено.</p></div>
+        <div class="doc-i"><span class="c">7.3</span><p>Выпал немезидой или выжившим — играй. Выход из игры, чтобы сбросить роль, считается сливом раунда.</p></div>
+        <div class="doc-i"><span class="c">7.4</span><p>Голосование за карту босса требует 70% голосов. Накрутка голосов вторыми аккаунтами запрещена.</p></div>
+        <div class="doc-i"><span class="c">7.5</span><p>Награда с босса — общая. Блокировать союзникам подход к сундукам запрещено.</p></div>
+      </section>
+
+      <section id="r8" style="scroll-margin-top:70px">
+        <div class="doc-h"><span class="i">08</span><h3>Аммопаки, магазин, донат</h3></div>
+        <div class="doc-i"><span class="c">8.1</span><p>Аммопаки зарабатываются уроном и убийствами. Любая накрутка — сговор, урон по «своему» боту, эксплойт плагина — обнуляет счёт.</p></div>
+        <div class="doc-i"><span class="c">8.2</span><p>Передача аммопаков между игроками разрешена. Продажа их за реальные деньги — нет.</p></div>
+        <div class="doc-i"><span class="c">8.3</span><p>Привилегия выдаётся по SteamID и не переносится на другой аккаунт.</p></div>
+        <div class="doc-i"><span class="c">8.4</span><p>Донат не возвращается, если привилегия снята за нарушение правил. Если привилегия не выдана по нашей вине — вернём или продлим, на выбор.</p></div>
+        <div class="doc-i"><span class="c">8.5</span><p>Привилегия не даёт боевого преимущества и не может быть основанием для поблажки при разборе.</p></div>
+        <div class="doc-i"><span class="c">8.6</span><p>Цены на всё — оружие, способности, привилегии — меняются только через голосование в канале.</p></div>
+      </section>
+
+      <section id="r9" style="scroll-margin-top:70px">
+        <div class="doc-h"><span class="i">09</span><h3>Администрация</h3></div>
+        <div class="doc-i"><span class="c">9.1</span><p>Администратор соблюдает те же правила. Привилегия не даёт права нарушать.</p></div>
+        <div class="doc-i"><span class="c">9.2</span><p>Запрещено пользоваться админ-командами ради себя, друзей или клана.</p></div>
+        <div class="doc-i"><span class="c">9.3</span><p>Спорные решения разбираются в Telegram по логам.</p></div>
+        <div class="doc-i"><span class="c">9.4</span><p>Администратор обязан назвать причину наказания по первому запросу.</p></div>
+        <div class="doc-i"><span class="c">9.5</span><p>Смена карты, рестарт раунда и выдача аммопаков по личной прихоти запрещены.</p></div>
+        <div class="doc-i"><span class="c">9.6</span><p>Администратор, нарушивший этот раздел, теряет права. За повтор — навсегда, без возврата оплаты.</p></div>
+      </section>
+
+      <section id="r10" style="scroll-margin-top:70px;border-bottom:0">
+        <div class="doc-h"><span class="i">10</span><h3>Наказания и жалобы</h3></div>
+        <div class="doc-i"><span class="c">10.1</span><p>Одно предупреждение выдаётся на всё время игры и сразу на все правила — второго не будет.</p></div>
+        <div class="doc-i"><span class="c">10.2</span><p>За серьёзное нарушение бан на сутки выдаётся без предупреждения.</p></div>
+        <div class="doc-i"><span class="c">10.3</span><p>Администраторам и VIP вместо бана снимаются привилегии на сутки, при повторе — снимаются полностью и навсегда.</p></div>
+        <div class="doc-i"><span class="c">10.4</span><p>Наказание привязано к SteamID. Бан по IP выдаётся только за обход блокировки.</p></div>
+        <div class="doc-i"><span class="c">10.5</span><p><b>Жалоба.</b> Пиши администратору в Telegram: свой ник, ник нарушителя, карта и примерное время. Чем точнее время, тем быстрее найдём в логах.</p></div>
+        <div class="doc-i"><span class="c">10.6</span><p><b>Апелляция.</b> Считаешь бан ошибочным — пиши туда же. Разбираем по логам, ошибочные баны снимаем и извиняемся.</p></div>
+        <div class="doc-i"><span class="c">10.7</span><p>Оскорбления в жалобе и апелляции сами по себе основание для отказа в разборе.</p></div>
+
         <div class="punish">
-          <div class="lbl">Как наказываем</div>
-          <p>Одно предупреждение выдаётся на всё время игры и сразу на все правила — второго не будет.
-            За серьёзное нарушение бан на сутки выдаётся без предупреждения. Администраторам и VIP вместо бана
-            снимаются привилегии на сутки, при повторе — снимаются полностью и навсегда.</p>
+          <div class="lbl">Сроки</div>
+          <table class="ledger" style="margin-top:12px">
+            <thead><tr><th>Нарушение</th><th>Наказание</th></tr></thead>
+            <tbody>
+              <tr><td class="nm"><b>Читы, скрипты, макросы</b><span>правила 5.1–5.3</span></td><td>бан навсегда</td></tr>
+              <tr><td class="nm"><b>Тиминг с зомби</b><span>правило 2.2 · повтор: неделя</span></td><td>сутки</td></tr>
+              <tr><td class="nm"><b>Слив раунда, помеха команде</b><span>правила 2.1, 2.3 · повтор: сутки</span></td><td>предупреждение</td></tr>
+              <tr><td class="nm"><b>Баги карт и плагинов</b><span>правило 2.6 · повтор: неделя</span></td><td>сутки</td></tr>
+              <tr><td class="nm"><b>Оскорбления, вражда</b><span>правила 1.2, 3.1 · повтор: сутки</span></td><td>предупреждение</td></tr>
+              <tr><td class="nm"><b>Флуд, спам, микрофон</b><span>правило 3.2 · повтор: сутки</span></td><td>кик</td></tr>
+              <tr><td class="nm"><b>Реклама</b><span>правило 1.3 · повтор: навсегда</span></td><td>сутки</td></tr>
+              <tr><td class="nm"><b>Запрещённый ник или тег</b><span>раздел 04 · повтор: сутки</span></td><td>кик до смены</td></tr>
+              <tr><td class="nm"><b>Обход блокировки</b><span>правило 1.5</span></td><td>бан навсегда</td></tr>
+              <tr><td class="nm"><b>Накрутка аммопаков</b><span>правило 8.1 · повтор: бан навсегда</span></td><td>обнуление счёта</td></tr>
+              <tr><td class="nm"><b>Злоупотребление админкой</b><span>раздел 09 · повтор: снятие навсегда</span></td><td>снятие прав на сутки</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:18px">Сроки — ориентир, а не приговор: администратор может смягчить наказание, если игрок признал
+            нарушение и исправился, и обязан объяснить решение в Telegram, если его об этом спросили.
+            Любой срок из таблицы меняется голосованием в канале.</p>
         </div>
       </section>
     </div>
@@ -713,6 +1127,14 @@ p{margin:0}
       <h2>Кланы</h2>
       <p class="sub">Клан даёт общий банк, тег над ником, отдельный раздел магазина и совместные задания.
         Уровень качается игрой, слоты и уровни можно докупить.</p>
+    </div>
+    <div class="spec" style="margin-bottom:34px">
+      <div><span class="k">Создать клан</span><span class="fill"></span><span class="v">10 000 аммопаков</span></div>
+      <div><span class="k">+1 уровень</span><span class="fill"></span><span class="v">60 аммопаков</span></div>
+      <div><span class="k">+1 слот</span><span class="fill"></span><span class="v">40 аммопаков</span></div>
+      <div><span class="k">Меню клана</span><span class="fill"></span><span class="v">/clan или /клан</span></div>
+      <div><span class="k">Задания</span><span class="fill"></span><span class="v">/tasks или /задания</span></div>
+      <div><span class="k">Колодец</span><span class="fill"></span><span class="v">/well или /колодец</span></div>
     </div>
     <div class="tools">
       <span class="stamp" style="margin-left:0"><span class="dot" id="clanDot"></span><span id="clanUpd">загрузка…</span></span>
@@ -813,6 +1235,7 @@ p{margin:0}
 <!-- ================= НИЖНЕЕ МЕНЮ ================= -->
 <nav class="tabs" id="tabs">
   <a href="#/" data-r="/"><svg viewBox="0 0 24 24"><path d="M3 15h18"/><path d="M8 15a4 4 0 0 1 8 0"/><path d="M5 19h5M14 19h5"/></svg>Главная</a>
+  <a href="#/game" data-r="/game"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Игра</a>
   <a href="#/rules" data-r="/rules"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7"/></svg>Правила</a>
   <a href="#/players" data-r="/players"><svg viewBox="0 0 24 24"><path d="M4 20V9M10 20V4M16 20v-8M22 20H2"/></svg>Игроки</a>
   <a href="#/clans" data-r="/clans"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 7.7 8 9 4.6-1.3 8-4 8-9V6z"/></svg>Кланы</a>
@@ -910,14 +1333,15 @@ function initStatic(){
 }
 
 /* ---------------- роутер ---------------- */
-const R = {'/':'p-home','/rules':'p-rules','/players':'p-players','/clans':'p-clans','/donate':'p-donate'};
-const TITLE = {'/':'Чёрный Рассвет — Zombie Plague, CS 1.6','/rules':'Правила — Чёрный Рассвет',
+const R = {'/':'p-home','/game':'p-game','/rules':'p-rules','/players':'p-players','/clans':'p-clans','/donate':'p-donate'};
+const TITLE = {'/':'Чёрный Рассвет — Zombie Plague, CS 1.6','/game':'Игра — Чёрный Рассвет','/rules':'Правила — Чёрный Рассвет',
   '/players':'Топ игроков — Чёрный Рассвет','/clans':'Кланы — Чёрный Рассвет','/donate':'Поддержать — Чёрный Рассвет'};
 
 function route(){
   let p = location.hash.replace(/^#/,'') || '/';
   let jump = null;
-  if(/^r\d$/.test(p)){ jump=p; p='/rules'; }
+  if(/^r\d+$/.test(p)){ jump=p; p='/rules'; }
+  if(/^g\d+$/.test(p)){ jump=p; p='/game';  }
   if(!R[p]) p='/';
   $$('.page').forEach(el=>el.classList.toggle('on', el.id===R[p]));
   $$('#railNav a, #tabs a').forEach(a=>a.classList.toggle('on', a.dataset.r===p));
@@ -926,7 +1350,11 @@ function route(){
   else window.scrollTo(0,0);
   if(p==='/players'||p==='/clans') loadTop();
 }
-addEventListener('hashchange',()=>{ if(location.hash.startsWith('#r') && !location.hash.startsWith('#/')) { if(!/^#r\d$/.test(location.hash)) return; } route(); });
+addEventListener('hashchange',()=>{
+  const h=location.hash;
+  if((h.startsWith('#r')||h.startsWith('#g')) && !h.startsWith('#/')){ if(!/^#[rg]\d+$/.test(h)) return; }
+  route();
+});
 
 /* ---------------- онлайн ---------------- */
 let LIVE = new Set();
