@@ -264,6 +264,8 @@ p{margin:0}
 .bnum i{display:block;font-style:normal;font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:4px}
 .bnum.mut{color:var(--ash)}
 .btag{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:var(--dim);border:1px solid var(--edge2);padding:1px 6px;flex-shrink:0}
+.bsub{font-family:var(--fm);font-size:10px;letter-spacing:.08em;color:var(--dim);margin-top:6px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:700px){
   .brow{grid-template-columns:34px 1fr 96px;gap:12px;padding:14px 0}
   .brow .n{font-size:18px}
@@ -1460,7 +1462,7 @@ async function loadTop(force){
     const r=await fetch(CONFIG.api.top,{cache:'no-store'}); if(!r.ok) throw 0;
     const j=await r.json();
     TOP={ players:(j.players||[]).map(p=>({name:p.name,kills:+p.kills||0,damage:+p.damage||0,hs:+(p.hs??0),deaths:+p.deaths||0})),
-          clans:(j.clans||[]).map(c=>({name:c.name,tag:c.tag||'',level:+c.level||0,exp:+c.exp||0,wins:+c.wins||0,slots:+c.slots||0})),
+          clans:(j.clans||[]).map(c=>({name:c.name,tag:c.tag||'',level:+c.level||0,exp:+c.exp||0,wins:+c.wins||0,losses:+c.losses||0,slots:+c.slots||0,members:+c.members||0,leader:c.leader||''})),
           time:j.updated||Date.now()/1000, loaded:Date.now(), demo:false };
     if(!TOP.players.length && !TOP.clans.length) throw 0;
   }catch(e){
@@ -1495,6 +1497,12 @@ function paintTop(){
       : '<div class="void-msg"><b>Рейтинг пуст</b>Появится после первой смены карты с игроками на сервере.</div>';
   }
 
+  /* Глава и состав приходят не всегда - если их нет, строку не рисуем. */
+  const clanSub=c=>{const p=[];
+    if(c.leader) p.push('Глава: '+esc(c.leader));
+    if(c.members) p.push(fmt(c.members)+' из '+fmt(c.slots||c.members)+' в составе');
+    if(c.wins||c.losses) p.push('войны '+fmt(c.wins)+'/'+fmt(c.losses));
+    return p.length?`<div class="bsub">${p.join(' · ')}</div>`:'';};
   const cl=[...TOP.clans].sort((a,b)=>(b.exp-a.exp)||(b.level-a.level)).slice(0,15);
   const cb=$('#clanBoard');
   if(cb){
@@ -1506,6 +1514,7 @@ function paintTop(){
         <span class="n">${i+1}</span>
         <div class="bname">
           <div class="t"><span>${esc(c.name)}</span>${c.tag?`<span class="btag">${esc(c.tag)}</span>`:''}</div>
+          ${clanSub(c)}
           <div class="bar"><i style="width:${Math.max(2,c.exp/max*100)}%"></i></div>
         </div>
         <span class="bnum">${fmt(c.exp)}<i>опыта</i></span>
