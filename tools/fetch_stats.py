@@ -5,7 +5,7 @@
 
 Что делает:
   1. Спрашивает у игрового сервера онлайн и карту по протоколу A2S (UDP).
-  2. Забирает через API панели файлы csstats.dat и zm_clans.ini.
+  2. Забирает через API панели csstats.dat, zm_clans.ini и состав кланов.
   3. Кладёт разобранные данные в data/online.json и data/top.json.
 
 Запускается роботом GitHub Actions. Ключ панели берётся из переменной
@@ -49,6 +49,12 @@ CLANS_PATHS = [
     '/cstrike/addons/amxmodx/data/zm_clans.ini',
     '/cstrike/addons/amxmodx/configs/zombie_plague/zm_clans.ini',
     '/addons/amxmodx/configs/zm_clans.ini',
+]
+MEMBERS_PATHS = [
+    '/cstrike/addons/amxmodx/data/zm_clan_members.ini',
+    '/cstrike/addons/amxmodx/configs/zm_clan_members.ini',
+    '/cstrike/addons/amxmodx/configs/zombie_plague/zm_clan_members.ini',
+    '/addons/amxmodx/data/zm_clan_members.ini',
 ]
 
 TOP_KEEP   = 50     # сколько игроков отдавать сайту (он показывает 15, но сортирует сам)
@@ -392,10 +398,12 @@ def parse_clans(text, nick_by_steam=None):
         if not name:
             name = tag
         out.append({
+            'idx': len(out),          # номер строки в файле - по нему состав
             'name': name, 'tag': tag, 'level': level, 'exp': exp,
             'coins': coins, 'bank': bank, 'slots': slots,
             'wins': num(k + 1), 'losses': num(k + 2),
-            'leader': nick_by_steam.get(tok[k], ''),
+            'leader': nick_by_steam.get(tok[k].strip('"'), ''),
+            'members': 0,
         })
     log('  zm_clans.ini: кланов %d' % len(out))
     if not out:
@@ -403,6 +411,50 @@ def parse_clans(text, nick_by_steam=None):
             safe = re.sub(r'STEAM_[0-9:]+', 'STEAM_x:y:z', line)
             log('    не разобрана строка: ' + safe[:200])
     return out
+
+# ------------------------------------------- разбор zm_clan_members.ini
+
+RANK_LEADER = 2
+
+def parse_members(text):
+    """Строка: "STEAM_лидера" "ник" клан ранг пожертвовал колодец ...
+
+    Клан - это номер строки в zm_clans.ini, ранг 2 - глава.
+    """
+    out = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line[0] in ';#[/':
+            continue
+        try:
+            tok = shlex.split(line)
+        except ValueError:
+            tok = line.split()
+        if len(tok) < 4:
+            continue
+        try:
+            clan, rank = int(tok[2]), int(tok[3])
+        except ValueError:
+            continue
+        if clan < 0:
+            continue
+        out.append({'auth': tok[0], 'name': tok[1], 'clan': clan, 'rank': rank})
+    log('  zm_clan_members.ini: игроков в кланах %d' % len(out))
+    return out
+
+
+def fill_roster(clans, members):
+    """Проставляет каждому клану число участников и ник главы."""
+    by_idx = {c['idx']: c for c in clans}
+    for m in members:
+        c = by_idx.get(m['clan'])
+        if not c:
+            continue
+        c['members'] += 1
+        if m['rank'] >= RANK_LEADER and m['name']:
+            c['leader'] = m['name']
+    return clans
+
 
 # ------------------------------------------------------------------ запись
 
@@ -452,11 +504,14 @@ def main():
     log('[2/3] Забираю файлы статистики через панель...')
     stats_raw = grab('csstats.dat',  CSSTATS_PATHS)
     clans_raw = grab('zm_clans.ini', CLANS_PATHS)
+    mem_raw   = grab('zm_clan_members.ini', MEMBERS_PATHS)
 
     log('[3/3] Разбираю...')
     people = parse_csstats(stats_raw) if stats_raw else []
     nick_by_steam = {p['steam']: p['name'] for p in people if p.get('steam')}
     clans = parse_clans(dec(clans_raw), nick_by_steam) if clans_raw else []
+    if clans and mem_raw:
+        fill_roster(clans, parse_members(dec(mem_raw)))
 
     if not people and not clans:
         log('  данных нет — старый data/top.json не трогаю')
@@ -480,7 +535,8 @@ def main():
     write_json('top.json', {
         'players': top_players,
         'clans':   [{'name': c['name'], 'tag': c['tag'], 'level': c['level'],
-                     'exp': c['exp'], 'wins': c['wins'], 'slots': c['slots'],
+                     'exp': c['exp'], 'wins': c['wins'], 'losses': c['losses'],
+                     'slots': c['slots'], 'members': c['members'],
                      'leader': c['leader']} for c in top_clans],
         'updated': now,
     })
