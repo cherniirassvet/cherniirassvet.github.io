@@ -287,6 +287,33 @@ p{margin:0}
   padding:14px 16px;font-size:14px;color:var(--dawn);word-break:break-word;line-height:1.5}
 .paybtns{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
 .paybtns .btn{flex:1 1 190px}
+.step{border-top:1px solid var(--edge);padding:30px 0}
+.step:first-of-type{border-top:0;padding-top:0}
+.step.off{opacity:.4;pointer-events:none}
+.step-h{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.step-n{font-family:var(--fm);font-size:11px;letter-spacing:.2em;color:var(--dim);flex-shrink:0}
+.step-h h3{font-size:17px;font-family:var(--fb);font-weight:600;text-transform:none;letter-spacing:0}
+.step p.hint{color:var(--ash);font-size:14px;margin-bottom:14px;max-width:62ch}
+.picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:12px}
+.picks .pgrp{grid-column:1/-1;margin-top:10px}
+.picks .pgrp:first-child{margin-top:0}
+.pick{text-align:left;background:var(--pit);border:1px solid var(--edge2);padding:15px 16px;
+  cursor:pointer;display:flex;flex-direction:column;gap:5px;font:inherit;color:inherit;
+  transition:border-color .16s,background .16s}
+.pick:hover{border-color:var(--dawn)}
+.pick.on{border-color:var(--dawn);background:rgba(200,183,154,.07)}
+.pick .pn{font-size:15px;color:var(--bone);font-weight:500}
+.pick .pd{font-size:12px;color:var(--dim);line-height:1.45}
+.pick .pp{font-family:var(--fm);font-size:14px;color:var(--dawn);margin-top:3px}
+.pick .pa{font-family:var(--fm);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.pick.on .pa{color:var(--dawn)}
+.found{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.found .pick{flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px}
+.found .mono{font-size:13px;color:var(--dawn)}
+.ordersum{background:var(--pit);border:1px solid var(--edge);padding:18px 18px 20px}
+.ordersum .orow{display:flex;justify-content:space-between;gap:14px;padding:7px 0;font-size:14px}
+.ordersum .orow span:first-child{color:var(--dim)}
+.ordersum .orow b{color:var(--dawn);font-family:var(--fm);font-weight:600}
 .paysum{font-family:var(--fm);font-size:13px;color:var(--ash);margin-top:12px;letter-spacing:.06em}
 .paysum b{color:var(--dawn);font-weight:600}
 .payhint{font-size:13px;color:var(--dim);margin-top:8px}
@@ -1194,7 +1221,7 @@ p{margin:0}
           <li><b>VIP-классы зомби</b></li>
           <li>Больше стартовых аммопаков</li>
         </ul>
-        <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener" style="margin-top:22px;width:100%">Купить VIP</a>
+        <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:22px;width:100%">Купить VIP</a>
       </div>
       <div class="col">
         <h3>Admin + VIP</h3>
@@ -1209,7 +1236,7 @@ p{margin:0}
           <li><b>Админская модель зомби</b></li>
           <li>Приоритетный разбор жалоб</li>
         </ul>
-        <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener" style="margin-top:22px;width:100%">Купить админку</a>
+        <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:22px;width:100%">Купить админку</a>
       </div>
     </div>
   </section>
@@ -1227,7 +1254,7 @@ p{margin:0}
       <tbody id="ledgerBody"></tbody>
     </table>
     <div class="paybtns" style="margin-top:28px">
-      <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Купить привилегию</a>
+      <a class="btn btn-solid" href="#/buy" data-r="/buy">Купить привилегию</a>
       <a class="btn adminlink" href="#" target="_blank" rel="noopener">Написать администратору</a>
     </div>
   </section>
@@ -1248,7 +1275,7 @@ p{margin:0}
             <div class="lbl">04</div><div><p>Привилегия выдаётся по SteamID и включается после смены карты.</p></div></div>
         </div>
         <div class="paybtns" style="margin-top:26px">
-          <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Купить привилегию</a>
+          <a class="btn btn-solid" href="#/buy" data-r="/buy">Купить привилегию</a>
           <a class="btn adminlink" href="#" target="_blank" rel="noopener">Написать администратору</a>
         </div>
       </div>
@@ -1276,25 +1303,10 @@ p{margin:0}
       </div>
       <div class="row">
         <div class="lbl">Собрать</div>
-        <div><h3>Готовая строка — скопируй и вставь</h3>
-          <p>Выбери, что берёшь, впиши свой SteamID — ниже соберётся строка,
-            которую нужно вставить в поле «Сообщение» на странице оплаты.</p>
-          <div class="paybuild">
-            <select id="payItem" aria-label="Что берёшь"></select>
-            <select id="payTerm" aria-label="Срок">
-              <option value="month">на месяц</option>
-              <option value="forever">навсегда</option>
-            </select>
-            <input id="paySteam" placeholder="STEAM_0:1:12345678" spellcheck="false" autocomplete="off" aria-label="Твой SteamID">
-          </div>
-          <span class="mono paymsg" id="payMsg">VIP STEAM_0:1:12345678</span>
-          <p class="paysum">К оплате: <b id="paySum">30 €</b></p>
-          <p class="payhint" id="payHint">Впиши SteamID — без него привилегию придётся выдавать руками.</p>
-          <div class="paybtns">
-            <button type="button" class="btn" id="payCopy">Скопировать строку</button>
-            <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Перейти к оплате</a>
-          </div>
-        </div>
+        <div><h3>Страница заказа посчитает всё сама</h3>
+          <p>Выбираешь позицию, вписываешь SteamID (или находишь его по нику) —
+            страница показывает сумму и готовую строку для сообщения к платежу.</p>
+          <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:14px">Перейти к заказу</a></div>
       </div>
       <div class="row">
         <div class="lbl">Где взять SteamID</div>
@@ -1317,6 +1329,79 @@ p{margin:0}
           <p>Привилегия привязывается к SteamID и начинает работать со следующей карты.
             Ник менять можно сколько угодно — на привилегию это не влияет.</p></div>
       </div>
+    </div>
+  </section>
+</section>
+
+<!-- =================================================================
+     СТРАНИЦА: ЗАКАЗ
+     ================================================================= -->
+<section class="page" id="p-buy">
+  <section class="band" style="border-top:0">
+    <div class="head">
+      <div class="lbl">Заказ · три шага</div>
+      <h2>Купить привилегию</h2>
+      <p class="sub">Собери заказ здесь — страница сама посчитает сумму и составит строку,
+        которую нужно вставить при оплате. Без неё привилегия не найдёт хозяина.</p>
+    </div>
+
+    <div class="step" id="stepItem">
+      <div class="step-h"><span class="step-n">01</span><h3>Что берёшь</h3></div>
+      <p class="hint">Выбери позицию. Что входит — расписано на странице «Поддержать».</p>
+      <div class="picks" id="buyPicks"></div>
+      <div class="termpick" id="buyTermRow" style="margin:18px 0 0">
+        <span class="lbl">Срок</span>
+        <button type="button" class="term on" data-bterm="month">На месяц</button>
+        <button type="button" class="term" data-bterm="forever">Навсегда</button>
+      </div>
+    </div>
+
+    <div class="step off" id="stepWho">
+      <div class="step-h"><span class="step-n">02</span><h3>Кому выдать</h3></div>
+      <p class="hint">Привилегия привязывается к SteamID — ник для этого не годится, его можно сменить.
+        Не знаешь свой SteamID: <b>зайди на сервер</b>, потом впиши тут свой ник и нажми «найти».
+        Ищу среди тех, кто сейчас в игре, и среди участников кланов.</p>
+      <div class="paybuild">
+        <input id="buyWho" placeholder="STEAM_0:1:12345678 или ник" spellcheck="false" autocomplete="off" aria-label="SteamID или ник">
+        <button type="button" class="btn" id="buyFind">Найти по нику</button>
+      </div>
+      <div class="found" id="buyFound"></div>
+      <p class="payhint" id="buyWhoHint">SteamID виден в игре: консоль клавишей <span class="mono dawnc">~</span>, команда <span class="mono dawnc">status</span>.</p>
+    </div>
+
+    <div class="step off" id="stepPay">
+      <div class="step-h"><span class="step-n">03</span><h3>Оплата</h3></div>
+      <div class="ordersum">
+        <div class="orow"><span>Позиция</span><b id="oItem">—</b></div>
+        <div class="orow"><span>Срок</span><b id="oTerm">—</b></div>
+        <div class="orow"><span>Кому</span><b id="oWho">—</b></div>
+        <div class="orow" style="border-top:1px solid var(--edge);margin-top:6px;padding-top:13px"><span>К оплате</span><b id="oSum">—</b></div>
+      </div>
+      <p class="hint" style="margin:18px 0 8px">Вставь эту строку в поле «Сообщение» на странице оплаты:</p>
+      <span class="mono paymsg" id="buyMsg">—</span>
+      <p class="payhint" id="buyHint"></p>
+      <div class="paybtns">
+        <button type="button" class="btn" id="buyCopy">Скопировать строку</button>
+        <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Перейти к оплате</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="head">
+      <div class="lbl">Если что-то пошло не так</div>
+      <h2>Платёж не пропадёт</h2>
+    </div>
+    <div class="rows">
+      <div class="row"><div class="lbl">Забыл строку</div>
+        <div><h3>Напиши администратору</h3>
+          <p>Платёж без сообщения или с опечаткой попадает к администратору с пометкой, что не так.
+            Привилегию выдадут руками — не мгновенно, но выдадут.</p>
+          <a class="btn adminlink" href="#" target="_blank" rel="noopener" style="margin-top:14px">Написать администратору</a></div></div>
+      <div class="row"><div class="lbl">Когда включится</div>
+        <div><h3>Со следующей карты</h3>
+          <p>VIP и админка выдаются автоматически — обычно за минуту после оплаты.
+            В игре появляются со сменой карты.</p></div></div>
     </div>
   </section>
 </section>
@@ -1354,7 +1439,8 @@ const CONFIG = {
   // поэтому цифры свежие. Если бот молчит — берём то, что робот сложил
   // в data/*.json (обновляется раз в 15 минут).
   live:   { online:'https://blackdawn-bot.cacicca.workers.dev/api/online',
-            top:   'https://blackdawn-bot.cacicca.workers.dev/api/top' },
+            top:   'https://blackdawn-bot.cacicca.workers.dev/api/top',
+            whois: 'https://blackdawn-bot.cacicca.workers.dev/api/whois' },
   api:    { online:'data/online.json', top:'data/top.json' },
   refresh:{ online:60000, top:60000 },
   demo:   false,                   // живые данные пошли 30.08.2026
@@ -1430,69 +1516,150 @@ function initStatic(){
     return `<tr${one?' class="once"':''}>
       <td class="nm"><b>${esc(r.name)}</b><span>${esc(r.desc)}</span></td>
       <td class="c-month">${m}</td><td class="c-forever">${f}</td>
-      <td class="hide"><a class="take donatelink" href="${CONFIG.links.donate}" target="_blank" rel="noopener">Взять</a></td>
+      <td class="hide"><a class="take" href="#/buy" data-r="/buy">Взять</a></td>
     </tr>`;
   }).join('');
 
-  buildPayHelper();
+  buildBuyPage();
 }
 
-/* Помощник на странице «Поддержать»: собирает строку для сообщения
-   к платежу. Именно из-за неверного сообщения привилегия не доходит,
-   поэтому строку лучше отдать готовой. */
-function buildPayHelper(){
-  const item=$('#payItem'), term=$('#payTerm'), steam=$('#paySteam'),
-        out=$('#payMsg'), hint=$('#payHint'), copy=$('#payCopy');
-  if(!item||!out) return;
+/* ================= страница заказа =================
 
-  const sum = $('#paySum');
-  const goods = CONFIG.ledger.filter(r=>!r.grp);
-  item.innerHTML = goods.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');
+   Собирает заказ и готовую строку для сообщения к платежу. Именно из-за
+   неверного сообщения привилегия и не доходит: DonationAlerts не умеет
+   ни подставлять сумму по ссылке, ни требовать сообщение, поэтому
+   единственное, что можно сделать, — отдать игроку строку готовой. */
 
-  const clean = v => String(v||'').toUpperCase().replace(/\s+/g,'');
-  const valid = v => /^STEAM_[0-5]:[01]:\d+$/.test(v);
+const ORDER = { name:null, term:'month', steam:'' };
 
-  function paint(){
-    const it  = goods.find(r=>r.name===item.value) || goods[0];
-    const one = it.once!=null;                    /* разовая покупка - срока нет */
-    term.style.display = one ? 'none' : '';
-    const forever = !one && term.value==='forever';
+const steamClean = v => String(v||'').toUpperCase().replace(/\s+/g,'');
+const steamOk    = v => /^STEAM_[0-5]:[01]:\d+$/.test(v);
 
-    const id = clean(steam.value);
-    out.textContent = it.name + (forever ? ' навсегда ' : ' ') + (id || 'STEAM_0:1:12345678');
-    sum.textContent = cash(one ? it.once : (forever ? it.forever : it.month));
+function buyGoods(){ return CONFIG.ledger.filter(r=>!r.grp); }
+function buyItem(){ return buyGoods().find(r=>r.name===ORDER.name) || null; }
+function buyOnce(it){ return it && it.once!=null; }
 
-    if(!id)             hint.textContent = 'Впиши SteamID — без него привилегию придётся выдавать руками.';
-    else if(!valid(id)) hint.textContent = 'SteamID выглядит не так. Должно быть вида STEAM_0:1:12345678.';
-    else if(it.auto)    hint.textContent = 'Готово. Вставь строку в поле «Сообщение» при оплате — привилегия выдастся сама, обычно за минуту.';
-    else                hint.textContent = 'Готово. Эту позицию администратор выдаёт руками — не мгновенно, но платёж не потеряется.';
-    hint.style.color = id && !valid(id) ? 'var(--blood)' : '';
-  }
-  [item,term,steam].forEach(e=>e.addEventListener('input',paint));
-  term.addEventListener('change',paint);
+function buyPrice(){
+  const it = buyItem(); if(!it) return null;
+  if(buyOnce(it)) return it.once;
+  return ORDER.term==='forever' ? it.forever : it.month;
+}
 
-  /* срок в помощнике едет за переключателем над прайсом */
-  $$('.term').forEach(b=>b.addEventListener('click',()=>{ term.value=b.dataset.term; paint(); }));
+function buyLine(){
+  const it = buyItem(); if(!it) return '';
+  const forever = !buyOnce(it) && ORDER.term==='forever';
+  return it.name + (forever ? ' навсегда ' : ' ') + (ORDER.steam || 'STEAM_0:1:12345678');
+}
 
-  copy.addEventListener('click',async()=>{
-    const text = out.textContent;
-    try{
-      await navigator.clipboard.writeText(text);
-    }catch(e){
-      const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t);
-      t.select(); try{ document.execCommand('copy'); }catch(_){ } t.remove();
-    }
-    const was=copy.textContent; copy.textContent='Скопировано';
-    setTimeout(()=>copy.textContent=was,1600);
+function buildBuyPage(){
+  const picks=$('#buyPicks'); if(!picks) return;
+
+  picks.innerHTML = CONFIG.ledger.map(r=>{
+    if(r.grp) return `<div class="pgrp"><span class="lbl">${esc(r.grp)}</span></div>`;
+    const price = r.once!=null ? cash(r.once) : cash(r.month)+' / '+cash(r.forever);
+    return `<button type="button" class="pick" data-pick="${esc(r.name)}">
+      <span class="pn">${esc(r.name)}</span>
+      <span class="pd">${esc(r.desc)}</span>
+      <span class="pp">${price}</span>
+      <span class="pa">${r.auto?'выдаётся автоматически':'выдаёт администратор'}</span>
+    </button>`;
+  }).join('');
+
+  picks.addEventListener('click',e=>{
+    const b=e.target.closest('[data-pick]'); if(!b) return;
+    const first = !ORDER.name;
+    ORDER.name=b.dataset.pick; paintBuy();
+    const it=buyItem();
+    const to = (it && !buyOnce(it)) ? $('#buyTermRow') : $('#stepWho');
+    if(first && to) to.scrollIntoView({behavior:'smooth',block:'center'});
   });
 
-  paint();
+  $$('[data-bterm]').forEach(b=>b.addEventListener('click',()=>{ ORDER.term=b.dataset.bterm; paintBuy(); }));
+
+  const who=$('#buyWho');
+  who.addEventListener('input',()=>{
+    const v=steamClean(who.value);
+    ORDER.steam = steamOk(v) ? v : '';
+    $('#buyFound').innerHTML='';
+    paintBuy();
+  });
+
+  $('#buyFind').addEventListener('click',findByNick);
+  who.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); findByNick(); }});
+
+  $('#buyFound').addEventListener('click',e=>{
+    const b=e.target.closest('[data-steam]'); if(!b) return;
+    ORDER.steam=b.dataset.steam; who.value=b.dataset.steam;
+    $('#buyFound').innerHTML=''; paintBuy();
+  });
+
+  $('#buyCopy').addEventListener('click',async()=>{
+    const text=$('#buyMsg').textContent;
+    try{ await navigator.clipboard.writeText(text); }
+    catch(e){ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t);
+              t.select(); try{ document.execCommand('copy'); }catch(_){ } t.remove(); }
+    const btn=$('#buyCopy'), was=btn.textContent;
+    btn.textContent='Скопировано'; setTimeout(()=>btn.textContent=was,1600);
+  });
+
+  paintBuy();
+}
+
+/* Ищем SteamID по нику среди тех, кто уже играл на сервере. */
+async function findByNick(){
+  const nick=String($('#buyWho').value||'').trim();
+  const box=$('#buyFound'), hint=$('#buyWhoHint');
+  if(steamOk(steamClean(nick))){ hint.textContent='Это уже SteamID — искать не нужно.'; return; }
+  if(nick.length<3){ hint.textContent='Для поиска нужно хотя бы три буквы ника.'; hint.style.color='var(--blood)'; return; }
+
+  hint.style.color=''; hint.textContent='Ищу…'; box.innerHTML='';
+  let j=null;
+  try{
+    const r=await fetch(CONFIG.live.whois,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick})});
+    if(r.ok) j=await r.json();
+  }catch(e){ /* ниже */ }
+
+  if(!j){ hint.textContent='Поиск сейчас не отвечает. Впиши SteamID вручную — из консоли, командой status.'; return; }
+  const m=j.matches||[];
+  if(!m.length){ hint.textContent='Не нашёл. Зайди на сервер и попробуй снова — либо впиши SteamID вручную, командой status в консоли.'; return; }
+
+  hint.textContent = m.length>1 ? 'Нашёл несколько — выбери себя.' : 'Нашёл. Проверь, что это ты.';
+  box.innerHTML = m.map(p=>`<button type="button" class="pick" data-steam="${esc(p.steam)}">
+      <span><span class="pn">${esc(p.name)}</span>${p.where?`<span class="pa" style="display:block">${esc(p.where)}</span>`:''}</span>
+      <span class="mono">${esc(p.steam)}</span>
+    </button>`).join('');
+}
+
+function paintBuy(){
+  if(!$('#buyPicks')) return;
+  const it=buyItem(), once=buyOnce(it);
+
+  $$('#buyPicks .pick').forEach(b=>b.classList.toggle('on', b.dataset.pick===ORDER.name));
+  $('#buyTermRow').style.display = (it && !once) ? '' : 'none';
+  $$('[data-bterm]').forEach(b=>b.classList.toggle('on', b.dataset.bterm===ORDER.term));
+
+  $('#stepWho').classList.toggle('off', !it);
+  $('#stepPay').classList.toggle('off', !(it && ORDER.steam));
+
+  const forever = it && !once && ORDER.term==='forever';
+  $('#oItem').textContent = it ? it.name : '—';
+  $('#oTerm').textContent = !it ? '—' : (once ? 'разовая покупка' : (forever ? 'навсегда' : 'месяц'));
+  $('#oWho').textContent  = ORDER.steam || '—';
+  $('#oSum').textContent  = it ? cash(buyPrice()) : '—';
+  $('#buyMsg').textContent = it ? buyLine() : 'Сначала выбери позицию';
+
+  const hint=$('#buyHint');
+  if(!it)              hint.textContent='';
+  else if(!ORDER.steam) hint.textContent='Впиши SteamID — без него привилегия не найдёт хозяина.';
+  else if(it.auto)      hint.textContent='Сумму на странице оплаты введи ровно эту, иначе выдача не сработает сама.';
+  else                  hint.textContent='Эту позицию администратор выдаёт руками — платёж не потеряется, но выдача не мгновенная.';
 }
 
 /* ---------------- роутер ---------------- */
-const R = {'/':'p-home','/game':'p-game','/rules':'p-rules','/players':'p-players','/clans':'p-clans','/donate':'p-donate'};
+const R = {'/':'p-home','/game':'p-game','/rules':'p-rules','/players':'p-players','/clans':'p-clans','/donate':'p-donate','/buy':'p-buy'};
 const TITLE = {'/':'Чёрный Рассвет — Zombie Plague, CS 1.6','/game':'Игра — Чёрный Рассвет','/rules':'Правила — Чёрный Рассвет',
-  '/players':'Топ игроков — Чёрный Рассвет','/clans':'Кланы — Чёрный Рассвет','/donate':'Поддержать — Чёрный Рассвет'};
+  '/players':'Топ игроков — Чёрный Рассвет','/clans':'Кланы — Чёрный Рассвет','/donate':'Поддержать — Чёрный Рассвет',
+  '/buy':'Купить привилегию — Чёрный Рассвет'};
 
 function route(){
   let p = location.hash.replace(/^#/,'') || '/';
