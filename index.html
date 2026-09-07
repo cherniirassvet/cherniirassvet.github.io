@@ -264,8 +264,11 @@ p{margin:0}
 .bnum i{display:block;font-style:normal;font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:4px}
 .bnum.mut{color:var(--ash)}
 .btag{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:var(--dim);border:1px solid var(--edge2);padding:1px 6px;flex-shrink:0}
+.blvl{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:var(--dawn);
+  border:1px solid var(--edge2);padding:1px 6px;flex-shrink:0}
+.bnm{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .bsub{font-family:var(--fm);font-size:10px;letter-spacing:.08em;color:var(--dim);margin-top:6px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  line-height:1.55}
 @media (max-width:700px){
   .brow{grid-template-columns:34px 1fr 96px;gap:12px;padding:14px 0}
   .brow .n{font-size:18px}
@@ -1513,12 +1516,13 @@ function paintTop(){
       : '<div class="void-msg"><b>Рейтинг пуст</b>Появится после первой смены карты с игроками на сервере.</div>';
   }
 
-  /* Глава и состав приходят не всегда - если их нет, строку не рисуем. */
+  /* Глава и состав приходят не всегда - если их нет, пункт пропускаем.
+     Победы и поражения показываем всегда: ноль - это тоже ответ. */
   const clanSub=c=>{const p=[];
     if(c.leader) p.push('Глава: '+esc(c.leader));
-    if(c.members) p.push(fmt(c.members)+' из '+fmt(c.slots||c.members)+' в составе');
-    if(c.wins||c.losses) p.push('войны '+fmt(c.wins)+'/'+fmt(c.losses));
-    return p.length?`<div class="bsub">${p.join(' · ')}</div>`:'';};
+    if(c.members) p.push('состав '+fmt(c.members)+'/'+fmt(c.slots||c.members));
+    p.push('побед/поражений '+fmt(c.wins||0)+'/'+fmt(c.losses||0));
+    return `<div class="bsub">${p.join(' · ')}</div>`;};
   const cl=[...TOP.clans].sort((a,b)=>(b.exp-a.exp)||(b.level-a.level)).slice(0,15);
   const cb=$('#clanBoard');
   if(cb){
@@ -1529,12 +1533,12 @@ function paintTop(){
       <div class="brow${i<3?' top':''}">
         <span class="n">${i+1}</span>
         <div class="bname">
-          <div class="t"><span>${esc(c.name)}</span>${c.tag?`<span class="btag">${esc(c.tag)}</span>`:''}</div>
+          <div class="t"><span class="bnm">${esc(c.name)}</span>${c.tag&&c.tag!==c.name?`<span class="btag">${esc(c.tag)}</span>`:''}<span class="blvl">LVL ${fmt(c.level)}</span></div>
           ${clanSub(c)}
           <div class="bar"><i style="width:${Math.max(2,c.exp/max*100)}%"></i></div>
         </div>
         <span class="bnum">${fmt(c.exp)}<i>опыта</i></span>
-        <span class="bnum mut hide">${fmt(c.level)}<i>уровень</i></span>
+        <span class="bnum mut hide">${fmt(c.wins||0)}/${fmt(c.losses||0)}<i>войны</i></span>
       </div>`).join('')
       : '<div class="void-msg"><b>Кланов пока нет</b>Создай первый в игре: меню на клавише M.</div>';
   }
