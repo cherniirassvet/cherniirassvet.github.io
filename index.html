@@ -1300,10 +1300,13 @@ p{margin:0}
 const CONFIG = {
   server: { ip:'195.60.166.224', port:27374, slots:32 },
   links:  { channel:'https://t.me/cherniirassvet', admin:'https://t.me/vatakat161' },
-  // На GitHub Pages данные собирает робот в data/*.json.
-  // На хостинге с PHP поменяй на 'api/query.php' и 'api/top.php'.
+  // Сначала спрашиваем бота: он читает файлы прямо с игрового сервера,
+  // поэтому цифры свежие. Если бот молчит — берём то, что робот сложил
+  // в data/*.json (обновляется раз в 15 минут).
+  live:   { online:'https://blackdawn-bot.cacicca.workers.dev/api/online',
+            top:   'https://blackdawn-bot.cacicca.workers.dev/api/top' },
   api:    { online:'data/online.json', top:'data/top.json' },
-  refresh:{ online:60000, top:300000 },
+  refresh:{ online:60000, top:60000 },
   demo:   false,                   // живые данные пошли 30.08.2026
   currency:'€',
 
@@ -1421,10 +1424,24 @@ function paintOnline(d){
   ['railDot','barDot','teleDot'].forEach(i=>{ const e=$('#'+i); e.className='dot '+(fresh?'on':'off'); });
   LIVE = new Set((ok && d.list ? d.list : []).map(p=>String(p.name||'').toLowerCase().trim()));
 }
+/* Пробуем живой источник, потом запасной файл. Если бот недоступен или
+   отвечает мусором, посетитель всё равно видит данные. */
+async function grab(kind){
+  for(const url of [CONFIG.live&&CONFIG.live[kind], CONFIG.api[kind]]){
+    if(!url) continue;
+    try{
+      const r = await fetch(url,{cache:'no-store'});
+      if(!r.ok) continue;
+      const j = await r.json();
+      if(j && typeof j === 'object') return j;
+    }catch(e){ /* следующий по списку */ }
+  }
+  return null;
+}
+
 async function loadOnline(){
   try{
-    const r = await fetch(CONFIG.api.online,{cache:'no-store'}); if(!r.ok) throw 0;
-    const j = await r.json();
+    const j = await grab('online'); if(!j) throw 0;
     paintOnline({ ok:j.online!==false, players:j.players??0, max:j.max??CONFIG.server.slots,
                   map:j.map||'', list:j.list||[], updated:j.updated||0 });
   }catch(e){ paintOnline({ok:false}); }
@@ -1459,8 +1476,7 @@ async function loadTop(force){
   if(TOP.time && !force && Date.now()-TOP.loaded < CONFIG.refresh.top){ paintTop(); return; }
   skeleton();
   try{
-    const r=await fetch(CONFIG.api.top,{cache:'no-store'}); if(!r.ok) throw 0;
-    const j=await r.json();
+    const j = await grab('top'); if(!j) throw 0;
     TOP={ players:(j.players||[]).map(p=>({name:p.name,kills:+p.kills||0,damage:+p.damage||0,hs:+(p.hs??0),deaths:+p.deaths||0})),
           clans:(j.clans||[]).map(c=>({name:c.name,tag:c.tag||'',level:+c.level||0,exp:+c.exp||0,wins:+c.wins||0,losses:+c.losses||0,slots:+c.slots||0,members:+c.members||0,leader:c.leader||''})),
           time:j.updated||Date.now()/1000, loaded:Date.now(), demo:false };
