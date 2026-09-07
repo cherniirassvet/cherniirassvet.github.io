@@ -274,6 +274,22 @@ p{margin:0}
   .brow .n{font-size:18px}
   .bnum.hide{display:none}
 }
+.paybuild{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 16px}
+.paybuild select,.paybuild input{font-family:var(--fm);font-size:13px;color:var(--bone);
+  background:var(--pit);border:1px solid var(--edge2);padding:11px 12px;min-width:0;
+  border-radius:0;-webkit-appearance:none;appearance:none}
+.paybuild select{flex:1 1 150px;background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;padding-right:30px}
+.paybuild input{flex:1 1 210px;text-transform:uppercase}
+.paybuild select:focus,.paybuild input:focus{outline:0;border-color:var(--dawn)}
+.paymsg{display:block;background:var(--pit);border:1px solid var(--edge);
+  padding:14px 16px;font-size:14px;color:var(--dawn);word-break:break-word;line-height:1.5}
+.paybtns{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.paybtns .btn{flex:1 1 190px}
+.paysum{font-family:var(--fm);font-size:13px;color:var(--ash);margin-top:12px;letter-spacing:.06em}
+.paysum b{color:var(--dawn);font-weight:600}
+.payhint{font-size:13px;color:var(--dim);margin-top:8px}
 .skel{display:block;height:12px;background:var(--edge);animation:sk 1.4s linear infinite;
   background:linear-gradient(90deg,#111,#1c1c20,#111);background-size:200% 100%}
 @keyframes sk{to{background-position:-200% 0}}
@@ -1178,6 +1194,7 @@ p{margin:0}
           <li><b>VIP-классы зомби</b></li>
           <li>Больше стартовых аммопаков</li>
         </ul>
+        <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener" style="margin-top:22px;width:100%">Купить VIP</a>
       </div>
       <div class="col">
         <h3>Admin + VIP</h3>
@@ -1192,6 +1209,7 @@ p{margin:0}
           <li><b>Админская модель зомби</b></li>
           <li>Приоритетный разбор жалоб</li>
         </ul>
+        <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener" style="margin-top:22px;width:100%">Купить админку</a>
       </div>
     </div>
   </section>
@@ -1208,7 +1226,10 @@ p{margin:0}
       </tr></thead>
       <tbody id="ledgerBody"></tbody>
     </table>
-    <a class="btn btn-solid adminlink" href="#" target="_blank" rel="noopener" style="margin-top:28px">Написать администратору</a>
+    <div class="paybtns" style="margin-top:28px">
+      <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Купить привилегию</a>
+      <a class="btn adminlink" href="#" target="_blank" rel="noopener">Написать администратору</a>
+    </div>
   </section>
 
   <section class="band">
@@ -1226,7 +1247,10 @@ p{margin:0}
           <div class="row" style="grid-template-columns:76px 1fr;gap:16px;padding:14px 0;border-bottom:0">
             <div class="lbl">04</div><div><p>Привилегия выдаётся по SteamID и включается после смены карты.</p></div></div>
         </div>
-        <a class="btn btn-solid adminlink" href="#" target="_blank" rel="noopener" style="margin-top:26px">Написать администратору</a>
+        <div class="paybtns" style="margin-top:26px">
+          <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Купить привилегию</a>
+          <a class="btn adminlink" href="#" target="_blank" rel="noopener">Написать администратору</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1249,6 +1273,28 @@ p{margin:0}
           <p style="margin-top:10px">Регистр и порядок слов не важны. Можно писать
             «вип», «vip», «админ», «админка», «admin». Срок — словом «навсегда»
             или «forever»; без него считается месяц.</p></div>
+      </div>
+      <div class="row">
+        <div class="lbl">Собрать</div>
+        <div><h3>Готовая строка — скопируй и вставь</h3>
+          <p>Выбери, что берёшь, впиши свой SteamID — ниже соберётся строка,
+            которую нужно вставить в поле «Сообщение» на странице оплаты.</p>
+          <div class="paybuild">
+            <select id="payItem" aria-label="Что берёшь"></select>
+            <select id="payTerm" aria-label="Срок">
+              <option value="month">на месяц</option>
+              <option value="forever">навсегда</option>
+            </select>
+            <input id="paySteam" placeholder="STEAM_0:1:12345678" spellcheck="false" autocomplete="off" aria-label="Твой SteamID">
+          </div>
+          <span class="mono paymsg" id="payMsg">VIP STEAM_0:1:12345678</span>
+          <p class="paysum">К оплате: <b id="paySum">30 €</b></p>
+          <p class="payhint" id="payHint">Впиши SteamID — без него привилегию придётся выдавать руками.</p>
+          <div class="paybtns">
+            <button type="button" class="btn" id="payCopy">Скопировать строку</button>
+            <a class="btn btn-solid donatelink" href="#" target="_blank" rel="noopener">Перейти к оплате</a>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="lbl">Где взять SteamID</div>
@@ -1302,7 +1348,8 @@ p{margin:0}
    ================================================================ */
 const CONFIG = {
   server: { ip:'195.60.166.224', port:27374, slots:32 },
-  links:  { channel:'https://t.me/cherniirassvet', admin:'https://t.me/vatakat161' },
+  links:  { channel:'https://t.me/cherniirassvet', admin:'https://t.me/vatakat161',
+            donate:'https://www.donationalerts.com/r/161vatakat161' },
   // Сначала спрашиваем бота: он читает файлы прямо с игрового сервера,
   // поэтому цифры свежие. Если бот молчит — берём то, что робот сложил
   // в data/*.json (обновляется раз в 15 минут).
@@ -1315,8 +1362,8 @@ const CONFIG = {
 
   ledger:[
     { grp:'Привилегии' },
-    { name:'VIP',            desc:'Нож, слот, магазин, вампиризм, метка',      month:30, forever:90  },
-    { name:'Admin + VIP',    desc:'Всё из VIP плюс права администратора',      month:60, forever:150 },
+    { name:'VIP',            desc:'Нож, слот, магазин, вампиризм, метка',      month:30, forever:90,  auto:true },
+    { name:'Admin + VIP',    desc:'Всё из VIP плюс права администратора',      month:60, forever:150, auto:true },
 
     { grp:'Дополнительно' },
     { name:'Бесконечные патроны', desc:'Обойма не заканчивается. На урон не влияет.', month:30, forever:90 },
@@ -1352,6 +1399,7 @@ async function copyAddr(){
 function initStatic(){
   $$('.tglink').forEach(a=>a.href=CONFIG.links.channel);
   $$('.adminlink').forEach(a=>a.href=CONFIG.links.admin);
+  $$('.donatelink').forEach(a=>a.href=CONFIG.links.donate);
   $$('.copyip').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();copyAddr();}));
   $('#ipText').textContent=ADDR; $('#ipFoot').textContent=ADDR;
   ['teleSlots','barSlots','specSlots'].forEach(i=>$('#'+i).textContent=CONFIG.server.slots);
@@ -1382,9 +1430,63 @@ function initStatic(){
     return `<tr${one?' class="once"':''}>
       <td class="nm"><b>${esc(r.name)}</b><span>${esc(r.desc)}</span></td>
       <td class="c-month">${m}</td><td class="c-forever">${f}</td>
-      <td class="hide"><a class="take adminlink" href="${CONFIG.links.admin}" target="_blank" rel="noopener">Взять</a></td>
+      <td class="hide"><a class="take donatelink" href="${CONFIG.links.donate}" target="_blank" rel="noopener">Взять</a></td>
     </tr>`;
   }).join('');
+
+  buildPayHelper();
+}
+
+/* Помощник на странице «Поддержать»: собирает строку для сообщения
+   к платежу. Именно из-за неверного сообщения привилегия не доходит,
+   поэтому строку лучше отдать готовой. */
+function buildPayHelper(){
+  const item=$('#payItem'), term=$('#payTerm'), steam=$('#paySteam'),
+        out=$('#payMsg'), hint=$('#payHint'), copy=$('#payCopy');
+  if(!item||!out) return;
+
+  const sum = $('#paySum');
+  const goods = CONFIG.ledger.filter(r=>!r.grp);
+  item.innerHTML = goods.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');
+
+  const clean = v => String(v||'').toUpperCase().replace(/\s+/g,'');
+  const valid = v => /^STEAM_[0-5]:[01]:\d+$/.test(v);
+
+  function paint(){
+    const it  = goods.find(r=>r.name===item.value) || goods[0];
+    const one = it.once!=null;                    /* разовая покупка - срока нет */
+    term.style.display = one ? 'none' : '';
+    const forever = !one && term.value==='forever';
+
+    const id = clean(steam.value);
+    out.textContent = it.name + (forever ? ' навсегда ' : ' ') + (id || 'STEAM_0:1:12345678');
+    sum.textContent = cash(one ? it.once : (forever ? it.forever : it.month));
+
+    if(!id)             hint.textContent = 'Впиши SteamID — без него привилегию придётся выдавать руками.';
+    else if(!valid(id)) hint.textContent = 'SteamID выглядит не так. Должно быть вида STEAM_0:1:12345678.';
+    else if(it.auto)    hint.textContent = 'Готово. Вставь строку в поле «Сообщение» при оплате — привилегия выдастся сама, обычно за минуту.';
+    else                hint.textContent = 'Готово. Эту позицию администратор выдаёт руками — не мгновенно, но платёж не потеряется.';
+    hint.style.color = id && !valid(id) ? 'var(--blood)' : '';
+  }
+  [item,term,steam].forEach(e=>e.addEventListener('input',paint));
+  term.addEventListener('change',paint);
+
+  /* срок в помощнике едет за переключателем над прайсом */
+  $$('.term').forEach(b=>b.addEventListener('click',()=>{ term.value=b.dataset.term; paint(); }));
+
+  copy.addEventListener('click',async()=>{
+    const text = out.textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(e){
+      const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t);
+      t.select(); try{ document.execCommand('copy'); }catch(_){ } t.remove();
+    }
+    const was=copy.textContent; copy.textContent='Скопировано';
+    setTimeout(()=>copy.textContent=was,1600);
+  });
+
+  paint();
 }
 
 /* ---------------- роутер ---------------- */
