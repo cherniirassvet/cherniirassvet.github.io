@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Чёрный Рассвет — Zombie Plague, CS 1.6</title>
+<title>{ZM}║ Чёрный Рассвет║ Hardcore ZOMBIE{ru/en}</title>
 <meta name="description" content="Хардкорный зомби-сервер CS 1.6. Привилегии покупаются в игре за аммопаки. Половина пожертвований уходит в приюты для бездомных животных.">
 <meta name="theme-color" content="#000000">
-<meta property="og:title" content="Чёрный Рассвет — Zombie Plague, CS 1.6">
+<meta property="og:title" content="{ZM}║ Чёрный Рассвет║ Hardcore ZOMBIE{ru/en}">
 <meta property="og:description" content="Донат ничего не решает в бою. 50% пожертвований — приютам для бездомных животных.">
 <meta property="og:image" content="img/hero.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Cpath d='M3 20h26' stroke='%23C8B79A' stroke-width='2'/%3E%3Cpath d='M10 20a6 6 0 0 1 12 0z' fill='%23C8B79A'/%3E%3C/svg%3E">
@@ -1718,9 +1718,9 @@ function paintBuy(){
 
 /* ---------------- роутер ---------------- */
 const R = {'/':'p-home','/game':'p-game','/rules':'p-rules','/players':'p-players','/clans':'p-clans','/donate':'p-donate','/buy':'p-buy'};
-const TITLE = {'/':'Чёрный Рассвет — Zombie Plague, CS 1.6','/game':'Игра — Чёрный Рассвет','/rules':'Правила — Чёрный Рассвет',
-  '/players':'Топ игроков — Чёрный Рассвет','/clans':'Кланы — Чёрный Рассвет','/donate':'Поддержать — Чёрный Рассвет',
-  '/buy':'Купить привилегию — Чёрный Рассвет'};
+/* Во вкладке браузера везде одно и то же - имя сервера, как в списке игр. */
+const SITE_TITLE = '{ZM}║ Чёрный Рассвет║ Hardcore ZOMBIE{ru/en}';
+const TITLE = new Proxy({}, { get: () => SITE_TITLE });
 
 function route(){
   let p = location.hash.replace(/^#/,'') || '/';
