@@ -1354,6 +1354,10 @@ p{margin:0}
         <button type="button" class="term on" data-bterm="month">На месяц</button>
         <button type="button" class="term" data-bterm="forever">Навсегда</button>
       </div>
+      <div class="termpick" id="buyModelRow" style="margin:16px 0 0;display:none">
+        <span class="lbl">Модель</span>
+      </div>
+      <p class="hint" id="buyModelHint" style="display:none;margin:0 0 6px"></p>
     </div>
 
     <div class="step off" id="stepWho">
@@ -1440,7 +1444,8 @@ const CONFIG = {
   // в data/*.json (обновляется раз в 15 минут).
   live:   { online:'https://blackdawn-bot.cacicca.workers.dev/api/online',
             top:   'https://blackdawn-bot.cacicca.workers.dev/api/top',
-            whois: 'https://blackdawn-bot.cacicca.workers.dev/api/whois' },
+            whois: 'https://blackdawn-bot.cacicca.workers.dev/api/whois',
+            models:'https://blackdawn-bot.cacicca.workers.dev/api/models' },
   api:    { online:'data/online.json', top:'data/top.json' },
   refresh:{ online:60000, top:60000 },
   demo:   false,                   // живые данные пошли 30.08.2026
@@ -1453,7 +1458,7 @@ const CONFIG = {
 
     { grp:'Дополнительно' },
     { name:'Бесконечные патроны', desc:'Обойма не заканчивается. На урон не влияет.', month:30, forever:90, auto:true },
-    { name:'Персональная модель', desc:'Своя модель персонажа, видна всем',           month:20, forever:60 },
+    { name:'Персональная модель', desc:'Своя модель персонажа, видна всем',           month:20, forever:60, auto:true, pickModel:true },
     { name:'Вампиризм',           desc:'Здоровье за убийство зомби',                  month:10, forever:30, auto:true },
 
     { grp:'Кланы' },
@@ -1530,7 +1535,9 @@ function initStatic(){
    ни подставлять сумму по ссылке, ни требовать сообщение, поэтому
    единственное, что можно сделать, — отдать игроку строку готовой. */
 
-const ORDER = { name:null, term:'month', steam:'' };
+const ORDER = { name:null, term:'month', steam:'', model:null, modelName:'' };
+let MODELS = null;          // null - ещё не грузили, [] - пусто, массив - список
+let MODELS_TRIED = false;
 
 const steamClean = v => String(v||'').toUpperCase().replace(/\s+/g,'');
 const steamOk    = v => /^STEAM_[0-5]:[01]:\d+$/.test(v);
@@ -1548,7 +1555,40 @@ function buyPrice(){
 function buyLine(){
   const it = buyItem(); if(!it) return '';
   const forever = !buyOnce(it) && ORDER.term==='forever';
-  return it.name + (forever ? ' навсегда ' : ' ') + (ORDER.steam || 'STEAM_0:1:12345678');
+  /* Номер модели бот читает из этой же строки, поэтому он идёт сразу
+     за названием позиции. */
+  const mdl = (it.pickModel && ORDER.model) ? ' '+ORDER.model : '';
+  return it.name + mdl + (forever ? ' навсегда ' : ' ') + (ORDER.steam || 'STEAM_0:1:12345678');
+}
+
+/* Список моделей тянем с сервера один раз и только когда он понадобился. */
+async function loadModels(){
+  if(MODELS_TRIED) return;
+  MODELS_TRIED = true;
+  try{
+    const r = await fetch(CONFIG.live.models, {cache:'no-store'});
+    const j = await r.json();
+    MODELS = Array.isArray(j.models) ? j.models : [];
+  }catch(e){ MODELS = null; }
+  paintModels();
+  paintBuy();
+}
+
+function paintModels(){
+  const row=$('#buyModelRow'), hint=$('#buyModelHint');
+  if(!row) return;
+  row.querySelectorAll('[data-bmodel]').forEach(b=>b.remove());
+
+  if(!MODELS){ hint.textContent = MODELS_TRIED ? 'Список моделей сейчас не читается — заказ уйдёт администратору.' : 'Загружаю список моделей…'; return; }
+  if(!MODELS.length){ hint.textContent='Моделей пока не добавили — напиши администратору, подберём.'; return; }
+
+  hint.textContent='Модель видна всем игрокам. Выбранный номер попадёт в строку для оплаты.';
+  MODELS.forEach(m=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='term'; b.dataset.bmodel=m.n; b.dataset.bmodelname=m.name||('модель '+m.n);
+    b.textContent=(m.name||('Модель '+m.n));
+    row.appendChild(b);
+  });
 }
 
 function buildBuyPage(){
@@ -1568,10 +1608,20 @@ function buildBuyPage(){
   picks.addEventListener('click',e=>{
     const b=e.target.closest('[data-pick]'); if(!b) return;
     const first = !ORDER.name;
-    ORDER.name=b.dataset.pick; paintBuy();
+    if(ORDER.name!==b.dataset.pick){ ORDER.model=null; ORDER.modelName=''; }
+    ORDER.name=b.dataset.pick;
     const it=buyItem();
-    const to = (it && !buyOnce(it)) ? $('#buyTermRow') : $('#stepWho');
+    if(it && it.pickModel){ paintModels(); loadModels(); }
+    paintBuy();
+    const to = (it && it.pickModel) ? $('#buyModelRow')
+             : (it && !buyOnce(it)) ? $('#buyTermRow') : $('#stepWho');
     if(first && to) to.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+
+  $('#buyModelRow').addEventListener('click',e=>{
+    const b=e.target.closest('[data-bmodel]'); if(!b) return;
+    ORDER.model=b.dataset.bmodel; ORDER.modelName=b.dataset.bmodelname;
+    paintBuy();
   });
 
   $$('[data-bterm]').forEach(b=>b.addEventListener('click',()=>{ ORDER.term=b.dataset.bterm; paintBuy(); }));
@@ -1638,11 +1688,21 @@ function paintBuy(){
   $('#buyTermRow').style.display = (it && !once) ? '' : 'none';
   $$('[data-bterm]').forEach(b=>b.classList.toggle('on', b.dataset.bterm===ORDER.term));
 
-  $('#stepWho').classList.toggle('off', !it);
-  $('#stepPay').classList.toggle('off', !(it && ORDER.steam));
+  /* Модель выбираем только там, где она нужна. Если список не пришёл,
+     не запираем человека - заказ просто уйдёт администратору. */
+  const wantMdl = !!(it && it.pickModel);
+  const canMdl  = wantMdl && Array.isArray(MODELS) && MODELS.length > 0;
+  $('#buyModelRow').style.display  = wantMdl ? '' : 'none';
+  $('#buyModelHint').style.display = wantMdl ? '' : 'none';
+  $$('#buyModelRow [data-bmodel]').forEach(b=>b.classList.toggle('on', b.dataset.bmodel===ORDER.model));
+
+  const ready = !!it && (!canMdl || !!ORDER.model);
+  $('#stepWho').classList.toggle('off', !ready);
+  $('#stepPay').classList.toggle('off', !(ready && ORDER.steam));
 
   const forever = it && !once && ORDER.term==='forever';
-  $('#oItem').textContent = it ? it.name : '—';
+  $('#oItem').textContent = !it ? '—'
+    : (it.pickModel && ORDER.modelName) ? (it.name + ' · ' + ORDER.modelName) : it.name;
   $('#oTerm').textContent = !it ? '—' : (once ? 'разовая покупка' : (forever ? 'навсегда' : 'месяц'));
   $('#oWho').textContent  = ORDER.steam || '—';
   $('#oSum').textContent  = it ? cash(buyPrice()) : '—';
@@ -1650,6 +1710,7 @@ function paintBuy(){
 
   const hint=$('#buyHint');
   if(!it)              hint.textContent='';
+  else if(wantMdl && canMdl && !ORDER.model) hint.textContent='Выбери модель — её номер нужен серверу для выдачи.';
   else if(!ORDER.steam) hint.textContent='Впиши SteamID — без него привилегия не найдёт хозяина.';
   else if(it.auto)      hint.textContent='Сумму на странице оплаты введи ровно эту, иначе выдача не сработает сама.';
   else                  hint.textContent='Эту позицию администратор выдаёт руками — платёж не потеряется, но выдача не мгновенная.';
