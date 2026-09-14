@@ -451,6 +451,17 @@ p{margin:0}
   .claim-num{font-size:clamp(72px,26vw,110px)}
   .btn{padding:14px 16px;font-size:11px}
 }
+
+/* === закреплённые панели === */
+@media (max-width:900px){
+  .topbar{position:fixed;left:0;right:0;top:0;padding-top:calc(11px + env(safe-area-inset-top))}
+  .shell{padding-top:calc(58px + env(safe-area-inset-top));padding-bottom:calc(122px + env(safe-area-inset-bottom))}
+  .band,section,[id^="r"]{scroll-margin-top:calc(70px + env(safe-area-inset-top))}
+  .tgbar{display:flex}
+  .toast{bottom:calc(138px + env(safe-area-inset-bottom))}
+}
+.tgbar{display:none;position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:59;padding:8px var(--pad)}
+.tgbar a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;border-radius:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#e0243a,#b3121f);box-shadow:0 6px 18px rgba(0,0,0,.45);text-decoration:none}
 </style>
 </head>
 <body>
@@ -1028,6 +1039,7 @@ p{margin:0}
         <div class="doc-i"><span class="c">1.7</span><p>Запрещена продажа, обмен и передача аккаунта, привилегии, клана и аммопаков за реальные деньги мимо администрации.</p></div>
         <div class="doc-i"><span class="c">1.8</span><p>Правила действуют и в игре, и в Telegram-канале проекта.</p></div>
         <div class="doc-i"><span class="c">1.9</span><p>Администрация может изменить правила, но только через голосование в канале. Новая редакция объявляется там же и сразу появляется на этой странице.</p></div>
+        <div class="doc-i"><span class="c">1.10</span><p>Будь активен в Telegram и Discord проекта, помогай новичкам разобраться с правилами и механикой.</p></div>
       </section>
 
       <section id="r2" style="scroll-margin-top:70px">
@@ -1102,11 +1114,9 @@ p{margin:0}
       <section id="r8" style="scroll-margin-top:70px">
         <div class="doc-h"><span class="i">08</span><h3>Аммопаки, магазин, донат</h3></div>
         <div class="doc-i"><span class="c">8.1</span><p>Аммопаки зарабатываются уроном и убийствами. Любая накрутка — сговор, урон по «своему» боту, эксплойт плагина — обнуляет счёт.</p></div>
-        <div class="doc-i"><span class="c">8.2</span><p>Передача аммопаков между игроками разрешена. Продажа их за реальные деньги — нет.</p></div>
-        <div class="doc-i"><span class="c">8.3</span><p>Привилегия выдаётся по SteamID и не переносится на другой аккаунт.</p></div>
-        <div class="doc-i"><span class="c">8.4</span><p>Донат не возвращается, если привилегия снята за нарушение правил. Если привилегия не выдана по нашей вине — вернём или продлим, на выбор.</p></div>
-        <div class="doc-i"><span class="c">8.5</span><p>Привилегия не даёт боевого преимущества и не может быть основанием для поблажки при разборе.</p></div>
-        <div class="doc-i"><span class="c">8.6</span><p>Цены на всё — оружие, способности, привилегии — меняются только через голосование в канале.</p></div>
+        <div class="doc-i"><span class="c">8.2</span><p>Донат не возвращается, если привилегия снята за нарушение правил. Если привилегия не выдана по нашей вине — вернём или продлим, на выбор.</p></div>
+        <div class="doc-i"><span class="c">8.3</span><p>Привилегия не даёт боевого преимущества и не может быть основанием для поблажки при разборе.</p></div>
+        <div class="doc-i"><span class="c">8.4</span><p>Цены на всё — оружие, способности, привилегии — меняются только через голосование в канале.</p></div>
       </section>
 
       <section id="r9" style="scroll-margin-top:70px">
@@ -1116,7 +1126,17 @@ p{margin:0}
         <div class="doc-i"><span class="c">9.3</span><p>Спорные решения разбираются в Telegram по логам.</p></div>
         <div class="doc-i"><span class="c">9.4</span><p>Администратор обязан назвать причину наказания по первому запросу.</p></div>
         <div class="doc-i"><span class="c">9.5</span><p>Смена карты, рестарт раунда и выдача аммопаков по личной прихоти запрещены.</p></div>
-        <div class="doc-i"><span class="c">9.6</span><p>Администратор, нарушивший этот раздел, теряет права. За повтор — навсегда, без возврата оплаты.</p></div>
+        <div class="doc-i"><span class="c">9.6</span><p>Лимит наблюдателей: VIP и ADMIN не занимают больше 2 слотов в режиме «Spectator».</p></div>
+        <div class="doc-i"><span class="c">9.7</span><p>Дьявол и Выживший выдаются не чаще одного раза за карту. Если на этой карте их уже выдавал кто-то из администрации, повторная выдача запрещена.</p></div>
+        <div class="doc-i"><span class="c">9.8</span><p>Запрещено делать Дьяволом или Выжившим себя и других игроков, если идёт первый раунд на карте, если отсчёт до заражения не дошёл до 5 секунд или если заражение уже началось.</p></div>
+        <div class="doc-i"><span class="c">9.9</span><p>Запрещено возрождать себя и других игроков во время спецраундов «Куча на кучу» и «Эпидемия».</p></div>
+        <div class="doc-i"><span class="c">9.10</span><p>Запрещено возрождать себя и других игроков во время события «Босс».</p></div>
+        <div class="doc-i"><span class="c">9.11</span><p>Запрещено запускать спецраунды «Выживший», «Немезида», «Куча на кучу», «Эпидемия» и «Массовое заражение», если после прошлого спецраунда не прошло 3 раунда.</p></div>
+        <div class="doc-i"><span class="c">9.12</span><p>Во время клановой войны запрещено пользоваться админ-меню ради преимущества одной из сторон.</p></div>
+        <div class="doc-i"><span class="c">9.13</span><p>Менять карту по личной прихоти или просьбе знакомых запрещено. Основания только два: лаги сервера или запрос 70% игроков.</p></div>
+        <div class="doc-i"><span class="c">9.14</span><p>Смена карты начинается с опроса <b>amx_vote "Smena kartu?" "Da" "Net"</b>. Если большинство «За», запускается <b>amx_votemap</b> минимум с тремя картами на выбор. Навязывать одну карту нельзя.</p></div>
+        <div class="doc-i"><span class="c">9.15</span><p>Запрещено менять карту в разгаре боя, особенно во время спецраунда. Дождись надписи «Победа людей» или «Победа зомби».</p></div>
+        <div class="doc-i"><span class="c">9.16</span><p>Администратор, нарушивший этот раздел, теряет права. За повтор — навсегда, без возврата оплаты.</p></div>
       </section>
 
       <section id="r10" style="scroll-margin-top:70px;border-bottom:0">
@@ -1427,6 +1447,7 @@ p{margin:0}
 </div><!-- /shell -->
 
 <!-- ================= НИЖНЕЕ МЕНЮ ================= -->
+<div class="tgbar"><a href="https://t.me/cherniirassvet" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.7l-4.8-1.5c-1-.3-1.1-1 .2-1.5l18.8-7.3c.9-.3 1.6.2 1.4 1.9z"/></svg>Вступить в Telegram</a></div>
 <nav class="tabs" id="tabs">
   <a href="#/" data-r="/"><svg viewBox="0 0 24 24"><path d="M3 15h18"/><path d="M8 15a4 4 0 0 1 8 0"/><path d="M5 19h5M14 19h5"/></svg>Главная</a>
   <a href="#/game" data-r="/game"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Игра</a>
