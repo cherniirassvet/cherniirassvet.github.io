@@ -7,7 +7,7 @@
 <meta name="description" content="Хардкорный зомби-сервер CS 1.6. Привилегии покупаются в игре за аммопаки. Половина пожертвований уходит в приюты для бездомных животных.">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="{ZM}║ Чёрный Рассвет║ Hardcore ZOMBIE{ru/en}">
-<meta property="og:description" content="Донат ничего не решает в бою. 50% пожертвований — приютам для бездомных животных.">
+<meta property="og:description" content="Помощь ничего не решает в бою. 50% пожертвований — приютам для бездомных животных.">
 <meta property="og:image" content="img/hero.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Cpath d='M3 20h26' stroke='%23C8B79A' stroke-width='2'/%3E%3Cpath d='M10 20a6 6 0 0 1 12 0z' fill='%23C8B79A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -462,6 +462,59 @@ p{margin:0}
 }
 .tgbar{display:none;position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:59;padding:8px var(--pad)}
 .tgbar a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;border-radius:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#e0243a,#b3121f);box-shadow:0 6px 18px rgba(0,0,0,.45);text-decoration:none}
+
+/* ===== ART v3 — изображения и эффекты ===== */
+.shot{position:relative;overflow:hidden;border:1px solid var(--edge);background:var(--ink);isolation:isolate}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(.22) brightness(.82) saturate(.92);transform:scale(1.02);transition:transform 1.4s cubic-bezier(.2,.7,.2,1),filter 1.4s}
+.shot:hover img{filter:grayscale(0) brightness(.98) saturate(1.02);transform:scale(1.07)}
+.shot::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.15) 55%,rgba(0,0,0,.72) 100%);pointer-events:none;z-index:1}
+.shot::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(200,183,154,0);transition:box-shadow .5s}
+.shot:hover::before{box-shadow:inset 0 0 0 1px rgba(200,183,154,.28)}
+.shot .cap{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:14px 16px;font:400 12px/1.4 var(--fm);letter-spacing:.06em;color:var(--ash);text-transform:uppercase}
+.shot .cap b{display:block;font:600 15px/1.25 var(--fd);letter-spacing:.01em;color:var(--bone);text-transform:none;margin-bottom:3px}
+.mosaic{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:160px;gap:10px;margin-top:26px}
+.mosaic .shot:nth-child(1){grid-column:span 2;grid-row:span 2}
+.mosaic .shot:nth-child(2){grid-column:span 2;grid-row:span 1}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px}
+.trio .shot{aspect-ratio:1/1}
+.plate{position:relative;min-height:340px;margin-top:26px;border:1px solid var(--edge);overflow:hidden}
+.plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 38%;filter:grayscale(.3) brightness(.62) saturate(.9);transform:scale(1.04);animation:drift 30s ease-in-out infinite alternate}
+.plate .txt{position:relative;z-index:2;padding:46px 34px;max-width:620px}
+.plate::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.72) 45%,rgba(0,0,0,.18) 100%)}
+@keyframes drift{from{transform:scale(1.04) translate3d(0,0,0)}to{transform:scale(1.12) translate3d(-1.5%,-1.5%,0)}}
+.rail-strip{margin-top:26px;overflow:hidden;position:relative;border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);padding:14px 0}
+.rail-strip::before,.rail-strip::after{content:"";position:absolute;top:0;bottom:0;width:90px;z-index:3;pointer-events:none}
+.rail-strip::before{left:0;background:linear-gradient(90deg,var(--ink),transparent)}
+.rail-strip::after{right:0;background:linear-gradient(270deg,var(--ink),transparent)}
+.rail-track{display:flex;gap:10px;width:max-content;animation:slide 66s linear infinite}
+.rail-strip:hover .rail-track{animation-play-state:paused}
+.rail-track .shot{width:168px;height:224px;flex:0 0 auto}
+@keyframes slide{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+.vow{margin-top:24px;border:1px solid var(--edge);border-left:2px solid var(--dawn);background:linear-gradient(180deg,rgba(200,183,154,.05),transparent 60%);padding:22px 24px}
+.vow h4{font:600 17px/1.3 var(--fd);color:var(--bone);margin:0 0 10px}
+.vow p{margin:0 0 9px;color:var(--ash);font-size:14.5px;line-height:1.65}
+.vow p:last-child{margin-bottom:0}
+.vow b{color:var(--bone);font-weight:600}
+.spark{position:relative}
+.spark::after{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--dawn),transparent);opacity:.5;animation:sweep 11s ease-in-out infinite}
+@keyframes sweep{0%,100%{transform:translateX(-45%);opacity:0}50%{transform:translateX(45%);opacity:.55}}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (max-width:900px){
+ .mosaic{grid-template-columns:repeat(2,1fr);grid-auto-rows:132px}
+ .mosaic .shot:nth-child(1){grid-column:span 2;grid-row:span 2}
+ .mosaic .shot:nth-child(2){grid-column:span 2}
+ .trio{grid-template-columns:repeat(2,1fr)}
+ .plate{min-height:300px}
+ .plate .txt{padding:30px 20px}
+ .plate::after{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.9) 70%)}
+ .rail-track .shot{width:126px;height:168px}
+}
+@media (max-width:430px){ .trio{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){
+ .rail-track,.plate img,.spark::after{animation:none}
+ .rv{opacity:1;transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -485,7 +538,7 @@ p{margin:0}
     <a href="#/rules" data-r="/rules">Правила</a>
     <a href="#/players" data-r="/players">Игроки</a>
     <a href="#/clans" data-r="/clans">Кланы</a>
-    <a href="#/donate" data-r="/donate">Поддержать</a>
+    <a href="#/donate" data-r="/donate">Помочь</a>
   </nav>
   <div class="rail-foot">
     <div class="rail-live">
@@ -557,13 +610,22 @@ p{margin:0}
         <a class="btn tglink" href="#" target="_blank" rel="noopener" style="margin-top:24px">Смотреть отчёты</a>
       </div>
     </div>
-  </section>
+  
+  <div class="mosaic rv">
+    <figure class="shot"><img src="img/pets-1.jpg" alt="Оранжерея" loading="lazy"><figcaption class="cap"><b>Оранжерея</b>тихое место, где их никто не тронет</figcaption></figure><figure class="shot"><img src="img/pets-7.jpg" alt="Из-под обстрела" loading="lazy"><figcaption class="cap"><b>Из-под обстрела</b>выносят всех, кто не может сам</figcaption></figure><figure class="shot"><img src="img/pets-2.jpg" alt="На плечах" loading="lazy"><figcaption class="cap"><b>На плечах</b>двое спасённых</figcaption></figure><figure class="shot"><img src="img/pets-3.jpg" alt="Свои" loading="lazy"><figcaption class="cap"><b>Свои</b>отряд не бросает никого</figcaption></figure>
+  </div>
+  <div class="vow rv">
+    <h4>Это не магазин. Здесь ничего не продаётся.</h4>
+    <p>Перевод — <b>добровольное пожертвование</b> на жизнь сервера. Половина каждой суммы уходит в приюты для бездомных животных, вторая закрывает аренду, защиту от атак и домен.</p>
+    <p>Всё, что даётся в благодарность, <b>можно получить и в самой игре за аммопаки</b>. Деньги не открывают ничего, чего нельзя заработать игрой, и не влияют на исход боя.</p>
+  </div>
+</section>
 
   <!-- Правило -->
   <section class="band">
     <div class="head">
       <div class="lbl">Главное правило</div>
-      <h2>Донат не стреляет</h2>
+      <h2>Помощь не стреляет</h2>
       <p class="sub">Привилегия даёт вид и удобство. Урон, здоровье и скорость одинаковые у всех — и у новичка, и у того, кто платит.</p>
     </div>
     <div class="rows">
@@ -589,6 +651,17 @@ p{margin:0}
       </div>
     </div>
   </section>
+<section class="band spark">
+  <div class="plate rv">
+    <img src="img/brand.jpg" alt="Выжившая с золотым автоматом на фоне горящего города" loading="lazy">
+    <div class="txt">
+      <div class="lbl">Зачем это всё</div>
+      <h2 style="margin-bottom:16px">Сервер держится<br>на своих</h2>
+      <p class="sub">Здесь нет рекламы, нет продаж и нет преимуществ за деньги. Есть люди, которые приходят играть, и есть те, кто помогает проекту дожить до следующего месяца. Этого хватает.</p>
+    </div>
+  </div>
+</section>
+
 
   <!-- Голосования -->
   <section class="band alt">
@@ -657,7 +730,16 @@ p{margin:0}
   </section>
 
   <!-- Вопросы -->
-  <section class="band">
+  
+<section class="band alt">
+  <div class="head">
+    <div class="lbl">Галерея</div>
+    <h2>Мир Чёрного Рассвета</h2>
+    <p class="sub">Арты, которые живут на сервере: в загрузочных окнах, в канале и на этой странице.</p>
+  </div>
+  <div class="rail-strip rv"><div class="rail-track"><figure class="shot"><img src="img/surv-01.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-05.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-12.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-02.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-09.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-15.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-03.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-06.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-16.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-04.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-10.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-13.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-07.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-14.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-11.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-08.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-01.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-05.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-12.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-02.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-09.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-15.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-03.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-06.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-16.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-04.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-10.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-13.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-07.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-14.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-11.jpg" alt="" loading="lazy"></figure><figure class="shot"><img src="img/surv-08.jpg" alt="" loading="lazy"></figure></div></div>
+</section>
+<section class="band">
     <div class="head">
       <div class="lbl">Вопросы</div>
       <h2>Коротко о главном</h2>
@@ -672,7 +754,7 @@ p{margin:0}
         <p>Остальные причины, по которым барьер не встанет: не хватает аммопаков (стоит 10), исчерпан лимит в 3 штуки за раунд,
           на карте уже стоит 20 барьеров, ты зомби, или место открытое — барьер ставится только в нычке, где над головой есть потолок.
           В каждом из этих случаев в чат приходит строка с точной причиной.</p></details>
-      <details><summary>Донат даёт преимущество в бою</summary>
+      <details><summary>Даёт ли помощь преимущество в бою</summary>
         <p>Нет. Привилегия не добавляет урона, здоровья и скорости.</p></details>
       <details><summary>Куда идут деньги</summary>
         <p>Половина — в приюты для бездомных животных, с отчётом в канале. Вторая половина — аренда, защита от атак, домен.</p></details>
@@ -724,7 +806,16 @@ p{margin:0}
   </section>
 
   <!-- 01 Аммопаки -->
-  <section class="band alt" id="g1" style="scroll-margin-top:70px">
+  
+<section class="band alt spark">
+  <div class="head">
+    <div class="lbl">Кто здесь водится</div>
+    <h2>Восемь тел, двое избранных<br>и один босс</h2>
+    <p class="sub">Классы зомби, спецраунды и арена босса — всё это меняется от карты к карте. Ниже расписано, как это устроено.</p>
+  </div>
+  <div class="trio rv"><figure class="shot"><img src="img/neon-1.jpg" alt="Зомби-классы" loading="lazy"><figcaption class="cap"><b>Зомби-классы</b>восемь тел на выбор, у каждого своя способность</figcaption></figure><figure class="shot"><img src="img/neon-2.jpg" alt="Немезида" loading="lazy"><figcaption class="cap"><b>Немезида</b>один против всех, живучий и быстрый</figcaption></figure><figure class="shot"><img src="img/neon-3.jpg" alt="Эпидемия" loading="lazy"><figcaption class="cap"><b>Эпидемия</b>спецраунд, когда правила меняются</figcaption></figure><figure class="shot"><img src="img/neon-4.jpg" alt="Выживший" loading="lazy"><figcaption class="cap"><b>Выживший</b>последняя надежда команды людей</figcaption></figure><figure class="shot"><img src="img/neon-5.jpg" alt="Арсенал" loading="lazy"><figcaption class="cap"><b>Арсенал</b>больше тридцати стволов за аммопаки</figcaption></figure><figure class="shot"><img src="img/neon-6.jpg" alt="Босс" loading="lazy"><figcaption class="cap"><b>Босс</b>отдельная арена и общий противник</figcaption></figure></div>
+</section>
+<section class="band alt" id="g1" style="scroll-margin-top:70px">
     <div class="head">
       <div class="lbl">01 · Экономика</div>
       <h2>Аммопаки</h2>
@@ -1114,7 +1205,7 @@ p{margin:0}
       <section id="r8" style="scroll-margin-top:70px">
         <div class="doc-h"><span class="i">08</span><h3>Аммопаки, магазин, донат</h3></div>
         <div class="doc-i"><span class="c">8.1</span><p>Аммопаки зарабатываются уроном и убийствами. Любая накрутка — сговор, урон по «своему» боту, эксплойт плагина — обнуляет счёт.</p></div>
-        <div class="doc-i"><span class="c">8.2</span><p>Донат не возвращается, если привилегия снята за нарушение правил. Если привилегия не выдана по нашей вине — вернём или продлим, на выбор.</p></div>
+        <div class="doc-i"><span class="c">8.2</span><p>Пожертвование не возвращается, если знак благодарности снят за нарушение правил. Если привилегия не выдана по нашей вине — вернём или продлим, на выбор.</p></div>
         <div class="doc-i"><span class="c">8.3</span><p>Привилегия не даёт боевого преимущества и не может быть основанием для поблажки при разборе.</p></div>
         <div class="doc-i"><span class="c">8.4</span><p>Цены на всё — оружие, способности, привилегии — меняются только через голосование в канале.</p></div>
       </section>
@@ -1220,6 +1311,17 @@ p{margin:0}
     </div>
     <div class="board" id="clanBoard"></div>
   </section>
+
+<section class="band spark">
+  <div class="plate rv">
+    <img src="img/wide-neon.jpg" alt="Выжившая в неоновом городе" loading="lazy">
+    <div class="txt">
+      <div class="lbl">Объединения</div>
+      <h2 style="margin-bottom:16px">Вместе — дольше</h2>
+      <p class="sub">Клан даёт общий счёт, свой магазин и место в таблице. Уровни и слоты покупаются в игре за клановые монеты, которые зарабатываются боем.</p>
+    </div>
+  </div>
+</section>
 </section>
 
 <!-- =================================================================
@@ -1228,11 +1330,18 @@ p{margin:0}
 <section class="page" id="p-donate">
   <section class="band" style="border-top:0">
     <div class="head">
-      <div class="lbl">Поддержка проекта</div>
-      <h2>Что можно взять</h2>
+      <div class="lbl">Помощь проекту</div>
+      <h2>Знаки благодарности</h2>
       <p class="sub">Половина суммы уходит в приюты для бездомных животных, вторая — на аренду, защиту и домен.
         Ни одна строка ниже не добавляет урона.</p>
     </div>
+  <div class="vow rv">
+    <h4>Пожертвование, а не покупка</h4>
+    <p>Ниже — <b>знаки благодарности</b> тем, кто помогает серверу жить. Это не услуги и не товары: сервер ничего не продаёт.</p>
+    <p><b>Половина</b> каждой суммы уходит в приюты для бездомных животных, остальное — на аренду, защиту от атак и домен. Отчёт с чеками — в Telegram-канале в конце месяца.</p>
+    <p>Всё из списка <b>можно получить и в самой игре за аммопаки</b>. Деньги не открывают ничего, чего нельзя заработать игрой, и не влияют на исход боя.</p>
+  </div>
+
 
     <div class="cols">
       <div class="col">
@@ -1246,7 +1355,7 @@ p{margin:0}
           <li><b>Метка в списке</b> игроков и префикс в чате</li>
           <li><b>VIP-классы зомби</b></li>
         </ul>
-        <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:22px;width:100%">Купить VIP</a>
+        <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:22px;width:100%">Помочь проекту</a>
       </div>
       <div class="col">
         <h3>Admin + VIP</h3>
@@ -1261,7 +1370,7 @@ p{margin:0}
           <li><b>Админская модель зомби</b></li>
           <li>Приоритетный разбор жалоб</li>
         </ul>
-        <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:22px;width:100%">Купить админку</a>
+        <a class="btn btn-solid" href="#/buy" data-r="/buy" style="margin-top:22px;width:100%">Помочь проекту</a>
       </div>
     </div>
   </section>
@@ -1279,7 +1388,7 @@ p{margin:0}
       <tbody id="ledgerBody"></tbody>
     </table>
     <div class="paybtns" style="margin-top:28px">
-      <a class="btn btn-solid" href="#/buy" data-r="/buy">Купить привилегию</a>
+      <a class="btn btn-solid" href="#/buy" data-r="/buy">Помочь проекту</a>
       <a class="btn adminlink" href="#" target="_blank" rel="noopener">Написать администратору</a>
     </div>
   </section>
@@ -1295,12 +1404,12 @@ p{margin:0}
           <div class="row" style="grid-template-columns:76px 1fr;gap:16px;padding:14px 0">
             <div class="lbl">02</div><div><p>Узнай свой SteamID: зайди на сервер и напиши в консоли <span class="mono dawnc">status</span>.</p></div></div>
           <div class="row" style="grid-template-columns:76px 1fr;gap:16px;padding:14px 0">
-            <div class="lbl">03</div><div><p>Оплати и <b>обязательно укажи в сообщении к платежу</b> позицию и свой SteamID — образец ниже.</p></div></div>
+            <div class="lbl">03</div><div><p>Переведи и <b>обязательно укажи в сообщении к платежу</b> позицию и свой SteamID — образец ниже.</p></div></div>
           <div class="row" style="grid-template-columns:76px 1fr;gap:16px;padding:14px 0;border-bottom:0">
             <div class="lbl">04</div><div><p>Привилегия выдаётся по SteamID и включается после смены карты.</p></div></div>
         </div>
         <div class="paybtns" style="margin-top:26px">
-          <a class="btn btn-solid" href="#/buy" data-r="/buy">Купить привилегию</a>
+          <a class="btn btn-solid" href="#/buy" data-r="/buy">Помочь проекту</a>
           <a class="btn adminlink" href="#" target="_blank" rel="noopener">Написать администратору</a>
         </div>
       </div>
@@ -1356,6 +1465,15 @@ p{margin:0}
       </div>
     </div>
   </section>
+
+<section class="band alt spark">
+  <div class="head">
+    <div class="lbl">Куда уходит половина</div>
+    <h2>Ради них всё и затевалось</h2>
+    <p class="sub">Мы не собираем на счёт и не копим. Каждый месяц половина собранного уходит в приют, а чеки выкладываем в канал — можно пересчитать за нами.</p>
+  </div>
+  <div class="trio rv"><figure class="shot"><img src="img/pets-5.jpg" alt="Двое на плечах" loading="lazy"><figcaption class="cap"><b>Двое на плечах</b>их вынесли и оставили себе</figcaption></figure><figure class="shot"><img src="img/pets-6.jpg" alt="Не бросили" loading="lazy"><figcaption class="cap"><b>Не бросили</b>пёс прошёл весь город вместе с ними</figcaption></figure><figure class="shot"><img src="img/pets-4.jpg" alt="Всей командой" loading="lazy"><figcaption class="cap"><b>Всей командой</b>уходят только вместе</figcaption></figure></div>
+</section>
 </section>
 
 <!-- =================================================================
@@ -1364,15 +1482,15 @@ p{margin:0}
 <section class="page" id="p-buy">
   <section class="band" style="border-top:0">
     <div class="head">
-      <div class="lbl">Заказ · три шага</div>
-      <h2>Купить привилегию</h2>
+      <div class="lbl">Помощь · три шага</div>
+      <h2>Помочь проекту</h2>
       <p class="sub">Собери заказ здесь — страница сама посчитает сумму и составит строку,
         которую нужно вставить при оплате. Без неё привилегия не найдёт хозяина.</p>
     </div>
 
     <div class="step" id="stepItem">
       <div class="step-h"><span class="step-n">01</span><h3>Что берёшь</h3></div>
-      <p class="hint">Выбери позицию. Что входит — расписано на странице «Поддержать».</p>
+      <p class="hint">Выбери позицию. Что входит — расписано на странице «Помочь».</p>
       <div class="picks" id="buyPicks"></div>
       <div class="termpick" id="buyTermRow" style="margin:18px 0 0">
         <span class="lbl">Срок</span>
@@ -1399,7 +1517,7 @@ p{margin:0}
     </div>
 
     <div class="step off" id="stepPay">
-      <div class="step-h"><span class="step-n">03</span><h3>Оплата</h3></div>
+      <div class="step-h"><span class="step-n">03</span><h3>Перевод</h3></div>
       <div class="ordersum">
         <div class="orow"><span>Позиция</span><b id="oItem">—</b></div>
         <div class="orow"><span>Срок</span><b id="oTerm">—</b></div>
@@ -1452,7 +1570,7 @@ p{margin:0}
   <a href="#/rules" data-r="/rules"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7"/></svg>Правила</a>
   <a href="#/players" data-r="/players"><svg viewBox="0 0 24 24"><path d="M4 20V9M10 20V4M16 20v-8M22 20H2"/></svg>Игроки</a>
   <a href="#/clans" data-r="/clans"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 7.7 8 9 4.6-1.3 8-4 8-9V6z"/></svg>Кланы</a>
-  <a href="#/donate" data-r="/donate"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.6-7-9.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 2.5C19 15.4 12 20 12 20z"/></svg>Поддержать</a>
+  <a href="#/donate" data-r="/donate"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.6-7-9.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 2.5C19 15.4 12 20 12 20z"/></svg>Помочь</a>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -1919,7 +2037,7 @@ function reveal(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{
     if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
   }),{rootMargin:'0px 0px -6% 0px',threshold:.04});
-  $$('.head,.claim>div,.claim-num,.qa,.board,.tocline,.cols,.ledger,.doc section').forEach(el=>{
+  $$('.head,.claim>div,.claim-num,.qa,.board,.tocline,.cols,.ledger,.doc section,.rv').forEach(el=>{
     el.classList.add('rv'); io.observe(el);
   });
   $$('.rows,.spec').forEach(box=>{
