@@ -622,8 +622,48 @@ body.fx-cross a,body.fx-cross button,body.fx-cross .term,body.fx-cross input,bod
  transform:translateX(-100%);animation:fxshine 3.4s ease-in-out 1.2s infinite}
 @keyframes fxshine{0%{transform:translateX(-100%)}55%,100%{transform:translateX(220%)}}
 
+
+/* ===== FX v2 — гроза и помехи ===== */
+/* гроза: зарево в небе */
+.fx-storm{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;mix-blend-mode:screen;
+ will-change:opacity;background:
+  radial-gradient(130% 62% at 50% -14%, rgba(178,198,228,.42), rgba(146,168,204,.12) 46%, transparent 76%),
+  linear-gradient(180deg, rgba(190,208,236,.10), transparent 60%)}
+/* гроза: сама молния */
+.fx-bolt{position:fixed;inset:0;pointer-events:none;z-index:5;mix-blend-mode:screen;opacity:0;
+ transition:opacity .16s linear}
+.fx-bolt.on{opacity:1;transition:none}
+
+/* помехи при переходе между вкладками */
+.fx-tear{position:fixed;inset:0;pointer-events:none;z-index:78;display:none;overflow:hidden}
+.fx-tear.on{display:block}
+.fx-tear i{position:absolute;left:-14%;width:128%;display:block;
+ border-top:1px solid rgba(255,255,255,.10);border-bottom:1px solid rgba(0,0,0,.55);
+ background:linear-gradient(90deg,transparent,rgba(200,183,154,.13) 18%,rgba(255,255,255,.08) 50%,rgba(200,183,154,.11) 80%,transparent);
+ animation:fxband .22s steps(1,end) both}
+.fx-tear i.r{background:linear-gradient(90deg,transparent,rgba(224,36,58,.17) 30%,transparent)}
+.fx-tear i.b{background:linear-gradient(90deg,transparent,rgba(120,200,255,.17) 70%,transparent)}
+.fx-tear::after{content:"";position:absolute;inset:0;opacity:.45;
+ background:repeating-linear-gradient(180deg,rgba(0,0,0,.30) 0 1px,transparent 1px 3px)}
+@keyframes fxband{
+ 0%{transform:translateX(var(--d,0px))}
+ 28%{transform:translateX(calc(var(--d,0px) * -.62))}
+ 56%{transform:translateX(calc(var(--d,0px) * .26))}
+ 100%{transform:none}
+}
+/* сдвиг самой ленты: отдельное свойство translate, чтобы не спорить с fxin */
+.page.fx-rip{animation:fxin .45s cubic-bezier(.2,.7,.2,1) both, fxrip .2s steps(1,end) both}
+@keyframes fxrip{
+ 0%{translate:-7px 0}
+ 24%{translate:6px 0}
+ 48%{translate:-3px 0}
+ 72%{translate:2px 0}
+ 100%{translate:none}
+}
+
 @media (prefers-reduced-motion:reduce){
- .fx-fog,.fx-fog2,.fx-lamp,.fx-ash,.fx-read{display:none}
+ .fx-fog,.fx-fog2,.fx-lamp,.fx-ash,.fx-read,.fx-storm,.fx-bolt,.fx-tear{display:none}
+ .page.fx-rip{animation:none}
  .page.on{animation:none}
  .fx-glitch{animation:none}
  .brow.top:first-child .bar i::after{animation:none}
@@ -2328,6 +2368,76 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
   /* --- 13. прицел --- */
   if(DESK) body.classList.add('fx-cross');
 
+
+  /* --- 15. гроза: вспышки молнии на фоне --- */
+  if(!RM){
+    var storm = el('div','fx-storm'); body.appendChild(storm);
+    var bolt  = el('canvas','fx-bolt'); body.appendChild(bolt);
+    var bx = bolt.getContext('2d');
+    function bsize(){ bolt.width = innerWidth; bolt.height = innerHeight; }
+    bsize(); addEventListener('resize', bsize);
+
+    function zigzag(x, y, endY, spread, step){
+      var pts = [[x,y]];
+      while(y < endY){
+        y += step + Math.random()*step*2;
+        x += (Math.random()-.5) * spread;
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+    function line(pts, w, a, blur){
+      bx.beginPath(); bx.moveTo(pts[0][0], pts[0][1]);
+      for(var i=1;i<pts.length;i++) bx.lineTo(pts[i][0], pts[i][1]);
+      bx.lineWidth = w; bx.lineCap = 'round'; bx.lineJoin = 'round';
+      bx.strokeStyle = 'rgba(208,224,246,' + a + ')';
+      bx.shadowBlur = blur; bx.shadowColor = 'rgba(148,178,230,.9)';
+      bx.stroke();
+    }
+    function drawBolt(){
+      bx.clearRect(0,0,bolt.width,bolt.height);
+      var main = zigzag(bolt.width*(.12 + Math.random()*.76), -24,
+                        bolt.height*(.30 + Math.random()*.34), 72, 18);
+      line(main, 5.5, .14, 26);
+      line(main, 2.4, .40, 14);
+      line(main, 1.0, .74, 6);
+      var br = 1 + (Math.random()<.6 ? 1 : 0);
+      for(var k=0;k<br;k++){
+        var j = 1 + Math.floor(Math.random()*(main.length-2));
+        var arm = zigzag(main[j][0], main[j][1], main[j][1] + 60 + Math.random()*110, 90, 16);
+        line(arm, 1.3, .46, 8);
+      }
+      bx.shadowBlur = 0;
+    }
+
+    function flash(){
+      var n = 1 + (Math.random()<.55 ? 1 : 0) + (Math.random()<.18 ? 1 : 0), i = 0;
+      if(Math.random() < .45){
+        drawBolt();
+        bolt.classList.add('on');
+        setTimeout(function(){ bolt.classList.remove('on'); }, 100 + Math.random()*60);
+      }
+      (function step(){
+        if(i++ >= n){ return; }
+        storm.style.transition = 'none';
+        storm.style.opacity = (.34 + Math.random()*.42).toFixed(2);
+        setTimeout(function(){
+          storm.style.transition = 'opacity ' + (100 + (Math.random()*180|0)) + 'ms linear';
+          storm.style.opacity = 0;
+          setTimeout(step, 80 + Math.random()*130);
+        }, 40 + Math.random()*55);
+      })();
+    }
+    (function loop(first){
+      var wait = first ? (2600 + Math.random()*2600)
+                       : (TOUCH ? 17000 : 10000) + Math.random()*(TOUCH ? 26000 : 19000);
+      setTimeout(function(){
+        if(!d.hidden) flash();
+        loop(false);
+      }, wait);
+    })(true);
+  }
+
   /* --- 12. полоса прочтения --- */
   var read = el('div','fx-read'); body.appendChild(read);
   function onScroll(){
@@ -2340,14 +2450,44 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
   }
   addEventListener('scroll', onScroll, {passive:true});
 
-  /* --- 11. переходы между вкладками --- */
+  /* --- 11. переходы между вкладками + помехи --- */
+  var tear = null;
+  function ripple(){
+    if(RM) return;
+    if(!tear){
+      tear = el('div','fx-tear');
+      for(var i=0;i<7;i++) tear.appendChild(el('i'));
+      body.appendChild(tear);
+    }
+    var bands = tear.children, top = 2;
+    for(var j=0;j<bands.length;j++){
+      var b = bands[j], h = 2 + Math.random()*9;
+      top += Math.random()*13;
+      b.className = Math.random()<.3 ? 'r' : (Math.random()<.4 ? 'b' : '');
+      b.style.top = top.toFixed(1) + '%';
+      b.style.height = h.toFixed(1) + '%';
+      b.style.setProperty('--d', ((Math.random()<.5?-1:1) * (14 + Math.random()*46)).toFixed(0) + 'px');
+      b.style.animation = 'none'; void b.offsetWidth; b.style.animation = '';
+      top += h;
+    }
+    tear.classList.add('on');
+    clearTimeout(ripple.t);
+    ripple.t = setTimeout(function(){ tear.classList.remove('on'); }, 260);
+  }
+
   if(typeof route === 'function'){
     var _route = route;
     route = function(){
       var cur = d.querySelector('.page.on');
       _route.apply(this, arguments);
       var nxt = d.querySelector('.page.on');
-      if(nxt && nxt !== cur && !RM){ nxt.style.animation = 'none'; void nxt.offsetWidth; nxt.style.animation = ''; }
+      if(nxt && nxt !== cur && !RM){
+        nxt.classList.remove('fx-rip');
+        nxt.style.animation = 'none'; void nxt.offsetWidth; nxt.style.animation = '';
+        nxt.classList.add('fx-rip');
+        setTimeout(function(){ nxt.classList.remove('fx-rip'); }, 520);
+        ripple();
+      }
       prepImages(); onScroll();
     };
   }
