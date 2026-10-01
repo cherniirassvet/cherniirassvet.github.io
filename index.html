@@ -631,7 +631,7 @@ body.fx-cross a,body.fx-cross button,body.fx-cross .term,body.fx-cross input,bod
   linear-gradient(180deg, rgba(190,208,236,.10), transparent 60%)}
 /* гроза: сама молния */
 .fx-bolt{position:fixed;inset:0;pointer-events:none;z-index:5;mix-blend-mode:screen;opacity:0;
- transition:opacity .16s linear}
+ transition:opacity .07s linear}
 .fx-bolt.on{opacity:1;transition:none}
 
 /* помехи при переходе между вкладками */
@@ -2369,7 +2369,7 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
   if(DESK) body.classList.add('fx-cross');
 
 
-  /* --- 15. гроза: вспышки молнии на фоне --- */
+  /* --- 15. гроза: удары молнии --- */
   if(!RM){
     var storm = el('div','fx-storm'); body.appendChild(storm);
     var bolt  = el('canvas','fx-bolt'); body.appendChild(bolt);
@@ -2377,10 +2377,11 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
     function bsize(){ bolt.width = innerWidth; bolt.height = innerHeight; }
     bsize(); addEventListener('resize', bsize);
 
+    /* ломаная канала разряда */
     function zigzag(x, y, endY, spread, step){
       var pts = [[x,y]];
       while(y < endY){
-        y += step + Math.random()*step*2;
+        y += step + Math.random()*step*1.9;
         x += (Math.random()-.5) * spread;
         pts.push([x,y]);
       }
@@ -2390,49 +2391,71 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
       bx.beginPath(); bx.moveTo(pts[0][0], pts[0][1]);
       for(var i=1;i<pts.length;i++) bx.lineTo(pts[i][0], pts[i][1]);
       bx.lineWidth = w; bx.lineCap = 'round'; bx.lineJoin = 'round';
-      bx.strokeStyle = 'rgba(208,224,246,' + a + ')';
-      bx.shadowBlur = blur; bx.shadowColor = 'rgba(148,178,230,.9)';
+      bx.strokeStyle = 'rgba(214,230,250,' + a + ')';
+      bx.shadowBlur = blur; bx.shadowColor = 'rgba(150,182,236,.95)';
       bx.stroke();
     }
-    function drawBolt(){
-      bx.clearRect(0,0,bolt.width,bolt.height);
-      var main = zigzag(bolt.width*(.12 + Math.random()*.76), -24,
-                        bolt.height*(.30 + Math.random()*.34), 72, 18);
-      line(main, 5.5, .14, 26);
-      line(main, 2.4, .40, 14);
-      line(main, 1.0, .74, 6);
-      var br = 1 + (Math.random()<.6 ? 1 : 0);
-      for(var k=0;k<br;k++){
+
+    /* один разряд: канал + ветки + свет в точке удара */
+    function makeStrike(){
+      var h = bolt.height, w = bolt.width;
+      var main = zigzag(w*(.10 + Math.random()*.80), -30, h*(.46 + Math.random()*.46), 78, 16);
+      var arms = [], k = 2 + Math.floor(Math.random()*2);
+      for(var i=0;i<k;i++){
         var j = 1 + Math.floor(Math.random()*(main.length-2));
-        var arm = zigzag(main[j][0], main[j][1], main[j][1] + 60 + Math.random()*110, 90, 16);
-        line(arm, 1.3, .46, 8);
+        arms.push(zigzag(main[j][0], main[j][1], main[j][1] + 70 + Math.random()*150, 100, 15));
       }
+      return {main:main, arms:arms, tip:main[main.length-1]};
+    }
+    function paint(st, power){
+      bx.clearRect(0,0,bolt.width,bolt.height);
+      /* свет вокруг точки удара */
+      var g = bx.createRadialGradient(st.tip[0], st.tip[1], 0, st.tip[0], st.tip[1], 170*power);
+      g.addColorStop(0, 'rgba(190,212,245,' + (.26*power).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(150,180,230,0)');
+      bx.fillStyle = g;
+      bx.beginPath(); bx.arc(st.tip[0], st.tip[1], 170*power, 0, 6.2832); bx.fill();
+      /* ветки */
+      for(var i=0;i<st.arms.length;i++){
+        line(st.arms[i], 2.0*power, .22*power, 10);
+        line(st.arms[i], 1.0, .52*power, 6);
+      }
+      /* главный канал: ореол, тело, раскалённая жила */
+      line(st.main, 8*power, .15*power, 30);
+      line(st.main, 3.4*power, .46*power, 16);
+      line(st.main, 1.3, .90*power, 7);
       bx.shadowBlur = 0;
     }
 
-    function flash(){
-      var n = 1 + (Math.random()<.55 ? 1 : 0) + (Math.random()<.18 ? 1 : 0), i = 0;
-      if(Math.random() < .45){
-        drawBolt();
-        bolt.classList.add('on');
-        setTimeout(function(){ bolt.classList.remove('on'); }, 100 + Math.random()*60);
-      }
+    /* удар: канал вспыхивает 2-4 раза, небо подсвечивается вместе с ним */
+    function strike(){
+      var st = makeStrike(), n = 2 + Math.floor(Math.random()*3), i = 0;
       (function step(){
-        if(i++ >= n){ return; }
-        storm.style.transition = 'none';
-        storm.style.opacity = (.34 + Math.random()*.42).toFixed(2);
-        setTimeout(function(){
-          storm.style.transition = 'opacity ' + (100 + (Math.random()*180|0)) + 'ms linear';
+        if(i++ >= n){
+          bolt.classList.remove('on');
+          storm.style.transition = 'opacity ' + (240 + (Math.random()*200|0)) + 'ms linear';
           storm.style.opacity = 0;
-          setTimeout(step, 80 + Math.random()*130);
-        }, 40 + Math.random()*55);
+          return;
+        }
+        var power = i === 1 ? 1 : (.55 + Math.random()*.45);
+        paint(st, power);
+        bolt.classList.add('on');
+        storm.style.transition = 'none';
+        storm.style.opacity = (.16 + .22*power).toFixed(2);
+        setTimeout(function(){
+          bolt.classList.remove('on');
+          storm.style.transition = 'opacity 80ms linear';
+          storm.style.opacity = 0;
+          setTimeout(step, 36 + Math.random()*80);
+        }, 50 + Math.random()*80);
       })();
     }
+
     (function loop(first){
-      var wait = first ? (2600 + Math.random()*2600)
-                       : (TOUCH ? 17000 : 10000) + Math.random()*(TOUCH ? 26000 : 19000);
+      var wait = first ? (2200 + Math.random()*2200)
+                       : (TOUCH ? 14000 : 7000) + Math.random()*(TOUCH ? 17000 : 12000);
       setTimeout(function(){
-        if(!d.hidden) flash();
+        if(!d.hidden) strike();
         loop(false);
       }, wait);
     })(true);
