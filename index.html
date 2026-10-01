@@ -2377,12 +2377,15 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
     function bsize(){ bolt.width = innerWidth; bolt.height = innerHeight; }
     bsize(); addEventListener('resize', bsize);
 
-    /* ломаная канала разряда */
-    function zigzag(x, y, endY, spread, step){
-      var pts = [[x,y]];
+    /* ломаная канала разряда: держится своей колонки, не уезжает за край */
+    function zigzag(x, y, endY, spread, step, drift){
+      var pts = [[x,y]], x0 = x, w = bolt.width;
+      drift = drift || 0;
       while(y < endY){
-        y += step + Math.random()*step*1.9;
-        x += (Math.random()-.5) * spread;
+        y += step + Math.random()*step*1.8;
+        x += (Math.random()-.5)*spread + (x0 - x)*.14 + drift;
+        if(x < 10) x = 10 + Math.random()*20;
+        if(x > w-10) x = w-10 - Math.random()*20;
         pts.push([x,y]);
       }
       return pts;
@@ -2396,40 +2399,61 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
       bx.stroke();
     }
 
-    /* один разряд: канал + ветки + свет в точке удара */
-    function makeStrike(){
-      var h = bolt.height, w = bolt.width;
-      var main = zigzag(w*(.10 + Math.random()*.80), -30, h*(.46 + Math.random()*.46), 78, 16);
-      var arms = [], k = 2 + Math.floor(Math.random()*2);
+    /* один канал: сверху донизу, с ветками */
+    function channel(xc, strong){
+      var h = bolt.height;
+      var main = zigzag(xc, -40, h*(.92 + Math.random()*.20), strong ? 86 : 64, 16,
+                        (Math.random()-.5)*14);
+      var arms = [], k = (strong ? 3 : 2) + Math.floor(Math.random()*3);
       for(var i=0;i<k;i++){
         var j = 1 + Math.floor(Math.random()*(main.length-2));
-        arms.push(zigzag(main[j][0], main[j][1], main[j][1] + 70 + Math.random()*150, 100, 15));
+        arms.push(zigzag(main[j][0], main[j][1], main[j][1] + 90 + Math.random()*220, 110, 15,
+                         (Math.random()-.5)*26));
       }
-      return {main:main, arms:arms, tip:main[main.length-1]};
+      return {main:main, arms:arms, tip:main[main.length-1], strong:strong,
+              p: strong ? 1 : (.42 + Math.random()*.34)};
     }
-    function paint(st, power){
-      bx.clearRect(0,0,bolt.width,bolt.height);
-      /* свет вокруг точки удара */
-      var g = bx.createRadialGradient(st.tip[0], st.tip[1], 0, st.tip[0], st.tip[1], 170*power);
-      g.addColorStop(0, 'rgba(190,212,245,' + (.26*power).toFixed(3) + ')');
+
+    /* разряд целиком: 3-5 каналов по всей высоте экрана */
+    function makeStrike(){
+      var w = bolt.width, n = 3 + Math.floor(Math.random()*3), ch = [], lead = Math.floor(Math.random()*n);
+      for(var i=0;i<n;i++){
+        var slot = (i + Math.random()*.8) / n;
+        ch.push(channel(w*(.05 + slot*.9), i === lead));
+      }
+      return ch;
+    }
+
+    function glow(x, y, r, a){
+      var g = bx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, 'rgba(190,212,245,' + a.toFixed(3) + ')');
       g.addColorStop(1, 'rgba(150,180,230,0)');
       bx.fillStyle = g;
-      bx.beginPath(); bx.arc(st.tip[0], st.tip[1], 170*power, 0, 6.2832); bx.fill();
-      /* ветки */
-      for(var i=0;i<st.arms.length;i++){
-        line(st.arms[i], 2.0*power, .22*power, 10);
-        line(st.arms[i], 1.0, .52*power, 6);
+      bx.beginPath(); bx.arc(x, y, r, 0, 6.2832); bx.fill();
+    }
+
+    function paint(st, power){
+      bx.clearRect(0,0,bolt.width,bolt.height);
+      for(var c=0;c<st.length;c++){
+        var ch = st[c];
+        /* слабые каналы мигают не в каждый кадр */
+        if(!ch.strong && Math.random() < .25) continue;
+        var p = power * ch.p;
+        glow(ch.tip[0], ch.tip[1], 190*p, .24*p);
+        for(var i=0;i<ch.arms.length;i++){
+          line(ch.arms[i], 2.0*p, .20*p, 10);
+          line(ch.arms[i], 1.0, .50*p, 6);
+        }
+        line(ch.main, 8*p, .14*p, 30);
+        line(ch.main, 3.4*p, .44*p, 16);
+        line(ch.main, 1.3, .88*p, 7);
       }
-      /* главный канал: ореол, тело, раскалённая жила */
-      line(st.main, 8*power, .15*power, 30);
-      line(st.main, 3.4*power, .46*power, 16);
-      line(st.main, 1.3, .90*power, 7);
       bx.shadowBlur = 0;
     }
 
-    /* удар: канал вспыхивает 2-4 раза, небо подсвечивается вместе с ним */
+    /* удар: каналы вспыхивают 3-5 раз, небо подсвечивается вместе с ними */
     function strike(){
-      var st = makeStrike(), n = 2 + Math.floor(Math.random()*3), i = 0;
+      var st = makeStrike(), n = 3 + Math.floor(Math.random()*3), i = 0;
       (function step(){
         if(i++ >= n){
           bolt.classList.remove('on');
