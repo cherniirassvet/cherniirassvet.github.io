@@ -538,16 +538,20 @@ p{margin:0}
 }
 
 /* ===== FX v1 — эффекты ===== */
-.fx-fog,.fx-lamp,.fx-ash{position:fixed;inset:0;pointer-events:none;z-index:2}
-.fx-fog{opacity:.5;background:
- radial-gradient(60% 45% at 18% 78%, rgba(200,183,154,.055), transparent 70%),
- radial-gradient(55% 40% at 82% 22%, rgba(120,140,170,.05), transparent 70%);
- animation:fogdrift 54s ease-in-out infinite alternate}
-@keyframes fogdrift{from{transform:translate3d(-2%,1%,0) scale(1.05)}to{transform:translate3d(3%,-2%,0) scale(1.16)}}
-.fx-lamp{z-index:3;opacity:0;transition:opacity .6s;mix-blend-mode:soft-light;
- background:radial-gradient(260px 260px at var(--lx,50%) var(--ly,50%), rgba(200,183,154,.30), rgba(200,183,154,.07) 45%, transparent 72%)}
+.fx-fog,.fx-lamp,.fx-ash{position:fixed;inset:0;pointer-events:none;z-index:4}
+.fx-fog{opacity:1;z-index:4;background:
+ radial-gradient(70% 55% at 18% 80%, rgba(200,183,154,.13), transparent 72%),
+ radial-gradient(62% 48% at 84% 20%, rgba(130,155,195,.11), transparent 72%);
+ animation:fogdrift 46s ease-in-out infinite alternate}
+.fx-fog2{position:fixed;inset:0;pointer-events:none;z-index:4;opacity:1;background:
+ radial-gradient(58% 50% at 52% 58%, rgba(200,183,154,.09), transparent 70%);
+ animation:fogdrift2 71s ease-in-out infinite alternate}
+@keyframes fogdrift{from{transform:translate3d(-4%,2%,0) scale(1.06)}to{transform:translate3d(6%,-4%,0) scale(1.24)}}
+@keyframes fogdrift2{from{transform:translate3d(5%,-3%,0) scale(1.1)}to{transform:translate3d(-6%,4%,0) scale(1.3)}}
+.fx-lamp{z-index:5;opacity:0;transition:opacity .5s;mix-blend-mode:screen;
+ background:radial-gradient(380px 380px at var(--lx,50%) var(--ly,50%), rgba(214,186,140,.26), rgba(190,160,120,.10) 40%, transparent 70%)}
 .fx-lamp.on{opacity:1}
-.fx-ash{z-index:2;opacity:.75}
+.fx-ash{z-index:4;opacity:1}
 
 /* прицел вместо курсора */
 body.fx-cross{cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><g fill='none' stroke='%23c8b79a' stroke-width='1.4' opacity='.85'><path d='M13 2v7M13 17v7M2 13h7M17 13h7'/><circle cx='13' cy='13' r='1.6' fill='%23c8b79a' stroke='none'/></g></svg>") 13 13, crosshair}
@@ -619,7 +623,7 @@ body.fx-cross a,body.fx-cross button,body.fx-cross .term,body.fx-cross input,bod
 @keyframes fxshine{0%{transform:translateX(-100%)}55%,100%{transform:translateX(220%)}}
 
 @media (prefers-reduced-motion:reduce){
- .fx-fog,.fx-lamp,.fx-ash,.fx-read{display:none}
+ .fx-fog,.fx-fog2,.fx-lamp,.fx-ash,.fx-read{display:none}
  .page.on{animation:none}
  .fx-glitch{animation:none}
  .brow.top:first-child .bar i::after{animation:none}
@@ -2271,20 +2275,20 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
   }
 
   /* --- 2. туман --- */
-  if(!RM){ body.appendChild(el('div','fx-fog')); }
+  if(!RM){ body.appendChild(el('div','fx-fog')); body.appendChild(el('div','fx-fog2')); }
 
   /* --- 3. пепел --- */
   if(!RM){
     var cv = el('canvas','fx-ash'); body.appendChild(cv);
-    var cx = cv.getContext('2d'), P = [], N = TOUCH ? 14 : 26, raf = 0;
+    var cx = cv.getContext('2d'), P = [], N = TOUCH ? 18 : 42, raf = 0;
     function size(){ cv.width = innerWidth; cv.height = innerHeight; }
     size(); addEventListener('resize', size);
     function seed(p){
       p.x = Math.random()*cv.width;
       p.y = cv.height + Math.random()*cv.height*.4;
-      p.r = .6 + Math.random()*1.5;
-      p.v = .15 + Math.random()*.45;
-      p.a = .10 + Math.random()*.35;
+      p.r = 1.0 + Math.random()*2.0;
+      p.v = .18 + Math.random()*.55;
+      p.a = .28 + Math.random()*.52;
       p.w = Math.random()*Math.PI*2;
       p.s = .004 + Math.random()*.012;
       return p;
@@ -2300,7 +2304,8 @@ window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;ba
         var x = p.x + Math.sin(p.w)*14;
         if(p.y < -20) seed(p);
         cx.beginPath();
-        cx.fillStyle = 'rgba(214,176,120,' + p.a + ')';
+        cx.shadowBlur = 8; cx.shadowColor = 'rgba(224,150,70,.85)';
+        cx.fillStyle = 'rgba(240,196,130,' + p.a + ')';
         cx.arc(x, p.y, p.r, 0, 6.283);
         cx.fill();
       }
