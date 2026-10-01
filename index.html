@@ -457,11 +457,32 @@ p{margin:0}
   .topbar{position:fixed;left:0;right:0;top:0;padding-top:calc(11px + env(safe-area-inset-top))}
   .shell{padding-top:calc(58px + env(safe-area-inset-top));padding-bottom:calc(122px + env(safe-area-inset-bottom))}
   .band,section,[id^="r"]{scroll-margin-top:calc(70px + env(safe-area-inset-top))}
-  .tgbar{display:flex}
+  .dock{display:flex}
   .toast{bottom:calc(138px + env(safe-area-inset-bottom))}
 }
-.tgbar{display:none;position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:59;padding:8px var(--pad)}
-.tgbar a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;border-radius:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#e0243a,#b3121f);box-shadow:0 6px 18px rgba(0,0,0,.45);text-decoration:none}
+/* ===== DOCK — закреплено на всех вкладках: адрес сервера + Telegram ===== */
+.dock{display:none;position:fixed;z-index:59;gap:8px;align-items:stretch}
+.dock .dock-ip,.dock .dock-tg{display:flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;text-decoration:none;font-family:var(--fd);font-weight:800;letter-spacing:.04em;text-transform:uppercase;transition:border-color .25s,color .25s,transform .25s,box-shadow .25s}
+.dock .dock-ip{flex-direction:column;gap:3px;background:rgba(10,10,13,.84);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--edge2);color:var(--bone);border-radius:12px;padding:10px 16px;line-height:1}
+.dock .dock-ip .k{font:400 9.5px/1 var(--fm);letter-spacing:.14em;color:var(--dim)}
+.dock .dock-ip .num{font:600 13.5px/1 var(--fm);letter-spacing:.02em;color:var(--dawn);text-transform:none}
+.dock .dock-ip:hover{border-color:var(--dawn);transform:translateY(-1px)}
+.dock .dock-ip:hover .num{color:#fff}
+.dock .dock-tg .t-short{display:none}
+.dock .dock-tg{background:linear-gradient(180deg,#e0243a,#b3121f);color:#fff;border-radius:12px;padding:12px 18px;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.dock .dock-tg:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,0,0,.55)}
+@media (min-width:901px){ .dock{display:flex;right:20px;bottom:20px;left:auto} }
+@media (max-width:900px){
+ .dock{display:flex;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));padding:8px var(--pad)}
+ .dock .dock-ip{flex:1.1;padding:9px 8px;border-radius:12px}
+ .dock .dock-ip .num{font-size:12.5px}
+ .dock .dock-tg{flex:1;padding:11px 8px;font-size:11px;letter-spacing:.02em}
+}
+@media (max-width:430px){
+ .dock .dock-tg .t-long{display:none}.dock .dock-tg .t-short{display:inline}
+ .dock .dock-tg{flex:.8;padding:11px 8px;font-size:10.5px}
+ .dock .dock-ip{flex:1}
+}
 
 /* ===== ART v3 — изображения и эффекты ===== */
 .shot{position:relative;overflow:hidden;border:1px solid var(--edge);background:var(--ink);isolation:isolate}
@@ -514,6 +535,95 @@ p{margin:0}
 @media (prefers-reduced-motion:reduce){
  .rail-track,.plate img,.spark::after{animation:none}
  .rv{opacity:1;transform:none;transition:none}
+}
+
+/* ===== FX v1 — эффекты ===== */
+.fx-fog,.fx-lamp,.fx-ash{position:fixed;inset:0;pointer-events:none;z-index:2}
+.fx-fog{opacity:.5;background:
+ radial-gradient(60% 45% at 18% 78%, rgba(200,183,154,.055), transparent 70%),
+ radial-gradient(55% 40% at 82% 22%, rgba(120,140,170,.05), transparent 70%);
+ animation:fogdrift 54s ease-in-out infinite alternate}
+@keyframes fogdrift{from{transform:translate3d(-2%,1%,0) scale(1.05)}to{transform:translate3d(3%,-2%,0) scale(1.16)}}
+.fx-lamp{z-index:3;opacity:0;transition:opacity .6s;mix-blend-mode:soft-light;
+ background:radial-gradient(260px 260px at var(--lx,50%) var(--ly,50%), rgba(200,183,154,.30), rgba(200,183,154,.07) 45%, transparent 72%)}
+.fx-lamp.on{opacity:1}
+.fx-ash{z-index:2;opacity:.75}
+
+/* прицел вместо курсора */
+body.fx-cross{cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><g fill='none' stroke='%23c8b79a' stroke-width='1.4' opacity='.85'><path d='M13 2v7M13 17v7M2 13h7M17 13h7'/><circle cx='13' cy='13' r='1.6' fill='%23c8b79a' stroke='none'/></g></svg>") 13 13, crosshair}
+body.fx-cross a,body.fx-cross button,body.fx-cross .term,body.fx-cross input,body.fx-cross select,body.fx-cross textarea,body.fx-cross [role="button"]{cursor:pointer}
+
+/* наклон плиток */
+.shot{transform-style:preserve-3d;will-change:transform}
+.shot.fx-tilt{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+
+/* глитч на заголовках */
+@keyframes fxglitch{
+ 0%{text-shadow:none;transform:none}
+ 18%{text-shadow:-2px 0 rgba(224,36,58,.75), 2px 0 rgba(120,200,255,.6);transform:translateX(1px)}
+ 34%{text-shadow:2px 0 rgba(224,36,58,.6), -2px 0 rgba(120,200,255,.5);transform:translateX(-1px)}
+ 52%{text-shadow:-1px 0 rgba(224,36,58,.5), 1px 0 rgba(120,200,255,.4);transform:none}
+ 100%{text-shadow:none;transform:none}
+}
+.fx-glitch{animation:fxglitch .42s steps(2,end)}
+
+/* прогрев картинок */
+.fx .shot img,.fx .plate img{opacity:0;transition:opacity .55s ease, transform 1.4s cubic-bezier(.2,.7,.2,1), filter 1.4s}
+.fx .shot img.fx-in,.fx .plate img.fx-in{opacity:1}
+.shot.fx-lqip,.plate.fx-lqip{background-size:cover;background-position:50% 40%}
+.shot.fx-lqip::marker{content:""}
+
+/* лайтбокс */
+.fx-box{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;
+ background:rgba(0,0,0,.93);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
+.fx-box.on{display:flex;opacity:1}
+.fx-box img{max-width:min(92vw,1100px);max-height:86vh;border:1px solid var(--edge2);box-shadow:0 30px 90px rgba(0,0,0,.8);
+ transform:scale(.96);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.fx-box.on img{transform:scale(1)}
+.fx-box .nav{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border:1px solid var(--edge2);
+ background:rgba(10,10,13,.8);color:var(--bone);font:300 26px/1 var(--fd);cursor:pointer;border-radius:50%}
+.fx-box .nav:hover{border-color:var(--dawn);color:#fff}
+.fx-box .prev{left:22px}.fx-box .next{right:22px}
+.fx-box .close{position:absolute;top:20px;right:22px;width:44px;height:44px;border:1px solid var(--edge2);
+ background:rgba(10,10,13,.8);color:var(--ash);font:300 20px/1 var(--fd);cursor:pointer;border-radius:50%}
+.fx-box .close:hover{color:#fff;border-color:var(--dawn)}
+.fx-box .cnt{position:absolute;bottom:22px;left:0;right:0;text-align:center;font:400 12px/1 var(--fm);letter-spacing:.1em;color:var(--dim)}
+@media (max-width:900px){ .fx-box .nav{width:44px;height:44px} .fx-box .prev{left:8px} .fx-box .next{right:8px} }
+
+/* переход между вкладками */
+.page.fx-out{opacity:0;transform:translateY(10px)}
+.page.on{animation:fxin .45s cubic-bezier(.2,.7,.2,1) both}
+@keyframes fxin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* полоса прочтения */
+.fx-read{position:fixed;left:0;top:0;height:2px;width:0;z-index:70;pointer-events:none;
+ background:linear-gradient(90deg,rgba(200,183,154,.25),var(--dawn));opacity:0;transition:opacity .4s}
+.fx-read.on{opacity:1}
+@media (max-width:900px){ .fx-read{top:calc(env(safe-area-inset-top) + 56px)} }
+
+/* барабан цифр */
+.fx-roll{display:inline-block;transition:transform .28s cubic-bezier(.3,.8,.3,1),opacity .28s}
+.fx-roll.up{transform:translateY(-.55em);opacity:0}
+.fx-roll.dn{transform:translateY(.55em);opacity:0}
+
+/* смена карты */
+#teleMap{transition:opacity .35s, transform .35s}
+#teleMap.fx-swap{opacity:0;transform:translateY(-4px)}
+
+/* полосы в топе */
+.brow .bar i{transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.brow.top:first-child .bar i{position:relative;overflow:hidden}
+.brow.top:first-child .bar i::after{content:"";position:absolute;inset:0;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+ transform:translateX(-100%);animation:fxshine 3.4s ease-in-out 1.2s infinite}
+@keyframes fxshine{0%{transform:translateX(-100%)}55%,100%{transform:translateX(220%)}}
+
+@media (prefers-reduced-motion:reduce){
+ .fx-fog,.fx-lamp,.fx-ash,.fx-read{display:none}
+ .page.on{animation:none}
+ .fx-glitch{animation:none}
+ .brow.top:first-child .bar i::after{animation:none}
+ .shot img,.plate img{opacity:1;transition:none}
 }
 </style>
 </head>
@@ -1563,7 +1673,7 @@ p{margin:0}
 </div><!-- /shell -->
 
 <!-- ================= НИЖНЕЕ МЕНЮ ================= -->
-<div class="tgbar"><a href="https://t.me/cherniirassvet" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.7l-4.8-1.5c-1-.3-1.1-1 .2-1.5l18.8-7.3c.9-.3 1.6.2 1.4 1.9z"/></svg>Вступить в Telegram</a></div>
+<div class="dock"><button class="dock-ip copyip" type="button" title="Скопировать адрес сервера"><span class="k">Адрес сервера</span><span class="num" id="ipDock">195.60.166.224:27374</span></button><a class="dock-tg tglink" href="#" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.7 19c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.7l-4.8-1.5c-1-.3-1.1-1 .2-1.5l18.8-7.3c.9-.3 1.6.2 1.4 1.9z"/></svg><span class="t-long">Вступить в Telegram</span><span class="t-short">Telegram</span></a></div>
 <nav class="tabs" id="tabs">
   <a href="#/" data-r="/"><svg viewBox="0 0 24 24"><path d="M3 15h18"/><path d="M8 15a4 4 0 0 1 8 0"/><path d="M5 19h5M14 19h5"/></svg>Главная</a>
   <a href="#/game" data-r="/game"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Игра</a>
@@ -1636,7 +1746,7 @@ function initStatic(){
   $$('.adminlink').forEach(a=>a.href=CONFIG.links.admin);
   $$('.donatelink').forEach(a=>a.href=CONFIG.links.donate);
   $$('.copyip').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();copyAddr();}));
-  $('#ipText').textContent=ADDR; $('#ipFoot').textContent=ADDR;
+  $('#ipText').textContent=ADDR; $('#ipFoot').textContent=ADDR; $('#ipDock').textContent=ADDR;
   ['teleSlots','barSlots','specSlots'].forEach(i=>$('#'+i).textContent=CONFIG.server.slots);
   $('#year').textContent=new Date().getFullYear();
 
@@ -2053,6 +2163,264 @@ reveal();
 loadOnline();
 setInterval(loadOnline, CONFIG.refresh.online);
 loadTop();
+
+window.__LQIP={"Gemini_Generated_Image_ukftl4ukftl4ukft.png":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEE/8QAHRABAAIABwAAAAAAAAAAAAAAAQADEiEyM0Fhcf/EABQBAQAAAAAAAAAAAAAAAAAAAAL/xAAWEQEBAQAAAAAAAAAAAAAAAAARAAH/2gAMAwEAAhEDEQA/AMGGkqBq1Bnz7EhsL0RDmM0v/9k=","brand.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwIF/8QAHhABAAICAgMBAAAAAAAAAAAAAQIRAAMSURMxQWL/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFREBAQAAAAAAAAAAAAAAAAAAABL/2gAMAwEAAhEDEQA/AM2MNaxnwoqkDr7kppVfHV/rB1yePtw7e3DJ0//Z","hero.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEE/8QAHRABAAIABwAAAAAAAAAAAAAAAQADEiEyM0Fhcf/EABQBAQAAAAAAAAAAAAAAAAAAAAL/xAAWEQEBAQAAAAAAAAAAAAAAAAARAAH/2gAMAwEAAhEDEQA/AMGGkqBq1Bnz7EhsL0RDmM0v/9k=","motd.png":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAHAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQG/8QAGRABAQEAAwAAAAAAAAAAAAAAAQARAxIh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDPLqb6VK8S71kiv//Z","neon-1.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwIE/8QAIxAAAQMDAgcAAAAAAAAAAAAAAQACEQMSIQQxEzJBYXGhsf/EABUBAQEAAAAAAAAAAAAAAAAAAAAE/8QAFxEBAAMAAAAAAAAAAAAAAAAAAAERIf/aAAwDAQACEQMRAD8AxNvZa1raQLpFszcJjdHxGDB0VMkbkuOfamj0Pen9KR3MfKUojX//2Q==","neon-2.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAED/8QAIxAAAgECBQUBAAAAAAAAAAAAAQIRABIEITFBYQMUIkJRgf/EABUBAQEAAAAAAAAAAAAAAAAAAAIE/8QAFxEAAwEAAAAAAAAAAAAAAAAAAAEhEf/aAAwDAQACEQMRAD8ANYFMIFCdTRgBD865Qdqj9uHYNh8NcDnczTPMUMeh3G/5W7Ktx8Rr8payiU//2Q==","neon-3.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAwT/xAAeEAACAQUAAwAAAAAAAAAAAAABAhEAAxIhMSJBYf/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAFxEAAwEAAAAAAAAAAAAAAAAAAAERUf/aAAwDAQACEQMRAD8AmsSuKBXAIMCRG6DG37svP25FUoq+JgSH1rnaI9NG6UqYf//Z","neon-4.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAH/xAAhEAACAgECBwAAAAAAAAAAAAABAgADERKREyEiQVFhgf/EABQBAQAAAAAAAAAAAAAAAAAAAAP/xAAWEQEBAQAAAAAAAAAAAAAAAAABABH/2gAMAwEAAhEDEQA/AAVBa+jK6mVgDkg+JOGvYUfQ0NVzLeiuN4kswJAY7w3ZzC//2Q==","neon-5.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAgME/8QAIRAAAgIBAgcAAAAAAAAAAAAAAQIAESEDMQQTFFKBkbH/xAAVAQEBAAAAAAAAAAAAAAAAAAABA//EABgRAQEAAwAAAAAAAAAAAAAAAAEAETFB/9oADAMBAAIRAxEAPwDHpBdI0MiirOBtcHQp3r5aS4fPMvO32AqtnA9QRe1cg6v/2Q==","neon-6.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAMF/8QAHRABAQACAQUAAAAAAAAAAAAAAQIAEQMEISJBYf/EABUBAQEAAAAAAAAAAAAAAAAAAAED/8QAGBEAAwEBAAAAAAAAAAAAAAAAAAEhERL/2gAMAwEAAhEDEQA/ABsnFczx800eRLIg+u+FWRTduvmTVepnbvNDClekrh//2Q==","pets-1.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAbEAEAAgMBAQAAAAAAAAAAAAABAAIDESEEsf/EABQBAQAAAAAAAAAAAAAAAAAAAAH/xAAVEQEBAAAAAAAAAAAAAAAAAAABAP/aAAwDAQACEQMRAD8AiPLS2NS1RA66+RGflROOiIsJf//Z","pets-2.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAIF/8QAHRAAAQQCAwAAAAAAAAAAAAAAAQACAxEhQTFSsf/EABQBAQAAAAAAAAAAAAAAAAAAAAL/xAAYEQACAwAAAAAAAAAAAAAAAAAAUQERIf/aAAwDAQACEQMRAD8AyzFGYw1vHet+6RS4kQ2MGgiOsdwj/9k=","pets-3.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMF/8QAHBAAAgICAwAAAAAAAAAAAAAAAREAAxKRAjEy/8QAFAEBAAAAAAAAAAAAAAAAAAAAAv/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDNwrFQBq9Bto7iRHI4gMpdaiGHX//Z","pets-4.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhAAAwEAAwAAAAAAAAAAAAAAAAECIRHB8P/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AMtzCmVMLV7sE+XmgEVr/9k=","pets-5.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMF/8QAHhAAAgEDBQAAAAAAAAAAAAAAAQIAAxEhFEFRsfD/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDLZKRpAKqg82x7ESZJ0q5O3ZiHDtf/2Q==","pets-6.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEE/8QAHRABAAIABwAAAAAAAAAAAAAAAQADEiEyM0Fhcf/EABQBAQAAAAAAAAAAAAAAAAAAAAL/xAAVEQEBAAAAAAAAAAAAAAAAAAARAP/aAAwDAQACEQMRAD8AwYaCoGrUGfPsSGwvREIzS//Z","pets-7.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAGxAAAwACAwAAAAAAAAAAAAAAAAECAxESIUH/xAAUAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8Ag80vCpmXtAy7fFd+AC//2Q==","privilegii.png":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAUDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMF/8QAGRAAAwEBAQAAAAAAAAAAAAAAAAECEQMx/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AMGus4koTwEq9AH/2Q==","surv-01.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAHRABAAEDBQAAAAAAAAAAAAAAAQACEyEEERIx4f/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEAAwAAAAAAAAAAAAAAAAAAACFR/9oADAMBAAIRAxEAPwDBYotgj2545iQVdKu+fYg6Uof/2Q==","surv-02.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAeEAACAQMFAAAAAAAAAAAAAAABAgAREiEDFDFBcf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQACUf/aAAwDAQACEQMRAD8Am2a2WVAYZrTqJKzM2i1zE4Xk+xENdoS//9k=","surv-03.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQF/8QAGxAAAwACAwAAAAAAAAAAAAAAAAERAgMSE0H/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAv/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDMerU1FmutKrPj6CeuSgIj/9k=","surv-04.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAEF/8QAHhAAAgICAgMAAAAAAAAAAAAAAQIAEQMhEjFRkcH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAv/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDPxI3DHShhRv5DlNnY9yYXYLQY9+Yck2dmER//2Q==","surv-05.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwIF/8QAHRAAAgMAAgMAAAAAAAAAAAAAAQIAAxEhImGB8P/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAFxEBAAMAAAAAAAAAAAAAAAAAAAECEf/aAAwDAQACEQMRAD8AzQwNFaIuPmH7zAarsdTnYK22BcFjD3IJJOkmLU6w/9k=","surv-06.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwQF/8QAIRAAAQMEAQUAAAAAAAAAAAAAAQACAxESITFREzJBweH/xAAVAQEBAAAAAAAAAAAAAAAAAAABA//EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDOEroujEy3BurzX4idC6463yki74z5FPakc43HJ2iJx//Z","surv-07.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAQIDBP/EACAQAAICAQMFAAAAAAAAAAAAAAECAAMhERIxIlFyofD/xAAVAQEBAAAAAAAAAAAAAAAAAAABA//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AMa3WUBaw5VHOVB0H2ZE0gEjd6hpzUNc9I58oj2WB2Adue8En//Z","surv-08.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAgQF/8QAHhAAAQQCAwEAAAAAAAAAAAAAAQACAyERMRIyUbH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAA//EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDOjndE2OMavF+jCmMRz1S2W5uh9Rc48jZ2kTf/2Q==","surv-09.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAEF/8QAHhAAAgICAgMAAAAAAAAAAAAAAQIAEQMhEjFRkcH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAv/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDPxI3DHShhRv5DlNnY9yYXYLXI9+Yck2dmER//2Q==","surv-10.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIDBf/EAB0QAAICAwADAAAAAAAAAAAAAAECAxEAEiExMlH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAA//EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDOefWRFEYNEGh5v5g6Sbtqoq+XkJSdlN9rHb2OIk//2Q==","surv-11.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIEBf/EACAQAAICAgAHAAAAAAAAAAAAAAIRAAEDEgQUMVFhgfD/xAAVAQEBAAAAAAAAAAAAAAAAAAABA//EABcRAQEBAQAAAAAAAAAAAAAAAAEAETH/2gAMAwEAAhEDEQA/AM4cpYwLh7Fulde3E5M/rhjItHtbXV+JK77wKJry/9k=","surv-12.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAdEAABBAIDAAAAAAAAAAAAAAABAAIDIRESIkGR/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQP/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARL/2gAMAwEAAhEDEQA/AIjIZdIQXBrW8dqBx0ikBOjbNGvETqoV/9k=","surv-13.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIDBf/EAB0QAAICAwADAAAAAAAAAAAAAAECAxEAEiExMlH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAA//EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDOefWRFEYNEGh5v5g6Sbtqoq+XkJSdlN9rHb2OIk//2Q==","surv-14.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwIF/8QAHxAAAgICAQUAAAAAAAAAAAAAAQIAEQMhMRITUXGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAABABL/2gAMAwEAAhEDEQA/AM0M6qmEAi18aN8QDgN8qPsjA79lx1NQGt+4EdLSX//Z","surv-15.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQF/8QAGxABAQEAAgMAAAAAAAAAAAAAAQIAEWEDIdH/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABYRAQEBAAAAAAAAAAAAAAAAAAABEf/aAAwDAQACEQMRAD8Ag8lHDNPDB7Hv5mz7qmVVV7zLU5H/2Q==","surv-16.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMF/8QAHxAAAQMEAwEAAAAAAAAAAAAAAQACAxESITEEFFFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAP/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARL/2gAMAwEAAhEDEQA/AM+jpIeu0k2AG3w/EUpXuPGbVxwTTOtImqm//9k=","wide-neon.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAGAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAHhAAAQQBBQAAAAAAAAAAAAAAAgABAxESBDEyQVH/xAAVAQEBAAAAAAAAAAAAAAAAAAABA//EABYRAQEBAAAAAAAAAAAAAAAAAAABEv/aAAwDAQACEQMRAD8AwxlgMbW9hVV1bupHpyzLhv4iJXzH/9k="};
+
+/* ================= FX v1 — эффекты ================= */
+(function(){
+  var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var TOUCH = matchMedia('(hover: none)').matches;
+  var DESK = !TOUCH && innerWidth > 900;
+  var LQIP = window.__LQIP || {};
+  var d = document, body = d.body;
+  d.documentElement.classList.add('fx');
+
+  function el(tag, cls){ var e=d.createElement(tag); if(cls) e.className=cls; return e; }
+
+  /* --- 14. прогрев картинок + 4. наклон + 10. лайтбокс --- */
+  var gallery = [];
+  function prepImages(){
+    gallery = [];
+    d.querySelectorAll('.shot img, .plate img').forEach(function(img){
+      var wrap = img.closest('.shot') || img.closest('.plate');
+      var file = (img.getAttribute('src')||'').split('/').pop();
+      if(wrap && LQIP[file] && !wrap.dataset.lqip){
+        wrap.dataset.lqip = '1';
+        wrap.classList.add('fx-lqip');
+        wrap.style.backgroundImage = 'url(' + LQIP[file] + ')';
+      }
+      if(img.complete && img.naturalWidth) img.classList.add('fx-in');
+      else img.addEventListener('load', function(){ img.classList.add('fx-in'); }, {once:true});
+      if(img.closest('.shot')) gallery.push(img);
+    });
+  }
+
+  /* --- лайтбокс --- */
+  var box, boxImg, boxCnt, boxIdx = 0;
+  function buildBox(){
+    box = el('div','fx-box');
+    boxImg = el('img');
+    var prev = el('button','nav prev'); prev.type='button'; prev.textContent='‹'; prev.setAttribute('aria-label','Предыдущий');
+    var next = el('button','nav next'); next.type='button'; next.textContent='›'; next.setAttribute('aria-label','Следующий');
+    var cls  = el('button','close');    cls.type='button';  cls.textContent='✕'; cls.setAttribute('aria-label','Закрыть');
+    boxCnt = el('div','cnt');
+    box.appendChild(boxImg); box.appendChild(prev); box.appendChild(next); box.appendChild(cls); box.appendChild(boxCnt);
+    body.appendChild(box);
+    prev.onclick = function(e){ e.stopPropagation(); step(-1); };
+    next.onclick = function(e){ e.stopPropagation(); step(1); };
+    cls.onclick  = function(e){ e.stopPropagation(); closeBox(); };
+    box.onclick  = function(e){ if(e.target===box || e.target===boxImg) closeBox(); };
+    addEventListener('keydown', function(e){
+      if(!box.classList.contains('on')) return;
+      if(e.key==='Escape') closeBox();
+      if(e.key==='ArrowLeft') step(-1);
+      if(e.key==='ArrowRight') step(1);
+    });
+  }
+  function openBox(i){
+    if(!box) buildBox();
+    boxIdx = i; show();
+    box.classList.add('on'); body.style.overflow='hidden';
+  }
+  function show(){
+    var img = gallery[boxIdx]; if(!img) return;
+    boxImg.src = img.getAttribute('src');
+    boxImg.alt = img.getAttribute('alt') || '';
+    boxCnt.textContent = (boxIdx+1) + ' / ' + gallery.length;
+  }
+  function step(n){ boxIdx = (boxIdx + n + gallery.length) % gallery.length; show(); }
+  function closeBox(){ box.classList.remove('on'); body.style.overflow=''; }
+
+  d.addEventListener('click', function(e){
+    var img = e.target.closest && e.target.closest('.shot img');
+    if(!img) return;
+    var i = gallery.indexOf(img);
+    if(i >= 0){ e.preventDefault(); openBox(i); }
+  });
+
+  /* --- наклон плиток --- */
+  if(DESK && !RM){
+    d.addEventListener('pointermove', function(e){
+      var s = e.target.closest && e.target.closest('.shot');
+      if(!s || s.closest('.rail-strip')) return;
+      var r = s.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - .5;
+      var py = (e.clientY - r.top) / r.height - .5;
+      s.classList.add('fx-tilt');
+      s.style.transform = 'perspective(900px) rotateY(' + (px*5).toFixed(2) + 'deg) rotateX(' + (-py*5).toFixed(2) + 'deg)';
+    });
+    d.addEventListener('pointerout', function(e){
+      var s = e.target.closest && e.target.closest('.shot');
+      if(s) s.style.transform = '';
+    });
+  }
+
+  /* --- 1. фонарь под курсором --- */
+  if(DESK && !RM){
+    var lamp = el('div','fx-lamp'); body.appendChild(lamp);
+    var lx=0, ly=0, pend=false;
+    addEventListener('pointermove', function(e){
+      lx = e.clientX; ly = e.clientY;
+      if(!pend){ pend = true; requestAnimationFrame(function(){
+        lamp.style.setProperty('--lx', lx+'px');
+        lamp.style.setProperty('--ly', ly+'px');
+        lamp.classList.add('on'); pend = false;
+      }); }
+    }, {passive:true});
+    addEventListener('pointerleave', function(){ lamp.classList.remove('on'); });
+  }
+
+  /* --- 2. туман --- */
+  if(!RM){ body.appendChild(el('div','fx-fog')); }
+
+  /* --- 3. пепел --- */
+  if(!RM){
+    var cv = el('canvas','fx-ash'); body.appendChild(cv);
+    var cx = cv.getContext('2d'), P = [], N = TOUCH ? 14 : 26, raf = 0;
+    function size(){ cv.width = innerWidth; cv.height = innerHeight; }
+    size(); addEventListener('resize', size);
+    function seed(p){
+      p.x = Math.random()*cv.width;
+      p.y = cv.height + Math.random()*cv.height*.4;
+      p.r = .6 + Math.random()*1.5;
+      p.v = .15 + Math.random()*.45;
+      p.a = .10 + Math.random()*.35;
+      p.w = Math.random()*Math.PI*2;
+      p.s = .004 + Math.random()*.012;
+      return p;
+    }
+    for(var i=0;i<N;i++) P.push(seed({}));
+    function tick(){
+      raf = requestAnimationFrame(tick);
+      if(d.hidden) return;
+      cx.clearRect(0,0,cv.width,cv.height);
+      for(var i=0;i<P.length;i++){
+        var p = P[i];
+        p.y -= p.v; p.w += p.s;
+        var x = p.x + Math.sin(p.w)*14;
+        if(p.y < -20) seed(p);
+        cx.beginPath();
+        cx.fillStyle = 'rgba(214,176,120,' + p.a + ')';
+        cx.arc(x, p.y, p.r, 0, 6.283);
+        cx.fill();
+      }
+    }
+    tick();
+    d.addEventListener('visibilitychange', function(){ if(!d.hidden && !raf) tick(); });
+  }
+
+  /* --- 5. глитч на заголовках --- */
+  if(DESK && !RM){
+    d.addEventListener('pointerenter', function(e){
+      var h = e.target.closest && e.target.closest('h2');
+      if(!h || h.dataset.g) return;
+      h.dataset.g = '1';
+      h.classList.add('fx-glitch');
+      setTimeout(function(){ h.classList.remove('fx-glitch'); delete h.dataset.g; }, 480);
+    }, true);
+  }
+
+  /* --- 13. прицел --- */
+  if(DESK) body.classList.add('fx-cross');
+
+  /* --- 12. полоса прочтения --- */
+  var read = el('div','fx-read'); body.appendChild(read);
+  function onScroll(){
+    var rules = d.getElementById('p-rules');
+    var live = rules && rules.classList.contains('on');
+    read.classList.toggle('on', !!live);
+    if(!live) return;
+    var h = d.documentElement.scrollHeight - innerHeight;
+    read.style.width = (h > 0 ? Math.min(100, scrollY / h * 100) : 0) + '%';
+  }
+  addEventListener('scroll', onScroll, {passive:true});
+
+  /* --- 11. переходы между вкладками --- */
+  if(typeof route === 'function'){
+    var _route = route;
+    route = function(){
+      var cur = d.querySelector('.page.on');
+      _route.apply(this, arguments);
+      var nxt = d.querySelector('.page.on');
+      if(nxt && nxt !== cur && !RM){ nxt.style.animation = 'none'; void nxt.offsetWidth; nxt.style.animation = ''; }
+      prepImages(); onScroll();
+    };
+  }
+
+  /* --- 6. барабан онлайна, 7. фавикон, 9. смена карты --- */
+  var favCv = el('canvas'); favCv.width = favCv.height = 64;
+  var favLink = d.querySelector('link[rel~="icon"]');
+  if(!favLink){ favLink = el('link'); favLink.rel='icon'; d.head.appendChild(favLink); }
+  var lastFav = null;
+  function paintFav(n){
+    if(lastFav === n) return; lastFav = n;
+    var c = favCv.getContext('2d');
+    c.clearRect(0,0,64,64);
+    c.fillStyle = '#0a0a0d'; c.beginPath(); c.arc(32,32,31,0,6.283); c.fill();
+    c.strokeStyle = 'rgba(200,183,154,.5)'; c.lineWidth = 2; c.stroke();
+    c.fillStyle = '#c8b79a';
+    c.font = 'bold ' + (String(n).length > 2 ? 26 : 34) + 'px sans-serif';
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(String(n), 32, 35);
+    try{ favLink.href = favCv.toDataURL('image/png'); }catch(e){}
+  }
+  function roll(node, val){
+    if(!node) return;
+    var old = node.textContent.trim();
+    if(old === String(val)) return;
+    if(RM){ node.textContent = val; return; }
+    var up = !isNaN(+old) && !isNaN(+val) && +val > +old;
+    node.classList.add('fx-roll', up ? 'up' : 'dn');
+    setTimeout(function(){
+      node.textContent = val;
+      node.classList.remove('up','dn');
+      node.classList.add(up ? 'dn' : 'up');
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ node.classList.remove('up','dn'); }); });
+    }, 280);
+  }
+  if(typeof paintOnline === 'function'){
+    var _po = paintOnline;
+    paintOnline = function(data){
+      var mapEl = d.getElementById('teleMap');
+      var oldMap = mapEl ? mapEl.textContent : '';
+      var oldN = {};
+      ['railOnline','barOnline','teleOnline'].forEach(function(i){
+        var n = d.getElementById(i); if(n) oldN[i] = n.textContent.trim();
+      });
+      _po.apply(this, arguments);
+      ['railOnline','barOnline','teleOnline'].forEach(function(i){
+        var n = d.getElementById(i); if(!n) return;
+        var v = n.textContent.trim();
+        if(oldN[i] !== undefined && oldN[i] !== v){ n.textContent = oldN[i]; roll(n, v); }
+      });
+      if(mapEl && oldMap && oldMap !== mapEl.textContent && !RM){
+        var nv = mapEl.textContent; mapEl.textContent = oldMap;
+        mapEl.classList.add('fx-swap');
+        setTimeout(function(){ mapEl.textContent = nv; mapEl.classList.remove('fx-swap'); }, 340);
+      }
+      var num = d.getElementById('railOnline');
+      var v2 = num ? num.textContent.trim() : '';
+      if(v2 && v2 !== '—') paintFav(v2);
+    };
+  }
+
+  /* --- 8. полосы в топе --- */
+  if(typeof paintTop === 'function' && !RM){
+    var _pt = paintTop;
+    paintTop = function(){
+      _pt.apply(this, arguments);
+      d.querySelectorAll('.brow .bar i').forEach(function(bar){
+        var w = bar.style.width;
+        bar.style.width = '0%';
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width = w; }); });
+      });
+    };
+  }
+
+  /* старт */
+  prepImages(); onScroll();
+  addEventListener('load', prepImages);
+})();
 </script>
 </body>
 </html>
